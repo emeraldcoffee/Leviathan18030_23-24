@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,7 +27,7 @@ public class Vision extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 public void onOpened() {
                     webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
@@ -35,7 +35,7 @@ public class Vision extends LinearOpMode {
                 }
 
                 public void onError(int errorCode) {
-                    telemetry.addLine("Something's wrong!");
+                    telemetry.addLine("Something's wrong! " + errorCode);
                 }
             });
         }
