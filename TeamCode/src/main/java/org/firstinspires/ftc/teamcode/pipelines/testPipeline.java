@@ -9,16 +9,14 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class testPipeline extends OpenCvPipeline {
 
-    private double
-            leftVal,
-            centVal,
-            rightVal,
-            winVal;
+    double leftVal;
+    double centVal;
+    double rightVal;
+    double winVal;
 
-    private Rect
-            leftRect = new Rect(100, 100, 60, 120),
-            centRect = new Rect (150, 150, 60, 120),
-            rightRect = new Rect(200, 200, 60, 120);
+    Rect leftRect = new Rect(100, 100, 60, 120);
+    Rect centRect = new Rect (150, 150, 60, 120);
+    Rect rightRect = new Rect(200, 200, 60, 120);
 
     public enum propPos {
         LEFT,
@@ -66,6 +64,7 @@ public class testPipeline extends OpenCvPipeline {
             Imgproc.rectangle(output, leftRect, red, 2);
             Imgproc.rectangle(output, centRect, red, 2);
             Imgproc.rectangle(output, rightRect, green, 2);
+
         }
         else {
             pos = propPos.CENT;
