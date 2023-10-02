@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,12 +20,12 @@ import java.util.List;
 public class hardwareMap {
     //Encoder names
     public Encoder encoder1;
-    //Motor names (drive train motors are in drive/SampleMechanumDrive)
+    //Motor names (drive train motors are in drive/SampleMecanumDrive)
     public DcMotorEx motor1, motor2, motor3, motor4;
     //Servo names
     public Servo servo1, servo2;
     //Camera name
-    public OpenCvCamera frontCamera;
+    public OpenCvWebcam webcam;
 
     private List<DcMotorEx> motors;
 
@@ -35,7 +36,7 @@ public class hardwareMap {
 
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        frontCamera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
         //Mapping encoder
         encoder1 = new Encoder(hwMap.get(DcMotorEx.class, "encoder1"));
