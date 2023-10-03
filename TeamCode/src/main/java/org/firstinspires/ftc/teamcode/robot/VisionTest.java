@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-public class visionTest {
+public class VisionTest {
 }
