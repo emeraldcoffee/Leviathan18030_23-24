@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 //Use this file to set up values that will be used by the robot like servo positions
-public class robotConstants {
+public class RobotConstants {
 
     //Whole # variables
     public static final int

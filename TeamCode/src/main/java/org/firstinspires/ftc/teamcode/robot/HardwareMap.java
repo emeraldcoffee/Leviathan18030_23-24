@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,10 +15,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class hardwareMap {
+public class HardwareMap {
     //Encoder names
     public Encoder encoder1;
-    //Motor names (drive train motors are in drive/SampleMechanumDrive)
+    //Motor names (drive train motors are in drive/SampleMecanumDrive)
     public DcMotorEx motor1, motor2, motor3, motor4;
     //Servo names
     public Servo servo1, servo2;
@@ -28,10 +27,10 @@ public class hardwareMap {
 
     private List<DcMotorEx> motors;
 
-    HardwareMap hwMap;
+    com.qualcomm.robotcore.hardware.HardwareMap hwMap;
     private ElapsedTime period = new ElapsedTime();
 
-    public void init(HardwareMap hwMap) {
+    public void init(com.qualcomm.robotcore.hardware.HardwareMap hwMap) {
 
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
