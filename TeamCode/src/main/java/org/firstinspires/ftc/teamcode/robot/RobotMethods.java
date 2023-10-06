@@ -70,8 +70,6 @@ public class RobotMethods {
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
 
-
-
     //Adds telemetry data for robot position
     public static String updateRobotPosition(Pose2d pose) {
         return "x: " + pose.getX() + " y: " + pose.getY() + " heading: " + pose.getHeading();

@@ -17,15 +17,15 @@ public class meepMeepCode {
                 .setColorScheme(new ColorSchemeBlueLight())
                 .followTrajectorySequence(drive ->
                         // in front of trusses on blue alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(0)))
+                        (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
                                 .strafeRight(19)
-                                .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
+                                /*.addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
                                 .waitSeconds(1)
                                 .turn(Math.toRadians(270))
                                 .addDisplacementMarker(() -> {}) // places down corresponding pixels
                                 .waitSeconds(1)
                                 .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
-                                .forward(60)
+                                .forward(60)*/
                                 .build()
                         )
                 );

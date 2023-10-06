@@ -136,6 +136,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         );
     }
 
+    /*public SampleMecanumDrive(HardwareMap hwMap) {
+        super();
+    }*/
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
