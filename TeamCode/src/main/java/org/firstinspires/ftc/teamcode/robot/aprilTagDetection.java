@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class aprilTagDetection extends OpMode {
                 .setCamera(frontCamera)
                 //sets camera resolution to 640 by 480 so that we can use a default calibration
                 .setCameraResolution(new Size(640,480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
     }
 
@@ -65,5 +67,21 @@ public class aprilTagDetection extends OpMode {
 
     @Override
     public void loop() {
+        //Checks if the camera has identified 1 or more april-tags
+        if (aprilTagProcessor.getDetections().size() > 0) {
+            //Gets all the april tag data for the 1st detection
+            AprilTagDetection tag = aprilTagProcessor.getDetections().get(0);
+
+            //Adds important data to telemetry so we can see it
+            telemetry.addData("x", tag.ftcPose.x);
+            telemetry.addData("y", tag.ftcPose.y);
+            telemetry.addData("z", tag.ftcPose.z);
+            telemetry.addData("roll", tag.ftcPose.roll);
+            telemetry.addData("pitch", tag.ftcPose.pitch);
+            telemetry.addData("yaw", tag.ftcPose.yaw);
+            telemetry.addData("confidence", tag.decisionMargin);
+        }
+
+        telemetry.update();
     }
 }
