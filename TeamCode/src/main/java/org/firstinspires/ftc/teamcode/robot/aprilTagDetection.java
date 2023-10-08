@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -20,11 +22,22 @@ public class aprilTagDetection extends OpMode {
     @Override
     public void init() {
         //Set to correct webcam, the second part
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        //Creates the AprilTagProcessor with all the defaults
-        aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        //Creates visionPortal with all the defaults, passes the webcam and the aprilTag Processor
-        visionPortal = VisionPortal.easyCreateWithDefaults(webcamName, aprilTagProcessor);
+        WebcamName frontCamera = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //Creates the AprilTagProcessor with configured settings
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
+
+        //Creates visionPortal with configured setting, passes the webcam and the aprilTag Processor
+        visionPortal = new VisionPortal.Builder()
+                .addProcessor(aprilTagProcessor)
+                .setCamera(frontCamera)
+                //sets camera resolution to 640 by 480 so that we can use a default calibration
+                .setCameraResolution(new Size(640,480))
+                .build();
     }
 
     @Override
