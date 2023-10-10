@@ -7,7 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class testPipeline extends OpenCvPipeline {
+public class TestPipeline extends OpenCvPipeline {
 
     double leftVal;
     double centVal;

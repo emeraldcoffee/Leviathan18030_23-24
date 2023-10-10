@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-public class robotMethods {
+public class RobotMethods {
 
     //Takes input values and sets drivetrain to corresponding powers while scaling all powers under 1
     public static void setMecanumDrive(double forward, double strafe, double turn, SampleMecanumDrive driveTrain) {
@@ -69,8 +69,6 @@ public class robotMethods {
         //Setting motors to their new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
-
-
 
     //Adds telemetry data for robot position
     public static String updateRobotPosition(Pose2d pose) {

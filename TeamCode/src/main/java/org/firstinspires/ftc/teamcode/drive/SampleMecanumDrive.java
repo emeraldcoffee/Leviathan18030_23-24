@@ -70,6 +70,19 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
+    /*
+        control hub
+        motor port 0:
+        motor port 1:
+        motor port 2: backLeft
+        motor port 3: frontLeft
+        expansion hub
+        motor port 0: frontRight
+        motor port 1: backRight
+        motor port 2:
+        motor port 3:
+     */
+
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
@@ -135,6 +148,10 @@ public class SampleMecanumDrive extends MecanumDrive {
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
     }
+
+    /*public SampleMecanumDrive(HardwareMap hwMap) {
+        super();
+    }*/
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
