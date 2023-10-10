@@ -15,9 +15,9 @@ public class meepMeepCode {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setColorScheme(new ColorSchemeBlueLight())
-                .followTrajectorySequence(drive ->
+                /*.followTrajectorySequence(drive ->
                         // in front of trusses on blue alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+                        /*(drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
                                 .strafeRight(19)
                                 /*.addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
                                 .waitSeconds(1)
@@ -25,12 +25,12 @@ public class meepMeepCode {
                                 .addDisplacementMarker(() -> {}) // places down corresponding pixels
                                 .waitSeconds(1)
                                 .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
-                                .forward(60)*/
+                                .forward(60)
                                 .build()
                         )
-                );
+                );*/
 
-                /*.followTrajectorySequence(drive ->
+                .followTrajectorySequence(drive ->
                     // behind trusses on blue alliance
                     (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(0)))
                             .strafeRight(20)
@@ -43,7 +43,7 @@ public class meepMeepCode {
                             .forward(20)
                             .build()
                     )
-                );*/
+                );
 
                 /*.followTrajectorySequence(drive ->
                         // in front of trusses on red alliance
