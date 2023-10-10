@@ -71,9 +71,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     private TrajectoryFollower follower;
 
     /*
+<<<<<<< HEAD
+=======
         front is towards the intake, back is towards the outtake
         horizontal directions are from the back of the robot
 
+>>>>>>> 4e10a60b4e63639d5cfa0577d932f5de9ac01342
         control hub
         motor port 0:
         motor port 1:
