@@ -15,16 +15,16 @@ public class meepMeepCode {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setColorScheme(new ColorSchemeBlueLight())
-                /*.followTrajectorySequence(drive ->
+                .followTrajectorySequence(drive ->
                         // in front of trusses on blue alliance
-                        /*(drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
-                                .strafeRight(19)
-                                /*.addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
+                        (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+                                .forward(19)
+                                .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
                                 .waitSeconds(1)
-                                .turn(Math.toRadians(270))
+                                .turn(Math.toRadians(90))
                                 .addDisplacementMarker(() -> {}) // places down corresponding pixels
                                 .waitSeconds(1)
-                                .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
+                                .splineTo(new Vector2d(-12, 35), Math.toRadians(90))
                                 .forward(60)
 <<<<<<< HEAD
 >>>>>>> 147ecc51ae5fe0d4db75544a38808109f445c45b
@@ -32,9 +32,9 @@ public class meepMeepCode {
 >>>>>>> 4e10a60b4e63639d5cfa0577d932f5de9ac01342
                                 .build()
                         )
-                );*/
+                );
 
-                .followTrajectorySequence(drive ->
+                /*.followTrajectorySequence(drive ->
                     // behind trusses on blue alliance
                     (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(0)))
                             .strafeRight(20)
@@ -47,7 +47,7 @@ public class meepMeepCode {
                             .forward(20)
                             .build()
                     )
-                );
+                );*/
 
                 /*.followTrajectorySequence(drive ->
                         // in front of trusses on red alliance
