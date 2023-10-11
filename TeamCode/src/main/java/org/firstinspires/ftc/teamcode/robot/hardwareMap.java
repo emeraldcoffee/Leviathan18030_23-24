@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -15,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class HardwareMap {
+public class hardwareMap {
     //Encoder names
     public Encoder encoder1;
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
@@ -27,10 +29,10 @@ public class HardwareMap {
 
     private List<DcMotorEx> motors;
 
-    com.qualcomm.robotcore.hardware.HardwareMap hwMap;
+    HardwareMap hwMap;
     private ElapsedTime period = new ElapsedTime();
 
-    public void init(com.qualcomm.robotcore.hardware.HardwareMap hwMap) {
+    public void init(HardwareMap hwMap) {
 
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());

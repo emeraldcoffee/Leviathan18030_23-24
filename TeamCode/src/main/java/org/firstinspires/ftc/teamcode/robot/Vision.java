@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp (name = "CameraTest", group = "testing")
+@TeleOp (name = "CameraTest", group = "rookiecamp")
 public class Vision extends LinearOpMode {
 
     @Override
