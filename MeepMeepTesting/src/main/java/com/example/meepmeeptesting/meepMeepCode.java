@@ -13,49 +13,43 @@ public class meepMeepCode {
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13.75)
                 .setColorScheme(new ColorSchemeBlueLight())
-                .followTrajectorySequence(drive ->
+                /*.followTrajectorySequence(drive ->
                         // in front of trusses on blue alliance
                         (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
                                 .forward(19)
                                 .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
                                 .waitSeconds(1)
-                                .turn(Math.toRadians(90))
+                                //.turn(Math.toRadians(90))
                                 .addDisplacementMarker(() -> {}) // places down corresponding pixels
                                 .waitSeconds(1)
-                                .splineTo(new Vector2d(-12, 35), Math.toRadians(90))
+                                .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
                                 .forward(60)
-<<<<<<< HEAD
->>>>>>> 147ecc51ae5fe0d4db75544a38808109f445c45b
-=======
->>>>>>> 4e10a60b4e63639d5cfa0577d932f5de9ac01342
                                 .build()
                         )
-                );
+                );*/
 
                 /*.followTrajectorySequence(drive ->
                     // behind trusses on blue alliance
-                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(0)))
-                            .strafeRight(20)
+                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
+                            .forward(19)
                             .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
                             .waitSeconds(1)
-                            .turn(Math.toRadians(270))
                             .addDisplacementMarker(() -> {}) // places down corresponding pixels
                             .waitSeconds(1)
-                            .splineTo(new Vector2d(30, 35), Math.toRadians(0))
-                            .forward(20)
+                            .splineTo(new Vector2d(38, 35), Math.toRadians(0))
+                            .forward(11)
                             .build()
                     )
                 );*/
 
                 /*.followTrajectorySequence(drive ->
                         // in front of trusses on red alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(0)))
-                                .strafeLeft(19)
+                        (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                                .forward(19)
                                 .addDisplacementMarker(() -> {})
                                 .waitSeconds(1)
-                                .turn(Math.toRadians(90))
                                 .addDisplacementMarker(() -> {})
                                 .waitSeconds(1)
                                 .splineTo(new Vector2d(-12, -35), Math.toRadians(0))
@@ -64,20 +58,19 @@ public class meepMeepCode {
                         )
                 );*/
 
-                /*.followTrajectorySequence(drive ->
+                .followTrajectorySequence(drive ->
                         // behind trusses on red alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(0)))
-                                .strafeLeft(20)
+                        (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
+                                .forward(20)
                                 .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
                                 .waitSeconds(1)
-                                .turn(Math.toRadians(90))
                                 .addDisplacementMarker(() -> {}) // places down corresponding pixels
                                 .waitSeconds(1)
                                 .splineTo(new Vector2d(30, -35), Math.toRadians(0))
-                                .forward(20)
+                                .forward(18)
                                 .build()
                         )
-                );*/
+                );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK).setDarkMode(true)
                 // Background opacity from 0-1
