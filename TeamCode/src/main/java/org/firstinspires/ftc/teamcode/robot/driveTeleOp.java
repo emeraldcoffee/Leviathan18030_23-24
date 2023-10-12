@@ -8,17 +8,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp
 public class driveTeleOp extends OpMode {
 
-    DcMotor frontLeft = null;
-    DcMotor frontRight = null;
-    DcMotor backLeft = null;
-    DcMotor backRight = null;
+    DcMotor frontLeft;
+    DcMotor frontRight;
+    DcMotor backLeft;
+    DcMotor backRight;
 
     @Override
     public void init() {
-        frontLeft = hardwareMap.get(DcMotor.class, "FL");
-        frontRight = hardwareMap.get(DcMotor.class, "FR");
-        backLeft = hardwareMap.get(DcMotor.class, "BL");
-        backRight = hardwareMap.get(DcMotor.class, "BR");
+        frontLeft = hardwareMap.dcMotor.get("FL");
+        //frontRight = hardwareMap.get(DcMotor.class, "FR");
+        backLeft = hardwareMap.dcMotor.get("BL");
+        //backRight = hardwareMap.get(DcMotor.class, "BR");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -26,22 +26,12 @@ public class driveTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.left_stick_y != 0.0){
-            frontLeft.setPower(-gamepad1.left_stick_y);
-            backLeft.setPower(-gamepad1.left_stick_y);
-        }
-        else {
-            frontLeft.setPower(0.0);
-            backLeft.setPower(0.0);
-        }
+        frontLeft.setPower(-gamepad1.left_stick_y);
+        backLeft.setPower(-gamepad1.left_stick_y);
 
-        if (gamepad1.right_stick_y != 0.0){
-            frontRight.setPower(-gamepad1.left_stick_y);
-            backRight.setPower(-gamepad1.left_stick_y);
-        }
-        else {
-            frontRight.setPower(0.0);
-            backRight.setPower(0.0);
-        }
+
+        //frontRight.setPower(-gamepad1.left_stick_y);
+        //backRight.setPower(-gamepad1.left_stick_y);
+
     }
 }
