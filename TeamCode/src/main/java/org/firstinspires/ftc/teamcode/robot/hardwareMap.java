@@ -48,6 +48,7 @@ public class hardwareMap {
         motor1 = hwMap.get(DcMotorEx.class, "motor1");
         motor2 = hwMap.get(DcMotorEx.class, "motor2");
         motor3 = hwMap.get(DcMotorEx.class, "motor3");
+        motor4 = hwMap.get(DcMotorEx.class, "motor4");
 
         //Creating list of motors to setup
         motors = Arrays.asList(motor1, motor2, motor3);
