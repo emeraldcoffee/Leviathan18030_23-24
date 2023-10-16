@@ -34,6 +34,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double LATERAL_DISTANCE = 13; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
 
+    /*RunLocalizationTest
+    *Drag robot along stretch
+    *Once you reach the end of the stretch, measure the distance traveled and the distance and the distance reported on the telemetry
+    * The multiplier for X is Measured distance/Telemetry distance traveled
+    * Y multiplier is the same process but in teh strafing direction
+    * road runner tuning 3 wheel odometry
+     */
     public static double X_MULTIPLIER = 1;
     public static double Y_MULTIPLIER = 1;
 

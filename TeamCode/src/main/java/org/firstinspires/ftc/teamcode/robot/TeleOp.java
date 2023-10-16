@@ -10,7 +10,7 @@ public class TeleOp extends OpMode {
 
     @Override
     public void init() {
-        //HardwareMap hwMap = new HardwareMap();
+        //HardwareMap hwMap = /new HardwareMap();
         //SampleMecanumDrive dt = new SampleMecanumDrive(hwMap);
 
 
