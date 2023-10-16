@@ -61,6 +61,7 @@ public class TestPipeline extends OpenCvPipeline {
         }
         else if (winVal == rightVal) {
             pos = propPos.RIGHT;
+            input.copyTo(output);
             Imgproc.rectangle(output, leftRect, red, 2);
             Imgproc.rectangle(output, centRect, red, 2);
             Imgproc.rectangle(output, rightRect, green, 2);
@@ -68,6 +69,7 @@ public class TestPipeline extends OpenCvPipeline {
         }
         else {
             pos = propPos.CENT;
+            input.copyTo(output);
             Imgproc.rectangle(output, leftRect, red, 2);
             Imgproc.rectangle(output, centRect, green, 2);
             Imgproc.rectangle(output, rightRect, red, 2);

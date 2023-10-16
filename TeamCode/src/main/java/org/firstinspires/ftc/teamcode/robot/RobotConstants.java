@@ -17,8 +17,13 @@ public class RobotConstants {
         strafeSpeed     = 1,
         turnSpeed       = .6,
 
-        servo1min       = .4,
-        servo1max       = .8,
-        servo1start     =.5;
+        dropTime        = .12,
+        resetTime       = .27,
+        dropOpen        = .7,
+        dropClosed      = .5,
+        intakeSpeed     = 1,
+        transferSpeed   = .6;
+
+
 
 }

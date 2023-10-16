@@ -21,50 +21,48 @@ public class hardwareMap {
     //Encoder names
     public Encoder encoder1;
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
-    public DcMotorEx motor1, motor2, motor3, motor4;
+    public DcMotorEx climbMotor, intakeMotor, transferMotor;
     //Servo names
-    public Servo servo1, servo2;
+    public Servo dropServo;
     //Camera name
     public OpenCvCamera frontCamera;
 
     private List<DcMotorEx> motors;
 
-    HardwareMap hwMap;
     private ElapsedTime period = new ElapsedTime();
 
     public void init(HardwareMap hwMap) {
 
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        frontCamera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        frontCamera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
 
         //Mapping encoder
-        encoder1 = new Encoder(hwMap.get(DcMotorEx.class, "encoder1"));
+        //encoder1 = new Encoder(hwMap.get(DcMotorEx.class, "leftRear"));
 
         //Optionally reverse the encoders with encoder1.setDirection(Encoder.Direction.REVERSE);
 
 
         //Mapping motors
-        motor1 = hwMap.get(DcMotorEx.class, "motor1");
-        motor2 = hwMap.get(DcMotorEx.class, "motor2");
-        motor3 = hwMap.get(DcMotorEx.class, "motor3");
+        climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
+        intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
+        transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
 
         //Creating list of motors to setup
-        motors = Arrays.asList(motor1, motor2, motor3);
+        motors = Arrays.asList(climbMotor, intakeMotor, transferMotor);
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
         //Optionally reverse them with: motor1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Mapping Servos
-        servo1 = hwMap.servo.get("servo1");
-        servo2 = hwMap.servo.get("servo2");
+        dropServo = hwMap.servo.get("dropServo");
 
         //Optionally reverse them with: servo1.setDirection(Servo.Direction.REVERSE);
 

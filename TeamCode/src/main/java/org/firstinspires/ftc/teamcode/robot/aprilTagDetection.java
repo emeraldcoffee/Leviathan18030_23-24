@@ -23,7 +23,7 @@ public class aprilTagDetection extends OpMode {
     @Override
     public void init() {
         //Set to correct webcam, the second part
-        WebcamName frontCamera = hardwareMap.get(WebcamName.class, "Webcam 1");
+        WebcamName frontCamera = hardwareMap.get(WebcamName.class, "camera");
         //Creates the AprilTagProcessor with configured settings
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
