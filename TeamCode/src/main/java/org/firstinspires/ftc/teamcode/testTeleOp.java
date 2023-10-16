@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
@@ -13,7 +14,9 @@ public class testTeleOp extends LinearOpMode {
     //makes sure that the servo has enough time to open
     ElapsedTime dropTimer = new ElapsedTime();
     int liftPosition;
+
     enum LiftState {
+
         LIFT_START,
         LIFT_EXTEND,
         LIFT_OUTTAKE,
@@ -21,6 +24,8 @@ public class testTeleOp extends LinearOpMode {
         LIFT_OUTTAKE_RELOADING,
         LIFT_RETRACT
     }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         //makes a variable, referencing LiftState called liftState and setting it to LIFT_START
