@@ -37,5 +37,21 @@ public class driveTeleOp extends OpMode {
         frontLeft.setPower(-gamepad1.left_stick_y);
         backLeft.setPower(-gamepad1.left_stick_y);
 
+
+        if(gamepad1.left_bumper) {
+            //set servo to a certain position
+            //resets drop timer
+            dropTimer.reset();
+            outtakeDrop.setPosition(0.5);
+            if(dropTimer.seconds() > 0.3){
+                //set servo to closing
+                //lift state to closing
+                dropTimer.reset();
+                outtakeDrop.setPosition(0);
+
+
+        //frontRight.setPower(-gamepad1.left_stick_y);
+        //backRight.setPower(-gamepad1.left_stick_y);
+
     }
 }
