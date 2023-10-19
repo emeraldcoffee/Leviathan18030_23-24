@@ -15,7 +15,7 @@ public class meepMeepCode {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13.75)
                 .setColorScheme(new ColorSchemeBlueLight())
-                /*.followTrajectorySequence(drive ->
+                .followTrajectorySequence(drive ->
                         // in front of trusses on blue alliance
                         (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
                                 .forward(19)
@@ -28,7 +28,8 @@ public class meepMeepCode {
                                 .forward(60)
                                 .build()
                         )
-                );*/
+                );
+
 
                 /*.followTrajectorySequence(drive ->
                     // behind trusses on blue alliance
@@ -58,11 +59,11 @@ public class meepMeepCode {
                         )
                 );*/
 
-                .followTrajectorySequence(drive ->
+                /*.followTrajectorySequence(drive ->
                         // behind trusses on red alliance
                         (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                                 .forward(20)
-                                .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
+                                .addDisplacementMarker(() -> {}) // pick up pixel and use vision to detect positions
                                 .waitSeconds(1)
                                 .addDisplacementMarker(() -> {}) // places down corresponding pixels
                                 .waitSeconds(1)
@@ -70,13 +71,12 @@ public class meepMeepCode {
                                 .forward(18)
                                 .build()
                         )
-                );
+                );*/
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK).setDarkMode(true)
                 // Background opacity from 0-1
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
                 .start();
-
-        }
     }
+}

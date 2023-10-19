@@ -116,16 +116,16 @@ public class testTele extends LinearOpMode {
             }
 
             switch (slide) {
-                case RETRACTED:
-                    if (gamepad2.right_bumper) {
+                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
+                    if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
                         robot.transferMotor.setPower(0.1);
                         slide = Slide.RESET;
                     }
                     break;
                 case EXTENDED:
-                    if (slideTimer.seconds() > 2) {
+                    if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
                         robot.transferMotor.setPower(0);
-                        slide = Slide.RESET;
+                        slide = Slide.RETRACTED;
                     }
                     break;
                 default:
@@ -136,6 +136,7 @@ public class testTele extends LinearOpMode {
 
             if (gamepad1.dpad_down) {
                 robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
+
             }
             else if (gamepad1.dpad_right) {
                 robot.transferMotor.setPower(RobotConstants.transferSpeed);
