@@ -24,6 +24,7 @@ public class hardwareMap {
     public DcMotorEx climbMotor, intakeMotor, transferMotor;
     //Servo names
     public Servo dropServo;
+
     //Camera name
     public OpenCvCamera frontCamera;
 

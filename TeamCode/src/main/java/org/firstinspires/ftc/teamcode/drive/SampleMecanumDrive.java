@@ -78,7 +78,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 >>>>>>> 4e10a60b4e63639d5cfa0577d932f5de9ac01342
         control hub
         motor port 0:
-        motor port 1:
+        motor port 1: transferMotor
         motor port 2: backLeft
         motor port 3: frontLeft
         expansion hub
@@ -88,7 +88,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         motor port 3:
      */
 
-    private DcMotorEx frontLeft, backLeft, backRight, frontRight;
+    private DcMotorEx frontLeft, backLeft, backRight, frontRight, transferMotor;
     private List<DcMotorEx> motors;
 
     // private IMU imu;
@@ -122,6 +122,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         backLeft = hardwareMap.get(DcMotorEx.class, "leftRear");
         backRight = hardwareMap.get(DcMotorEx.class, "rightRear");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
+        transferMotor = hardwareMap.get(DcMotorEx.class, "transferMotor");
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);

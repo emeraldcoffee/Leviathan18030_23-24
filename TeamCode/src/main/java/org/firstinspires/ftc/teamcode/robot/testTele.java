@@ -24,6 +24,14 @@ public class testTele extends LinearOpMode {
         RESET
     }
 
+    enum Slide {
+        RETRACTED,
+
+        EXTENDED,
+
+        RESET
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         //Updating Status
@@ -36,7 +44,10 @@ public class testTele extends LinearOpMode {
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
         ElapsedTime dropTimer = new ElapsedTime();
+        ElapsedTime slideTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
+
+        Slide slide = Slide.RETRACTED;
 
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
@@ -102,6 +113,24 @@ public class testTele extends LinearOpMode {
                     break;
                 default:
                     drop = Drop.RESET;
+            }
+
+            switch (slide) {
+                case RETRACTED:
+                    if (gamepad2.right_bumper) {
+                        robot.transferMotor.setPower(0.1);
+                        slide = Slide.RESET;
+                    }
+                    break;
+                case EXTENDED:
+                    if (slideTimer.seconds() > 2) {
+                        robot.transferMotor.setPower(0);
+                        slide = Slide.RESET;
+                    }
+                    break;
+                default:
+                    slide = Slide.RESET;
+
             }
 
 
