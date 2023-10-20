@@ -15,8 +15,8 @@ public class RobotMethods {
         double scalePower = max(abs(forward) + abs(strafe) + abs(turn), 1);
 
         //Creating string with all drive powers for mecanum drive
-        Double[] driveSpeeds = {(forward+strafe-turn)/scalePower, (forward-strafe-turn)/scalePower,
-                (forward+strafe+turn/scalePower), (forward-strafe+turn)/scalePower};
+        Double[] driveSpeeds = {(forward-strafe-turn)/scalePower, (forward+strafe-turn)/scalePower,
+                                (forward-strafe+turn/scalePower), (forward+strafe+turn)/scalePower};
 
         //Setting motors to there new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
@@ -28,8 +28,8 @@ public class RobotMethods {
         double scalePower = max(abs(forward) + abs(strafe) + abs(turn), maxPower);
 
         //Creating string with all drive powers for mecanum drive
-        Double[] driveSpeeds = {(forward+strafe-turn)/scalePower, (forward-strafe-turn)/scalePower,
-                                (forward+strafe+turn/scalePower), (forward-strafe+turn)/scalePower};
+        Double[] driveSpeeds = {(forward-strafe-turn)/scalePower, (forward+strafe-turn)/scalePower,
+                                (forward-strafe+turn/scalePower), (forward+strafe+turn)/scalePower};
 
         //Setting motors to there new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
