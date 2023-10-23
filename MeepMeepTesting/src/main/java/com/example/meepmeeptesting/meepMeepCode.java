@@ -19,13 +19,25 @@ public class meepMeepCode {
                         // in front of trusses on blue alliance
                         (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
                                 .forward(19)
-                                .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
+                                .addDisplacementMarker(() -> {}) // uses Vision to detect where the team prop is
                                 .waitSeconds(1)
-                                //.turn(Math.toRadians(90))
-                                .addDisplacementMarker(() -> {}) // places down corresponding pixels
+                                .addDisplacementMarker(() -> {}) // places down pixel where team prop is
                                 .waitSeconds(1)
                                 .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
                                 .forward(60)
+                                .addDisplacementMarker(() -> {}) // places down pixel on backdrop
+                                // cycling
+                                .waitSeconds(1)
+                                .back(10)
+                                .turn(Math.toRadians(180))
+                                .forward(90)
+                                .addDisplacementMarker(() -> {}) // picks up pixels
+                                .waitSeconds(1)
+                                .back(10)
+                                .turn(Math.toRadians(180))
+                                .forward(90)
+                                .addDisplacementMarker(() -> {}) // place down pixel on backdrop
+
                                 .build()
                         )
                 );
