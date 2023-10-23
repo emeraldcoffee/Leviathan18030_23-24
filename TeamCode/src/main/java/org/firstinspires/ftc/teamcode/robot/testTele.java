@@ -17,7 +17,6 @@ public class testTele extends LinearOpMode {
 
     //Establish variables
     double maxSpeed = 1;
-
     enum Drop {
         OPEN,
         CLOSED,
@@ -44,6 +43,7 @@ public class testTele extends LinearOpMode {
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
         telemetry.update();
+
 
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
@@ -122,6 +122,5 @@ public class testTele extends LinearOpMode {
         //Passing robots estimated position when tele is stopped
         PassData.currentPose = driveTrain.getPoseEstimate();
     }
-
 
 }
