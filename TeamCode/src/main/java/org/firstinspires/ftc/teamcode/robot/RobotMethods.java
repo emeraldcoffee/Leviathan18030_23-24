@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -74,8 +75,27 @@ public class RobotMethods {
     //Adds telemetry data for robot position
     public static String updateRobotPosition(Pose2d pose) {
         return "x: " + pose.getX() + " y: " + pose.getY() + " heading: " + pose.getHeading();
-
     }
 
+    public static void outtakePlace (hardwareMap hwMap) {
+        ElapsedTime dropTime = new ElapsedTime();
+        hwMap.dropServo.setPosition(RobotConstants.dropOpen);
+        dropTime.reset();
+        if (dropTime.seconds() > RobotConstants.dropTime) {
+            hwMap.dropServo.setPosition(RobotConstants.dropClosed);
+        }
+    }
 
+    public static void slideExtend (hardwareMap hwMap, double time) { // change from time to using encoders
+        ElapsedTime slideTime = new ElapsedTime();
+        hwMap.transferMotor.setPower(1.0);
+        slideTime.reset();
+        if (slideTime.seconds() > time) {
+            outtakePlace(hwMap);
+            hwMap.transferMotor.setPower(-1.0);
+        }
+    }
+    public static void slideRetract (hardwareMap hwMap) {
+        hwMap.transferMotor.setPower(-1.0);
+    }
 }

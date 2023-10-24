@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.camera3BoxDetection;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class VisionTest {
@@ -13,7 +14,7 @@ public class VisionTest {
     HardwareMap hw;
 
     hardwareMap hwMap = new hardwareMap();
-    hwMap.init(hardwareMap);
+    /*hwMap.init(hwMap);
     cam3BoxDetect = new camera3BoxDetection();
 
     hwMap.frontCamera.setPipeline(cam3BoxDetect);
@@ -28,5 +29,5 @@ public class VisionTest {
 
         @Override
         public void onError(int errorCode) {}
-    });
+    });*/
 }

@@ -16,30 +16,44 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13.75)
                 .setColorScheme(new ColorSchemeBlueLight())
                 .followTrajectorySequence(drive ->
-                        // in front of trusses on blue alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
-                                .forward(19)
-                                .addDisplacementMarker(() -> {}) // uses Vision to detect where the team prop is
-                                .waitSeconds(1)
-                                .addDisplacementMarker(() -> {}) // places down pixel where team prop is
-                                .waitSeconds(1)
-                                .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
-                                .forward(60)
-                                .addDisplacementMarker(() -> {}) // places down pixel on backdrop
-                                // cycling
-                                .waitSeconds(1)
-                                .back(10)
-                                .turn(Math.toRadians(180))
-                                .forward(90)
-                                .addDisplacementMarker(() -> {}) // picks up pixels
-                                .waitSeconds(1)
-                                .back(10)
-                                .turn(Math.toRadians(180))
-                                .forward(90)
-                                .addDisplacementMarker(() -> {}) // place down pixel on backdrop
+                    // in front of trusses on blue alliance
+                    (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
 
-                                .build()
-                        )
+                    .forward(19)
+                    // uses Vision to detect where the team prop is
+                    .addDisplacementMarker(() -> {
+
+                    })
+                    // places down pixel where team prop is
+                    .addDisplacementMarker(() -> {
+                    // turn depending on where the team prop is
+                    //RobotMethods.outtakePlace(hwMap);
+                    })
+                    .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
+                    .forward(60)
+                    // places down pixel on backdrop
+                    .addDisplacementMarker(() -> {
+                    //RobotMethods.slideExtend(hwMap, 5.0);
+                    })
+                    // cycling
+                    .waitSeconds(1)
+                    .back(10)
+                    .turn(Math.toRadians(180))
+                    .forward(90)
+                    // picks up pixels
+                    .addDisplacementMarker(() -> {
+
+                    })
+                    .waitSeconds(1)
+                    .back(10)
+                    .turn(Math.toRadians(180))
+                    .forward(90)
+                    // place down pixel on backdrop
+                    .addDisplacementMarker(() -> {
+                    //RobotMethods.slideExtend(hwMap, 5.0);
+                    })
+                    .build()
+                    )
                 );
 
 
