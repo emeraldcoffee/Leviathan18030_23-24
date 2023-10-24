@@ -23,6 +23,14 @@ public class testTele extends LinearOpMode {
         RESET
     }
 
+    enum Slide {
+        RETRACTED,
+
+        EXTENDED,
+
+        RESET
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
         //Updating Status
@@ -35,7 +43,10 @@ public class testTele extends LinearOpMode {
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
         ElapsedTime dropTimer = new ElapsedTime();
+        ElapsedTime slideTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
+
+        Slide slide = Slide.RETRACTED;
 
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
@@ -104,9 +115,30 @@ public class testTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
+            switch (slide) {
+                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
+                    if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
+                        slideTimer.reset();
+                        slide = Slide.EXTENDED;
+                    }
+                    break;
+                case EXTENDED:
+                    robot.transferMotor.setPower(0.2);
+
+                    if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
+                        robot.transferMotor.setPower(0);
+                        slide = Slide.RETRACTED;
+                    }
+                    break;
+                default:
+                    slide = Slide.RETRACTED;
+
+            }
+
 
             if (gamepad1.dpad_down) {
                 robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
+
             }
             else if (gamepad1.dpad_right) {
                 robot.transferMotor.setPower(RobotConstants.transferSpeed);

@@ -52,8 +52,8 @@ public class driveTeleOp extends OpMode {
 
                 //frontRight.setPower(-gamepad1.left_stick_y);
                 //backRight.setPower(-gamepad1.left_stick_y);
-            }
 
+            }
         }
     }
 }
