@@ -123,10 +123,10 @@ public class testTele extends LinearOpMode {
                     }
                     break;
                 case EXTENDED:
-                    robot.transferMotor.setPower(0.2);
+                    robot.climbMotor.setPower(0.2);
 
                     if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
-                        robot.transferMotor.setPower(0);
+                        robot.climbMotor.setPower(0);
                         slide = Slide.RETRACTED;
                     }
                     break;
@@ -141,7 +141,7 @@ public class testTele extends LinearOpMode {
 
             }
             else if (gamepad1.dpad_right) {
-                robot.transferMotor.setPower(RobotConstants.transferSpeed);
+                robot.climbMotor.setPower(RobotConstants.climbSpeed);
             }
 
             //Updating telemetry

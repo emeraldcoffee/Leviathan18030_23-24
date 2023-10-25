@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -86,16 +87,15 @@ public class RobotMethods {
         }
     }
 
-    public static void slideExtend (hardwareMap hwMap, double time) { // change from time to using encoders
-        ElapsedTime slideTime = new ElapsedTime();
-        hwMap.transferMotor.setPower(1.0);
-        slideTime.reset();
-        if (slideTime.seconds() > time) {
+    public static void slideExtend (hardwareMap hwMap, double ticks) { // change from time to using encoders
+        hwMap.climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hwMap.climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        hwMap.climbMotor.setPower(1.0);
+
+        if (ticks <= hwMap.climbMotor.getCurrentPosition()) {
             outtakePlace(hwMap);
-            hwMap.transferMotor.setPower(-1.0);
+            hwMap.climbMotor.setPower(-1.0);
         }
-    }
-    public static void slideRetract (hardwareMap hwMap) {
-        hwMap.transferMotor.setPower(-1.0);
     }
 }
