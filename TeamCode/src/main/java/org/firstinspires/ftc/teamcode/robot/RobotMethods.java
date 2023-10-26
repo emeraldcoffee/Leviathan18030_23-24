@@ -88,14 +88,17 @@ public class RobotMethods {
     }
 
     public static void slideExtend (hardwareMap hwMap, double ticks) { // change from time to using encoders
+        ElapsedTime slideTime = new ElapsedTime();
         hwMap.climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hwMap.climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        hwMap.climbMotor.setPower(1.0);
+        slideTime.reset();
+        hwMap.climbMotor.setPower(.4);
 
-        if (ticks <= hwMap.climbMotor.getCurrentPosition()) {
+        if (slideTime.seconds() >= ticks) {
             outtakePlace(hwMap);
-            hwMap.climbMotor.setPower(-1.0);
+            hwMap.climbMotor.setPower(-.8);
+
         }
     }
 }

@@ -21,7 +21,7 @@ public class TestingTeleOp extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.right_trigger > 0.0) {
-            RobotMethods.slideExtend(hwMap, 50);
+            RobotMethods.slideExtend(hwMap, 5.0);
         }
     }
 }

@@ -11,6 +11,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 public class autoRed {
 
-    TrajectorySequence ts = drive.trajectoryequenceBuilder
-            .turn(Math.toRadians())
+    /*TrajectorySequence ts = drive.trajectoryequenceBuilder
+            .turn(Math.toRadians())*/
 }
