@@ -70,15 +70,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     private TrajectoryFollower follower;
 
     /*
-<<<<<<< HEAD
-=======
         front is towards the intake, back is towards the outtake
         horizontal directions are from the back of the robot
 
->>>>>>> 4e10a60b4e63639d5cfa0577d932f5de9ac01342
         control hub
         motor port 0:
-        motor port 1: transferMotor
+        motor port 1: liftMotor
         motor port 2: backLeft
         motor port 3: frontLeft
         expansion hub
@@ -88,7 +85,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         motor port 3:
      */
 
-    private DcMotorEx frontLeft, backLeft, backRight, frontRight, transferMotor;
+    private DcMotorEx frontLeft, backLeft, backRight, frontRight;
     private List<DcMotorEx> motors;
 
     // private IMU imu;
@@ -122,12 +119,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         backLeft = hardwareMap.get(DcMotorEx.class, "leftRear");
         backRight = hardwareMap.get(DcMotorEx.class, "rightRear");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
-        transferMotor = hardwareMap.get(DcMotorEx.class, "transferMotor");
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight, transferMotor);
+        motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();

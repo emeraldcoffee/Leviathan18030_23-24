@@ -7,7 +7,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class camera3BoxDetection extends OpenCvPipeline {
+public class Camera3BoxDetection extends OpenCvPipeline {
     //Defining outputs for the camera
     public enum teamElementPosition {
         LEFT,

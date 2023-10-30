@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
 public class BlueFrontStart extends LinearOpMode {
@@ -18,10 +20,22 @@ public class BlueFrontStart extends LinearOpMode {
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
         hardwareMap hwMap = new hardwareMap();
 
-        Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
-        /*Pose2d bBStartPose = new Pose2d(12, 63, Math.toRadians(270));
+        hwMap.init(hardwareMap);
+        hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            public void onOpened()
+            {
+                hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
+
+        /*Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
+        Pose2d bBStartPose = new Pose2d(12, 63, Math.toRadians(270));
         Pose2d rFStartPose = new Pose2d(-35, -63, Math.toRadians(90));
-        Pose2d rBStartPose = new Pose2d(12, -63, Math.toRadians(90));*/
+        Pose2d rBStartPose = new Pose2d(12, -63, Math.toRadians(90));
 
 
         // in front of trusses on blue
@@ -42,7 +56,7 @@ public class BlueFrontStart extends LinearOpMode {
                 .forward(60)
                 // places down pixel on backdrop
                 .addDisplacementMarker(() -> {
-                    RobotMethods.slideExtend(hwMap, 5.0);
+                    //RobotMethods.slideExtend(hwMap, 50);
                 })
                 // cycling
                 .waitSeconds(1)
@@ -59,7 +73,7 @@ public class BlueFrontStart extends LinearOpMode {
                 .forward(90)
                 // place down pixel on backdrop
                 .addDisplacementMarker(() -> {
-                    RobotMethods.slideExtend(hwMap, 5.0);
+                    //RobotMethods.slideExtend(hwMap, 50);
                 })
                 .build();
 
@@ -67,6 +81,6 @@ public class BlueFrontStart extends LinearOpMode {
 
         if (!isStopRequested()) {
             dt.followTrajectorySequence(blueFront);
-        }
+        }*/
     }
 }
