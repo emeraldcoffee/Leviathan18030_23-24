@@ -19,6 +19,7 @@ public class testTele extends LinearOpMode {
 
     //Establish variables
     double maxSpeed = 1;
+
     enum Drop {
         OPEN,
         CLOSED,
@@ -50,7 +51,7 @@ public class testTele extends LinearOpMode {
         ElapsedTime slideTimer = new ElapsedTime();
         Slide slide = Slide.RETRACTED;
         int slideTarget = 0;
-        final PIDCoefficients slidePIDVals = new PIDCoefficients(2/8192, .01/8192, .001/8192);
+        final PIDCoefficients slidePIDVals = new PIDCoefficients(2 / 8192, .01 / 8192, .001 / 8192);
         double slideI = 0.0;
 
         //Getting last pose
@@ -73,7 +74,7 @@ public class testTele extends LinearOpMode {
 
         status.setValue("Running");
 
-        while(opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested()) {
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
@@ -82,7 +83,7 @@ public class testTele extends LinearOpMode {
             //Driver 1 code
 
             //Front triggers being used to speedup or slowdown robots driving
-            double finalSpeed = RobotConstants.speedMultiplier * (1+(gamepad1.right_trigger-gamepad1.left_trigger)/1.2);
+            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
 
             //Getting joystick values for driving
             double drive = gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed;
@@ -120,7 +121,6 @@ public class testTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
-<<<<<<< HEAD
             switch (slide) {
                 case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
                     if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
@@ -129,25 +129,24 @@ public class testTele extends LinearOpMode {
                     }
                     break;
                 case EXTENDED:
-                    robot.climbMotor.setPower(0.1);
+                    //robot.climbMotor.setPower(0.1);
 
                     if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
-                        robot.climbMotor.setPower(-.1);
+                        //robot.climbMotor.setPower(-.1);
                         slide = Slide.RETRACTED;
                     }
                     break;
                 default:
                     slide = Slide.RETRACTED;
-=======
+
             /*double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
             int distRemain = slideTarget - slideCurPos;
 
             slideI += distRemain * slidePIDVals.i;
             robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));*/
->>>>>>> f82aede7197374b422fe33a4861fa5454a5e8c5f
 
-                robot.liftMotor.setPower(gamepad2.left_stick_y);
+                    robot.liftMotor.setPower(gamepad2.left_stick_y);
 //            switch (slide) {\\]
 //                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
 //                    if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
@@ -181,17 +180,17 @@ public class testTele extends LinearOpMode {
             if (gamepad1.dpad_right) {
                 robot.climbMotor.setPower(RobotConstants.climbSpeed);
             }*/
->>>>>>> f82aede7197374b422fe33a4861fa5454a5e8c5f
 
-            //Updating telemetry
-            telemetry.update();
+                    //Updating telemetry
+                    telemetry.update();
 
-            //Updating for roadrunner
-            driveTrain.update();
+                    //Updating for roadrunner
+                    driveTrain.update();
 
+            }
+            //Passing robots estimated position when tele is stopped
+            PassData.currentPose = driveTrain.getPoseEstimate();
         }
-        //Passing robots estimated position when tele is stopped
-        PassData.currentPose = driveTrain.getPoseEstimate();
-    }
 
+    }
 }

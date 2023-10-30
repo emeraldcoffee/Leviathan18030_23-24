@@ -106,7 +106,7 @@ public class RobotMethods {
 
         return 0;
     }
-    /*public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)
+    public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)
 
         ElapsedTime timer = new ElapsedTime();
 
@@ -132,10 +132,10 @@ public class RobotMethods {
         }
 
         return p + i + d;
-    }*/
+    }
 
 
-    /*public static void slideExtend (hardwareMap hwMap, double distance) { // needs to go from inches to ticks
+    public static void slideExtend (hardwareMap hwMap, double distance) { // needs to go from inches to ticks
 
         hwMap.climbMotor.setPower(slidePID(hwMap, .2, .2, .2, distance));
         outtakePlace(hwMap);
@@ -145,5 +145,5 @@ public class RobotMethods {
 
     public static void slideRetract (hardwareMap hwMap, double distance) {
         hwMap.climbMotor.setPower(-slidePID(hwMap, .2, .2, .2, distance));
-    }*/
+    }
 }

@@ -50,7 +50,7 @@ public class hardwareMap {
             encoder port 3: rightEncoder
      */
 
-    public DcMotorEx liftMotor;//climbMotor, intakeMotor, liftMotor, transferMotor;
+    public DcMotorEx liftMotor, climbMotor, intakeMotor, liftMotor, transferMotor;
     //Servo names
     public Servo dropServo;
 
@@ -77,9 +77,9 @@ public class hardwareMap {
 
 
         //Mapping motors
-        /*climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
+        climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
         intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
-        transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");*/
+        transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
         liftMotor = hwMap.get(DcMotorEx.class, "liftMotor");
 
         //Creating list of motors to setup
