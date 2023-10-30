@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -43,10 +45,13 @@ public class testTele extends LinearOpMode {
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
         ElapsedTime dropTimer = new ElapsedTime();
-        ElapsedTime slideTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
 
+        ElapsedTime slideTimer = new ElapsedTime();
         Slide slide = Slide.RETRACTED;
+        int slideTarget = 0;
+        final PIDCoefficients slidePIDVals = new PIDCoefficients(2/8192, .01/8192, .001/8192);
+        double slideI = 0.0;
 
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
@@ -115,34 +120,42 @@ public class testTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
-            switch (slide) {
-                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
-                    if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
-                        slideTimer.reset();
-                        slide = Slide.EXTENDED;
-                    }
-                    break;
-                case EXTENDED:
-                    robot.climbMotor.setPower(0.2);
+            /*double slideVelo = robot.liftEncoder.getCorrectedVelocity();
+            int slideCurPos = robot.liftEncoder.getCurrentPosition();
+            int distRemain = slideTarget - slideCurPos;
 
-                    if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
-                        robot.climbMotor.setPower(0);
-                        slide = Slide.RETRACTED;
-                    }
-                    break;
-                default:
-                    slide = Slide.RETRACTED;
+            slideI += distRemain * slidePIDVals.i;
+            robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));*/
 
-            }
+                robot.liftMotor.setPower(gamepad2.left_stick_y);
+//            switch (slide) {\\]
+//                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
+//                    if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
+//                        RobotMethods.slideExtend(robot, 50);
+//                        slide = Slide.EXTENDED;
+//                    }
+//                    break;
+//                case EXTENDED:
+//                    robot.climbMotor.setPower(0.2);
+//
+//                    if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
+//                        robot.climbMotor.setPower(0);
+//                        slide = Slide.RETRACTED;
+//                    }
+//                    break;
+//                default:
+//                    slide = Slide.RETRACTED;
+//
+//            }
 
 
-            if (gamepad1.dpad_down) {
+            /*if (gamepad1.dpad_down) {
                 robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
 
             }
-            else if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_right) {
                 robot.climbMotor.setPower(RobotConstants.climbSpeed);
-            }
+            }*/
 
             //Updating telemetry
             telemetry.update();

@@ -10,47 +10,80 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class hardwareMap {
+
     //Encoder names
-    public Encoder encoder1;
+    public Encoder liftEncoder;
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
-    public DcMotorEx climbMotor, intakeMotor, transferMotor;
+
+    /*
+        front is towards the intake, back is towards the outtake
+        horizontal directions are from the back of the robot
+
+        control hub
+        motor port 0:
+            encoder port 0: liftEncoder
+        motor port 1: liftMotor
+            encoder port 1: leftEncoder
+        motor port 2: backLeft
+            encoder port 2:
+        motor port 3: frontLeft
+            encoder port 3: centEncoder
+
+        expansion hub
+        motor port 0: frontRight
+            encoder port 0:
+        motor port 1: backRight
+            encoder port 1:
+        motor port 2:
+            encoder port 2:
+        motor port 3:
+            encoder port 3: rightEncoder
+     */
+
+    public DcMotorEx liftMotor;//climbMotor, intakeMotor, liftMotor, transferMotor;
     //Servo names
     public Servo dropServo;
 
     //Camera name
-    public OpenCvCamera frontCamera;
+    public OpenCvCamera webcam;
 
     private List<DcMotorEx> motors;
 
     private ElapsedTime period = new ElapsedTime();
 
+    Camera3BoxDetection camPipe;
+
     public void init(HardwareMap hwMap) {
 
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        frontCamera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
+
 
         //Mapping encoder
-        //encoder1 = new Encoder(hwMap.get(DcMotorEx.class, "leftRear"));
+        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftEncoder"));
 
         //Optionally reverse the encoders with encoder1.setDirection(Encoder.Direction.REVERSE);
 
 
         //Mapping motors
-        climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
+        /*climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
         intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
-        transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
+        transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");*/
+        liftMotor = hwMap.get(DcMotorEx.class, "liftMotor");
 
         //Creating list of motors to setup
-        motors = Arrays.asList(climbMotor, intakeMotor, transferMotor);
+        motors = Arrays.asList(/*climbMotor, intakeMotor, */liftMotor);
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
