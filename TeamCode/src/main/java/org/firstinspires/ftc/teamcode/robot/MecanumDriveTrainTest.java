@@ -14,8 +14,8 @@ public class MecanumDriveTrainTest {
     HardwareMap hwMap;
     DcMotor frontLeft;
     DcMotor frontRight;
-    DcMotor rearLeft;
-    DcMotor rearRight;
+    DcMotor backLeft;
+    DcMotor backRight;
     //DcMotor intake
     //DcMotor lift;
     //DcMotor hang;

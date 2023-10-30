@@ -29,7 +29,9 @@ public class BlueFrontStart extends LinearOpMode {
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+                telemetry.addData("Error: ", errorCode);
+            }
         });
 
         /*Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
