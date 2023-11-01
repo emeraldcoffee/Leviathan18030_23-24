@@ -17,40 +17,40 @@ public class meepMeepCode {
                 .setColorScheme(new ColorSchemeBlueLight())
                 .followTrajectorySequence(drive ->
                     // in front of trusses on blue alliance
-                    (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+                    (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(90)))
 
-                    .forward(19)
+                    .back(19)
                     // uses Vision to detect where the team prop is
                     .addDisplacementMarker(() -> {
 
                     })
+                    .waitSeconds(1)
                     // places down pixel where team prop is
                     .addDisplacementMarker(() -> {
-                    // turn depending on where the team prop is
-                    //RobotMethods.outtakePlace(hwMap);
+                        // turn depending on where the team prop is
+                        //RobotMethods.outtakePlace(hwMap);
                     })
-                    .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
-                    .forward(60)
+                    .back(8)
+                    .turn(Math.toRadians(90))
+
+                    .back(80)
                     // places down pixel on backdrop
                     .addDisplacementMarker(() -> {
-                    //RobotMethods.slideExtend(hwMap, 5.0);
+                        //RobotMethods.slideExtend(hwMap, 5.0);
                     })
+
                     // cycling
                     .waitSeconds(1)
-                    .back(10)
-                    .turn(Math.toRadians(180))
-                    .forward(90)
+                    .forward(100)
                     // picks up pixels
                     .addDisplacementMarker(() -> {
 
                     })
                     .waitSeconds(1)
-                    .back(10)
-                    .turn(Math.toRadians(180))
-                    .forward(90)
+                    .back(102)
                     // place down pixel on backdrop
                     .addDisplacementMarker(() -> {
-                    //RobotMethods.slideExtend(hwMap, 5.0);
+                        //RobotMethods.slideExtend(hwMap, 5.0);
                     })
                     .build()
                     )

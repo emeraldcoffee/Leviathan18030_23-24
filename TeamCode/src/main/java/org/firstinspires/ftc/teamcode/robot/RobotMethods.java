@@ -11,6 +11,14 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class RobotMethods {
 
+    double accelTime;
+    double halfDist;
+    double accelDist;
+    double decelDist;
+    double constDist;
+    double constTime;
+    double decelTime;
+
     //Takes input values and sets drivetrain to corresponding powers while scaling all powers under 1
     public static void setMecanumDrive(double forward, double strafe, double turn, SampleMecanumDrive driveTrain) {
         //Find value to make all motor powers less than 1
@@ -87,26 +95,47 @@ public class RobotMethods {
         }
     }
 
-    public int setTargetPos(double maxAccel, double maxVelo, int finalPos) {
-        double accelTime = maxVelo / maxAccel;
-        double halfDist = finalPos / 2;
-        double accelDist = .5 * maxAccel * (accelTime * accelTime);
+    public void setTargetPos(double maxAccel, double maxVelo, int finalPos) {
+        accelTime = maxVelo / maxAccel;
+        halfDist = finalPos / 2;
+        accelDist = .5 * maxAccel * Math.pow(accelTime, 2);
 
         if (accelDist > halfDist) {
             accelDist = Math.sqrt(halfDist / (.5 * maxAccel));
         }
-        accelDist = .5 * maxAccel * (accelTime * accelTime);
+        accelDist = .5 * maxAccel * Math.pow(accelTime, 2);
 
         maxVelo =  maxAccel * accelDist; // changes max velo based on max accel and dist to accel
 
-        double decelDist = accelDist; //
-        double constDist = finalPos - (accelDist * 2);
-        double constTime = constDist / maxVelo;
-        double decelTime = accelTime + constTime;
-
-        return 0;
+        decelDist = accelDist;
+        constDist = finalPos - (accelDist * 2);
+        constTime = constDist / maxVelo;
+        decelTime = accelTime + constTime;
     }
-    public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)
+
+    public double slidesUpdate(double maxAccel, double maxVelo, int finalPos) {
+        ElapsedTime timer = new ElapsedTime();
+        double constCurrTime;
+        setTargetPos(maxAccel, maxVelo, finalPos);
+        double totalTime = accelTime + constTime + decelTime;
+        if (timer.seconds() > totalTime)
+            return finalPos;
+        if (timer.seconds() < accelTime)
+            return Math.pow(.5 * maxAccel * timer.seconds(), 2);
+        else if (timer.seconds() < decelTime) {
+            accelDist = Math.pow(.5 * maxAccel * accelTime, 2);
+            constCurrTime = timer.seconds() - accelTime;
+            return accelDist + maxVelo * constCurrTime;
+        }
+        else {
+            accelDist = Math.pow(.5 * maxAccel * accelTime, 2);
+            constDist = maxVelo * constTime;
+            decelTime = timer.seconds() - decelTime;
+
+            return Math.pow(accelDist + constDist + maxVelo * decelTime - .5 * maxAccel * decelTime, 2);
+        }
+    }
+    /*public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)
 
         ElapsedTime timer = new ElapsedTime();
 
@@ -137,13 +166,13 @@ public class RobotMethods {
 
     public static void slideExtend (hardwareMap hwMap, double distance) { // needs to go from inches to ticks
 
-        hwMap.climbMotor.setPower(slidePID(hwMap, .2, .2, .2, distance));
+        hwMap.liftMotor.setPower(slidePID(hwMap, .2, .2, .2, distance));
         outtakePlace(hwMap);
 
         slideRetract(hwMap, distance);
     }
 
     public static void slideRetract (hardwareMap hwMap, double distance) {
-        hwMap.climbMotor.setPower(-slidePID(hwMap, .2, .2, .2, distance));
-    }
+        hwMap.liftMotor.setPower(-slidePID(hwMap, .2, .2, .2, distance));
+    }*/
 }

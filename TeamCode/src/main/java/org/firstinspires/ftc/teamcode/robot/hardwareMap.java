@@ -50,7 +50,7 @@ public class hardwareMap {
             encoder port 3: rightEncoder
      */
 
-    public DcMotorEx liftMotor, climbMotor, intakeMotor, liftMotor, transferMotor;
+    public DcMotorEx liftMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
     public Servo dropServo;
 
