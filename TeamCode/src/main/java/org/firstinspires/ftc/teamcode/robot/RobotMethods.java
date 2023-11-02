@@ -7,9 +7,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class RobotMethods {
+
+    double current_velocity;
 
     //Takes input values and sets drivetrain to corresponding powers while scaling all powers under 1
     public static void setMecanumDrive(double forward, double strafe, double turn, SampleMecanumDrive driveTrain) {
@@ -146,4 +149,33 @@ public class RobotMethods {
     public static void slideRetract (hardwareMap hwMap, double distance) {
         hwMap.climbMotor.setPower(-slidePID(hwMap, .2, .2, .2, distance));
     }
+
+    public void getVelocity (double previousPosition, double previousTime, double currentTime, double currentPosition) {
+        double velocity = (previousPosition - currentPosition) / (previousTime- currentTime);
+        //use Elapsed time to get time
+        return velocity;
+    }
+    public void trapazoidalMotionSlides(hardwareMap hwMap) {
+        /*
+        https://gm0.org/en/latest/docs/software/concepts/control-loops.html
+        int direction_multiplier;
+        double position_error;
+        while True:
+            hwMap.liftEncoder.getCurrentPosition();
+            current_velocity = hwMap.liftEncoder.getCorrectedVelocity();
+
+            direction_multiplier = 1;
+
+            if (position_error < 0)
+                direction_multiplier = -1;
+
+            //if maximum speed has not been reached
+            if (MAXIMUM_SPEED > abs(current_velocity)):
+
+         */
+
+    }
 }
+
+
+
