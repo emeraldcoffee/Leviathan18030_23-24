@@ -5,13 +5,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 
@@ -43,9 +42,11 @@ public class testTele extends LinearOpMode {
 
         //Init code
         roboMethods = new RobotMethods();
-        hardwareMap robot = new hardwareMap();
+        HwMap robot = new HwMap();
+        HardwareMap hwMap = new HardwareMap();
+
+        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hwMap);
         robot.init(hardwareMap);
-        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
         ElapsedTime dropTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
@@ -73,7 +74,7 @@ public class testTele extends LinearOpMode {
         if (isStopRequested()) return;
 
         status.setValue("Running");
-        roboMethods.setTargetPos(robot.liftEncoder.getCurrentPosition(), RobotConstants.slideBottom);
+        roboMethods.setTargetPos(robot.slideEncoder.getCurrentPosition(), RobotConstants.slideBottom);
 
         while (opModeIsActive() && !isStopRequested()) {
             //Getting robots estimated position
@@ -125,15 +126,15 @@ public class testTele extends LinearOpMode {
 
             switch (slidePos) {
                 case BOTTOM:
-                    if (gamepad2.x) {
+                    if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
                         slidePos = Slide.LOW;
                     }
-                    else if (gamepad2.y) {
+                    else if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
                         slidePos = Slide.MIDDLE;
                     }
-                    else if (gamepad2.a) {
+                    else if (gamepad2.y) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
                         slidePos = Slide.TOP;
                     }
@@ -157,14 +158,14 @@ public class testTele extends LinearOpMode {
                     }
                     break;
             }
-            double slideVelo = robot.liftEncoder.getCorrectedVelocity();
-            int slideCurPos = robot.liftEncoder.getCurrentPosition();
+            double slideVelo = robot.slideEncoder.getCorrectedVelocity();
+            int slideCurPos = robot.slideEncoder.getCurrentPosition();
 
             double distRemain = roboMethods.slidesUpdate() - slideCurPos;
 
             slideI += distRemain * slidePIDVals.i;
 
-            robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
+            robot.slideMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
             /*if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
                 robot.liftMotor.setPower(-(distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
@@ -177,7 +178,7 @@ public class testTele extends LinearOpMode {
             //Updating for roadrunner
             driveTrain.update();
         }
-        robot.liftMotor.setPower(0.0);
+        robot.slideMotor.setPower(0.0);
 
 //            switch (slide) {
 //                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over

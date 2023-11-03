@@ -14,15 +14,14 @@ import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class hardwareMap {
+public class HwMap {
 
     //Encoder names
-    public Encoder liftEncoder;
+    public Encoder slideEncoder;
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
 
     /*
@@ -50,7 +49,7 @@ public class hardwareMap {
             encoder port 3: rightEncoder
      */
 
-    public DcMotorEx liftMotor, climbMotor, intakeMotor, transferMotor;
+    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
     public Servo dropServo;
 
@@ -71,12 +70,13 @@ public class hardwareMap {
 
 
         //Mapping encoder
-        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftEncoder"));
+        slideEncoder = new Encoder(hwMap.get(DcMotorEx.class, "slideEncoder"));
 
         //Optionally reverse the encoders with encoder1.setDirection(Encoder.Direction.REVERSE);
 
 
         //Mapping motors
+<<<<<<< Updated upstream:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/hardwareMap.java
         climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
         intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
         transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
@@ -84,6 +84,15 @@ public class hardwareMap {
 
         //Creating list of motors to setup
         motors = Arrays.asList(climbMotor, intakeMotor, liftMotor, transferMotor);
+=======
+        //climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
+        //intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
+        //transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
+        slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
+
+        //Creating list of motors to setup
+        motors = Arrays.asList(/*climbMotor, intakeMotor, */slideMotor);
+>>>>>>> Stashed changes:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/HwMap.java
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
