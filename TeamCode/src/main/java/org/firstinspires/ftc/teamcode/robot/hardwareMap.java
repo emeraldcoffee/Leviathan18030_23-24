@@ -77,13 +77,13 @@ public class hardwareMap {
 
 
         //Mapping motors
-        //climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
-        //intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
-        //transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
+        climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
+        intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
+        transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
         liftMotor = hwMap.get(DcMotorEx.class, "liftMotor");
 
         //Creating list of motors to setup
-        motors = Arrays.asList(/*climbMotor, intakeMotor, */liftMotor);
+        motors = Arrays.asList(climbMotor, intakeMotor, liftMotor, transferMotor);
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
