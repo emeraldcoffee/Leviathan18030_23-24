@@ -75,7 +75,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         control hub
         motor port 0:
-        motor port 1: liftMotor
+        motor port 1: slideMotor
         motor port 2: backLeft
         motor port 3: frontLeft
         expansion hub
@@ -85,7 +85,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         motor port 3:
      */
 
-    private DcMotorEx frontLeft, backLeft, backRight, frontRight;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
     // private IMU imu;
@@ -115,15 +115,15 @@ public class SampleMecanumDrive extends MecanumDrive {
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);*/
 
-        frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        backLeft = hardwareMap.get(DcMotorEx.class, "leftRear");
-        backRight = hardwareMap.get(DcMotorEx.class, "rightRear");
-        frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        motors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -305,10 +305,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        frontLeft.setPower(v);
-        backLeft.setPower(v1);
-        backRight.setPower(v2);
-        frontRight.setPower(v3);
+        leftFront.setPower(v);
+        leftRear.setPower(v1);
+        rightRear.setPower(v2);
+        rightFront.setPower(v3);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -125,15 +126,15 @@ public class testTele extends LinearOpMode {
 
             switch (slidePos) {
                 case BOTTOM:
-                    if (gamepad2.x) {
+                    if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
                         slidePos = Slide.LOW;
                     }
-                    else if (gamepad2.y) {
+                    else if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
                         slidePos = Slide.MIDDLE;
                     }
-                    else if (gamepad2.a) {
+                    else if (gamepad2.y) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
                         slidePos = Slide.TOP;
                     }
