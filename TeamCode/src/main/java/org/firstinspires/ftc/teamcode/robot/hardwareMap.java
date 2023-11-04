@@ -71,7 +71,7 @@ public class hardwareMap {
 
 
         //Mapping encoder
-        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftEncoder"));
+        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "slideMotor"));
 
         //Optionally reverse the encoders with encoder1.setDirection(Encoder.Direction.REVERSE);
 

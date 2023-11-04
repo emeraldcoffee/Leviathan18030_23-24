@@ -59,7 +59,7 @@ public class testTele extends LinearOpMode {
         driveTrain.setPoseEstimate(PassData.currentPose);
 
         //Adding roadrunner pose to telemetry
-        Telemetry.Item robotPose = telemetry.addData("Robot pose:", roboMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
+        Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
         telemetry.update();
 
         //Set starting positions
@@ -93,7 +93,7 @@ public class testTele extends LinearOpMode {
 
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
-            roboMethods.setMecanumDrive(drive, strafe, turn, maxSpeed, driveTrain);
+            RobotMethods.setMecanumDrive(drive, strafe, turn, maxSpeed, driveTrain);
 
 
             //Driver 2 code
@@ -157,6 +157,7 @@ public class testTele extends LinearOpMode {
                     }
                     break;
             }
+
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
 
