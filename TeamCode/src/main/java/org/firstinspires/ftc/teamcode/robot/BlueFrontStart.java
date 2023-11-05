@@ -18,7 +18,7 @@ public class BlueFrontStart extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
-        hardwareMap hwMap = new hardwareMap();
+        HwMap hwMap = new HwMap();
 
         hwMap.init(hardwareMap);
         hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()

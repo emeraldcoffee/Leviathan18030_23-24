@@ -43,9 +43,8 @@ public class testTele extends LinearOpMode {
         //Init code
         roboMethods = new RobotMethods();
         HwMap robot = new HwMap();
-        HardwareMap hwMap = new HardwareMap();
 
-        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hwMap);
+        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
         robot.init(hardwareMap);
 
         ElapsedTime dropTimer = new ElapsedTime();

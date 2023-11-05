@@ -15,8 +15,9 @@ public class meepMeepCode {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13.75)
                 .setColorScheme(new ColorSchemeBlueLight())
-                .followTrajectorySequence(drive ->
-                    // in front of trusses on blue alliance
+
+                // in front of trusses on blue alliance
+                /*.followTrajectorySequence(drive ->
                     (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(90)))
 
                     .back(19)
@@ -54,22 +55,32 @@ public class meepMeepCode {
                     })
                     .build()
                     )
-                );
+                );*/
 
+                // behind trusses on blue alliance
+                .followTrajectorySequence(drive ->
+                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(90)))
+                            .back(19)
 
-                /*.followTrajectorySequence(drive ->
-                    // behind trusses on blue alliance
-                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
-                            .forward(19)
-                            .addDisplacementMarker(() -> {}) // uses camera to look at AprilTags
+                            // uses Vision to detect where the team prop is
+                            .addDisplacementMarker(() -> {})
                             .waitSeconds(1)
-                            .addDisplacementMarker(() -> {}) // places down corresponding pixels
+
+                            // places down pixel where team prop is
+                            .addDisplacementMarker(() -> {
+                                // turn depending on where the team prop is
+                            })
                             .waitSeconds(1)
-                            .splineTo(new Vector2d(38, 35), Math.toRadians(0))
-                            .forward(11)
+                            
+                            .back(8)
+                            .turn(Math.toRadians(90))
+                            .back(40)
+                            // places down pixel on backdrop
+                            .addDisplacementMarker(() -> {})
+
                             .build()
                     )
-                );*/
+                );
 
                 /*.followTrajectorySequence(drive ->
                         // in front of trusses on red alliance

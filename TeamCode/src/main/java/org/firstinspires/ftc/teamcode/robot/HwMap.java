@@ -20,10 +20,6 @@ import java.util.List;
 
 public class HwMap {
 
-    //Encoder names
-    public Encoder slideEncoder;
-    //Motor names (drive train motors are in drive/SampleMecanumDrive)
-
     /*
         front is towards the intake, back is towards the outtake
         horizontal directions are from the back of the robot
@@ -49,6 +45,10 @@ public class HwMap {
             encoder port 3: rightEncoder
      */
 
+    //Encoder names
+    public Encoder slideEncoder;
+
+    //Motor names (drive train motors are in drive/SampleMecanumDrive)
     public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
     public Servo dropServo;
@@ -76,15 +76,13 @@ public class HwMap {
 
 
         //Mapping motors
-<<<<<<< Updated upstream:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/hardwareMap.java
         climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
         intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
         transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
-        liftMotor = hwMap.get(DcMotorEx.class, "liftMotor");
+        slideMotor = hwMap.get(DcMotorEx.class, "liftMotor");
 
         //Creating list of motors to setup
-        motors = Arrays.asList(climbMotor, intakeMotor, liftMotor, transferMotor);
-=======
+        motors = Arrays.asList(climbMotor, intakeMotor, slideMotor, transferMotor);
         //climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
         //intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
         //transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
@@ -92,7 +90,6 @@ public class HwMap {
 
         //Creating list of motors to setup
         motors = Arrays.asList(/*climbMotor, intakeMotor, */slideMotor);
->>>>>>> Stashed changes:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/HwMap.java
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
