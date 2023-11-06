@@ -80,7 +80,7 @@ public class testTele extends LinearOpMode {
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
-            robotPose.setValue(roboMethods.updateRobotPosition(myPose));
+            robotPose.setValue(RobotMethods.updateRobotPosition(myPose));
 
             //Driver 1 code
 
@@ -126,11 +126,11 @@ public class testTele extends LinearOpMode {
 
             switch (slidePos) {
                 case BOTTOM:
-                    if (gamepad2.a) {
+                    if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
                         slidePos = Slide.LOW;
                     }
-                    else if (gamepad2.x) {
+                    else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
                         slidePos = Slide.MIDDLE;
                     }
@@ -140,37 +140,77 @@ public class testTele extends LinearOpMode {
                     }
                     break;
                 case LOW:
-                    if (gamepad2.b) {
+                    if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
                         slidePos = Slide.BOTTOM;
                     }
+                    else if (gamepad2.b) {
+                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
+                        slidePos = Slide.MIDDLE;
+                    }
+                    else if (gamepad2.y) {
+                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
+                        slidePos = Slide.TOP;
+                    }
                     break;
                 case MIDDLE:
-                    if (gamepad2.b) {
+                    if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
                         slidePos = Slide.BOTTOM;
                     }
+                    else if (gamepad2.x) {
+                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
+                        slidePos = Slide.LOW;
+                    }
+                    else if (gamepad2.y) {
+                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
+                        slidePos = Slide.TOP;
+                    }
                     break;
                 case TOP:
-                    if (gamepad2.b) {
+                    if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
                         slidePos = Slide.BOTTOM;
+                    }
+                    else if (gamepad2.b) {
+                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
+                        slidePos = Slide.MIDDLE;
+                    }
+                    else if (gamepad2.x) {
+                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
+                        slidePos = Slide.LOW;
                     }
                     break;
             }
 
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
+            telemetry.addData("Slide Encoder Pos", slideCurPos);
 
             double distRemain = roboMethods.slidesUpdate() - slideCurPos;
 
             slideI += distRemain * slidePIDVals.i;
+
 
             robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
             /*if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
                 robot.liftMotor.setPower(-(distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
             }*/
+
+            if (gamepad2.dpad_down) {
+                robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
+            } else {
+                robot.intakeMotor.setPower(0);
+            }
+
+            if (gamepad2.dpad_right) {
+                robot.transferMotor.setPower(RobotConstants.transferSpeed);
+            } else {
+                robot.transferMotor.setPower(0);
+            }
+
+
 
 
             //Updating telemetry

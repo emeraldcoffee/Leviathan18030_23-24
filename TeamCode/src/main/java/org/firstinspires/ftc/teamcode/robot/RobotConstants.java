@@ -18,7 +18,7 @@ public class RobotConstants {
         //Drivetrain constants
         speedMultiplier = .6,
         maxVelo         = 1,
-        maxAccel        = 1,
+        maxAccel        = 10,
         driveSpeed      = 1,
         strafeSpeed     = 1,
         turnSpeed       = .6,
@@ -27,6 +27,7 @@ public class RobotConstants {
         resetTime       = .27,
         dropOpen        = .7,
         dropClosed      = .5,
+        transferSpeed = 1,
         intakeSpeed     = 1,
         climbSpeed   = .6;
 
