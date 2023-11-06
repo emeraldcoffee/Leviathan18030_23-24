@@ -51,6 +51,7 @@ public class Camera3BoxDetection extends OpenCvPipeline {
         Core.extractChannel(centerSquare, centerSquare, 0);
         Core.extractChannel(rightSquare, rightSquare, 0);
 
+
         Scalar leftAvg = Core.mean(leftSquare), centerAvg = Core.mean(centerSquare), rightAvg = Core.mean(rightSquare);
 
         leftValue = leftAvg.val[0];

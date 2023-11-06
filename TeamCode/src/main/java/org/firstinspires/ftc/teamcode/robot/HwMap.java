@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class hardwareMap {
+public class HwMap {
 
     //Encoder names
     public Encoder liftEncoder;

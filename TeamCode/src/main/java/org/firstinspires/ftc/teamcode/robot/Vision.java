@@ -20,7 +20,7 @@ public class Vision extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        hardwareMap robot = new hardwareMap();
+        HwMap robot = new HwMap();
         robot.init(hardwareMap);
         Camera3BoxDetection = new Camera3BoxDetection();
 
