@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.maxAccel;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.maxVelo;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
@@ -18,6 +20,18 @@ public class RobotMethods {
     double constDist;
     double constTime;
     double decelTime;
+
+
+    int startPosStore;
+    int targetPosStore;
+    double max_velocity;
+    double acceleration_dt;
+    double acceleration_distance;
+    double deceleration_dt;
+    double cruise_dt;
+    double cruise_distance;
+    double deceleration_time;
+    ElapsedTime elapsed_time = new ElapsedTime();
 
     //Takes input values and sets drivetrain to corresponding powers while scaling all powers under 1
     public static void setMecanumDrive(double forward, double strafe, double turn, SampleMecanumDrive driveTrain) {
@@ -95,9 +109,9 @@ public class RobotMethods {
         }
     }
 
-    public void setTargetPos(double maxAccel, double maxVelo, int finalPos) {
+    /*public void setTargetPos(int distLeft) {
         accelTime = maxVelo / maxAccel;
-        halfDist = finalPos / 2;
+        halfDist = distLeft / 2;
         accelDist = .5 * maxAccel * Math.pow(accelTime, 2);
 
         if (accelDist > halfDist) {
@@ -105,34 +119,102 @@ public class RobotMethods {
         }
         accelDist = .5 * maxAccel * Math.pow(accelTime, 2);
 
-        maxVelo =  maxAccel * accelDist; // changes max velo based on max accel and dist to accel
+        double newMaxVelo =  maxAccel * accelDist; // changes max velo based on max accel and dist to accel
 
         decelDist = accelDist;
-        constDist = finalPos - (accelDist * 2);
+        constDist = distLeft - (accelDist * 2);
         constTime = constDist / maxVelo;
         decelTime = accelTime + constTime;
-    }
+    }*/
 
-    public double slidesUpdate(double maxAccel, double maxVelo, int finalPos) {
+    /*public double slidesUpdate(double maxAccel, double maxVelo, int finalPos) {
         ElapsedTime timer = new ElapsedTime();
         double constCurrTime;
-        setTargetPos(maxAccel, maxVelo, finalPos);
+        setTargetPos(finalPos);
         double totalTime = accelTime + constTime + decelTime;
+
         if (timer.seconds() > totalTime)
             return finalPos;
-        if (timer.seconds() < accelTime)
-            return Math.pow(.5 * maxAccel * timer.seconds(), 2);
+
+        if (timer.seconds() < accelTime) {
+            return .5 * maxAccel * Math.pow(accelTime, 2);
+        }
         else if (timer.seconds() < decelTime) {
-            accelDist = Math.pow(.5 * maxAccel * accelTime, 2);
+            accelDist = .5 * maxAccel * Math.pow(accelTime, 2);
             constCurrTime = timer.seconds() - accelTime;
             return accelDist + maxVelo * constCurrTime;
         }
         else {
-            accelDist = Math.pow(.5 * maxAccel * accelTime, 2);
+            accelDist = .5 * maxAccel * Math.pow(accelTime, 2);
             constDist = maxVelo * constTime;
             decelTime = timer.seconds() - decelTime;
 
-            return Math.pow(accelDist + constDist + maxVelo * decelTime - .5 * maxAccel * decelTime, 2);
+            return accelDist + constDist + maxVelo * decelTime - .5 * maxAccel * Math.pow(accelTime, 2);
+        }
+    }*/
+
+    public void setTargetPos(int startPos, int targetPos) {
+        //Return the current reference position based on the given motion profile times, maximum acceleration, velocity, and current time.
+        max_velocity = maxVelo;
+
+        int distance = targetPos - startPos;
+        startPosStore = startPos;
+        targetPosStore = targetPos;
+        // calculate the time it takes to accelerate to max velocity
+        acceleration_dt = max_velocity / maxAccel;
+
+        // If we can't accelerate to max velocity in the given distance, we'll accelerate as much as possible
+        double halfway_distance = distance / 2;
+        acceleration_distance = 0.5 * maxAccel * Math.pow(acceleration_dt, 2);
+
+        if (acceleration_distance > halfway_distance)
+            acceleration_dt = Math.sqrt(halfway_distance / (0.5 * maxAccel));
+
+        acceleration_distance = 0.5 * maxAccel * Math.pow(acceleration_dt, 2);
+
+        // recalculate max velocity based on the time we have to accelerate and decelerate
+        max_velocity = maxAccel * acceleration_dt;
+
+        // we decelerate at the same rate as we accelerate
+        deceleration_dt = acceleration_dt;
+
+        // calculate the time that we're at max velocity
+        cruise_distance = distance - 2 * acceleration_distance;
+        cruise_dt = cruise_distance / max_velocity;
+        deceleration_time = acceleration_dt + cruise_dt;
+
+        elapsed_time.reset();
+    }
+
+
+    // check if we're still in the motion profile
+    public double slidesUpdate() {
+        double entire_dt = acceleration_dt + cruise_dt + deceleration_dt;
+        if (elapsed_time.seconds() > entire_dt)
+            return startPosStore;
+
+        // if we're accelerating
+        if (elapsed_time.seconds() < acceleration_dt)
+            // use the kinematic equation for acceleration
+            return startPosStore + 0.5 * RobotConstants.maxAccel * Math.pow(elapsed_time.seconds(), 2);
+
+        // if we're cruising
+        else if (elapsed_time.seconds() < deceleration_time) {
+            acceleration_distance = 0.5 * RobotConstants.maxAccel * Math.pow(acceleration_dt, 2);
+            double cruise_current_dt = elapsed_time.seconds() - acceleration_dt;
+
+            // use the kinematic equation for constant velocity
+            return startPosStore + acceleration_distance + max_velocity * cruise_current_dt;
+        }
+
+        // if we're decelerating
+        else {
+            acceleration_distance = 0.5 * maxAccel * Math.pow(acceleration_dt, 2);
+            cruise_distance = max_velocity * cruise_dt;
+            deceleration_time = elapsed_time.seconds() - deceleration_time;
+
+            // use the kinematic equations to calculate the instantaneous desired position
+            return startPosStore + cruise_distance + max_velocity * deceleration_time - 0.5 * maxAccel * Math.pow(deceleration_time, 2);
         }
     }
     /*public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)

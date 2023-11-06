@@ -25,15 +25,15 @@ public class MecanumDriveTrainTest {
     public void init (HardwareMap hwMap) {
         frontLeft = hwMap.get(DcMotor.class, "frontLeft");
         frontRight = hwMap.get(DcMotor.class, "frontRight");
-        rearLeft = hwMap.get(DcMotor.class, "rearLeft");
-        rearRight = hwMap.get(DcMotor.class, "rearRight");
+        backLeft = hwMap.get(DcMotor.class, "rearLeft");
+        backRight = hwMap.get(DcMotor.class, "rearRight");
         //lift = hwMap.get(DcMotor.class, "lift");
         //outtake = hwMap.get(Servo.class, "outtake");
 
         setL(frontLeft);
         setR(frontRight);
-        setL(rearLeft);
-        setR(rearRight);
+        setL(backLeft);
+        setR(backRight);
 
         /*setL(lift);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);*/
