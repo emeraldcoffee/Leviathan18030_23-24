@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
@@ -18,7 +14,7 @@ public class BlueFrontStart extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
-        hardwareMap hwMap = new hardwareMap();
+        HwMap hwMap = new HwMap();
 
         hwMap.init(hardwareMap);
         hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -33,6 +29,12 @@ public class BlueFrontStart extends LinearOpMode {
                 telemetry.addData("Error: ", errorCode);
             }
         });
+
+        waitForStart();
+
+        while (opModeIsActive() && !isStopRequested()) {
+
+        }
 
         /*Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
         Pose2d bBStartPose = new Pose2d(12, 63, Math.toRadians(270));

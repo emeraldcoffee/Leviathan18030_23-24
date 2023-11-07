@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,12 +15,11 @@ import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class hardwareMap {
+public class HwMap {
 
     //Encoder names
     public Encoder liftEncoder;
@@ -71,7 +71,9 @@ public class hardwareMap {
 
 
         //Mapping encoder
-        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftEncoder"));
+        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftMotor"));
+        //liftEncoder.setDirection(Encoder.Direction.REVERSE);
+
         //Optionally reverse the encoders with encoder1.setDirection(Encoder.Direction.REVERSE);
 
 
@@ -82,7 +84,7 @@ public class hardwareMap {
         liftMotor = hwMap.get(DcMotorEx.class, "liftMotor");
 
         //Creating list of motors to setup
-        motors = Arrays.asList(/*climbMotor, intakeMotor, */liftMotor);
+        motors = Arrays.asList(climbMotor, intakeMotor, liftMotor, transferMotor);
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
@@ -94,6 +96,8 @@ public class hardwareMap {
 
         //Optionally reverse them with: motor1.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        transferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //Mapping Servos
         dropServo = hwMap.servo.get("dropServo");
 

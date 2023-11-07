@@ -31,10 +31,14 @@ public class Camera3BoxDetection extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         //Used to change formats not necessary here
-        //Imgproc.cvtColor(input, input, Imgproc.COLOR_YCrCb2RGB);
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_YCrCb2RGB);
         double leftValue, centerValue, rightValue, winningValue;
 
         //Set rectangles to be completely inside of object your detecting when its in that position
+        // Red values
+        int[] lower_red = new int[] {0, 0, 200};
+        int[] upper_red = new int[] {0, 0, 255};
+
 
 
         //Getting cropped sections of the camera for comparisons
@@ -46,6 +50,7 @@ public class Camera3BoxDetection extends OpenCvPipeline {
         Core.extractChannel(leftSquare, leftSquare, 0);
         Core.extractChannel(centerSquare, centerSquare, 0);
         Core.extractChannel(rightSquare, rightSquare, 0);
+
 
         Scalar leftAvg = Core.mean(leftSquare), centerAvg = Core.mean(centerSquare), rightAvg = Core.mean(rightSquare);
 
