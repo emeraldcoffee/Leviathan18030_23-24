@@ -13,15 +13,6 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 public class RobotMethods {
 
-    double accelTime;
-    double halfDist;
-    double accelDist;
-    double decelDist;
-    double constDist;
-    double constTime;
-    double decelTime;
-
-
     int startPosStore;
     int targetPosStore;
     double max_velocity;
@@ -100,7 +91,7 @@ public class RobotMethods {
         return "x: " + pose.getX() + " y: " + pose.getY() + " heading: " + pose.getHeading();
     }
 
-    public static void outtakePlace (hardwareMap hwMap) {
+    public static void outtakePlace (HwMap hwMap) {
         ElapsedTime dropTime = new ElapsedTime();
         hwMap.dropServo.setPosition(RobotConstants.dropOpen);
         dropTime.reset();

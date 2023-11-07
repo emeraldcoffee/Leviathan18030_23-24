@@ -31,7 +31,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 1.38; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 13; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 13.25; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
 
     /*RunLocalizationTest
@@ -44,9 +44,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double X_MULTIPLIER = 1;
     public static double Y_MULTIPLIER = 1;
 
-    private Encoder leftEncoder, rightEncoder, frontEncoder;
+    public static Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    private List<Integer> lastEncPositions, lastEncVels;
+    public List<Integer> lastEncPositions, lastEncVels;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
@@ -58,8 +58,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftRear"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightRear"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftFront"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "transferMotor"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "climbMotor"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
@@ -67,6 +67,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
+
+    public static List<Integer> getEncoderVals() {
+        return Arrays.asList(leftEncoder.getCurrentPosition(), rightEncoder.getCurrentPosition(), frontEncoder.getCurrentPosition());
+
     }
 
     @NonNull

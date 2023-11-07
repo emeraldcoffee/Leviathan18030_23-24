@@ -8,12 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 
 @TeleOp()
@@ -44,7 +46,7 @@ public class testTele extends LinearOpMode {
 
         //Init code
         roboMethods = new RobotMethods();
-        hardwareMap robot = new hardwareMap();
+        HwMap robot = new HwMap();
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
@@ -63,6 +65,10 @@ public class testTele extends LinearOpMode {
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
         telemetry.update();
 
+        //Adding odom pod encoders to telemetry
+        Telemetry.Item odom = telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
+        telemetry.update();
+
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
@@ -77,6 +83,7 @@ public class testTele extends LinearOpMode {
         roboMethods.setTargetPos(robot.liftEncoder.getCurrentPosition(), RobotConstants.slideBottom);
 
         while (opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position

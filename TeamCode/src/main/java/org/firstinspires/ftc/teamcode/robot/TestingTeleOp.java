@@ -9,12 +9,12 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class TestingTeleOp extends OpMode {
 
     SampleMecanumDrive dt;
-    hardwareMap hwMap;
+    HwMap hwMap;
 
     @Override
     public void init() {
         dt = new SampleMecanumDrive(hardwareMap);
-        hwMap = new hardwareMap();
+        hwMap = new HwMap();
         hwMap.init(hardwareMap);
     }
 

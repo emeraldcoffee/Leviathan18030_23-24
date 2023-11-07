@@ -25,7 +25,7 @@ public class slideTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        hardwareMap robot = new hardwareMap();
+        HwMap robot = new HwMap();
         robot.init(hardwareMap);
 
         ElapsedTime cycleTimer = new ElapsedTime();
