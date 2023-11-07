@@ -30,6 +30,12 @@ public class BlueFrontStart extends LinearOpMode {
             }
         });
 
+        waitForStart();
+
+        while (opModeIsActive() && !isStopRequested()) {
+
+        }
+
         /*Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
         Pose2d bBStartPose = new Pose2d(12, 63, Math.toRadians(270));
         Pose2d rFStartPose = new Pose2d(-35, -63, Math.toRadians(90));
