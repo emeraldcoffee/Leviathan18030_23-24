@@ -28,7 +28,7 @@ public class RobotConstants {
         dropOpen        = .7,
         dropClosed      = .5,
         transferSpeed = 1,
-        intakeSpeed     = 1,
+        intakeSpeed     = .6,
         climbSpeed   = .6;
 
 
