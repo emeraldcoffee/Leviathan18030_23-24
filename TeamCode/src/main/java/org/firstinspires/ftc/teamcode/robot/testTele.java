@@ -9,7 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.robocol.TelemetryMessage;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -24,6 +26,8 @@ public class testTele extends LinearOpMode {
     //Establish variables
     double maxSpeed = 1;
     RobotMethods roboMethods;
+
+    int targetPos = RobotConstants.slideBottom;
 
     enum Drop {
         OPEN,
@@ -55,7 +59,7 @@ public class testTele extends LinearOpMode {
 
         ElapsedTime slideTimer = new ElapsedTime();
         Slide slidePos = Slide.BOTTOM;
-        final PIDCoefficients slidePIDVals = new PIDCoefficients(2.0 / 8192, .01 / 8192, .001 / 8192);
+        final PIDCoefficients slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
         double slideI = 0.0;
 
         //Getting last pose
@@ -96,7 +100,7 @@ public class testTele extends LinearOpMode {
 
             //Getting joystick values for driving
             double drive = gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed;
-            double strafe = gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed;
+            double strafe = -(gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed);
             double turn = gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed;
 
             //Calculating and applying the powers for mecanum wheels
@@ -135,56 +139,68 @@ public class testTele extends LinearOpMode {
                 case BOTTOM:
                     if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
+                        targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
                     }
                     else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
+                        targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
                     }
                     else if (gamepad2.y) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
+                        targetPos = RobotConstants.slideTop;
                         slidePos = Slide.TOP;
                     }
                     break;
                 case LOW:
                     if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
+                        targetPos = RobotConstants.slideBottom;
                         slidePos = Slide.BOTTOM;
                     }
                     else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
+                        targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
                     }
                     else if (gamepad2.y) {
                         roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
+                        targetPos = RobotConstants.slideTop;
                         slidePos = Slide.TOP;
                     }
                     break;
                 case MIDDLE:
                     if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
+                        targetPos = RobotConstants.slideBottom;
                         slidePos = Slide.BOTTOM;
                     }
                     else if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
+                        targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
                     }
                     else if (gamepad2.y) {
                         roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
+                        targetPos = RobotConstants.slideTop;
                         slidePos = Slide.TOP;
                     }
                     break;
                 case TOP:
                     if (gamepad2.a) {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
+                        targetPos = RobotConstants.slideBottom;
                         slidePos = Slide.BOTTOM;
                     }
                     else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
+                        targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
                     }
                     else if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
+                        targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
                     }
                     break;
@@ -194,10 +210,18 @@ public class testTele extends LinearOpMode {
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
             telemetry.addData("Slide Encoder Pos", slideCurPos);
 
-            double distRemain = roboMethods.slidesUpdate() - slideCurPos;
+            targetPos = Range.clip(targetPos, RobotConstants.slideMinHeight, RobotConstants.slideMaxHeight);
+
+            double distRemain = targetPos - slideCurPos;
 
             slideI += distRemain * slidePIDVals.i;
 
+            telemetry.addData("POWER!!!!!!!!!", (distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
+            telemetry.addData("Dist remaining", distRemain);
+            telemetry.addData("Proportional", slidePIDVals.p);
+            telemetry.addData("Integral", slidePIDVals.i);
+            telemetry.addData("Derivative", slidePIDVals.d);
+            telemetry.addData("Target pos", targetPos);
 
             robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
@@ -225,6 +249,12 @@ public class testTele extends LinearOpMode {
             }
 
 
+            if ((gamepad2.left_trigger != 0.0) && (gamepad2.right_trigger != 0.0)) {
+                robot.climbMotor.setPower(RobotConstants.climbSpeed);
+            }
+            else {
+                robot.climbMotor.setPower(0);
+            }
 
 
             //Updating telemetry

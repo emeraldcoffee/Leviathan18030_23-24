@@ -4,8 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
+import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous
 public class BlueFrontStart extends LinearOpMode {
@@ -14,9 +17,13 @@ public class BlueFrontStart extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
+        Camera3BoxDetection camBoxPipeline = new Camera3BoxDetection();
+        ColorMask colorMaskPipeline = new ColorMask();
         HwMap hwMap = new HwMap();
 
         hwMap.init(hardwareMap);
+
+        hwMap.webcam.setPipeline(colorMaskPipeline);
         hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             public void onOpened()

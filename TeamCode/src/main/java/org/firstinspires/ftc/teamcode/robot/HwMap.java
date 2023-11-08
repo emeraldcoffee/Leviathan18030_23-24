@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -94,6 +96,9 @@ public class HwMap {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //Optionally reverse them with: motor1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -103,10 +108,10 @@ public class HwMap {
 
         //Optionally reverse them with: servo1.setDirection(Servo.Direction.REVERSE);
 
-
         //Reads all sensor data at once and saves it, instead of doing multiple individual reads. It talks just as long to read all non-12c senors as it takes to read one
         for (LynxModule module : hwMap.getAll(LynxModule.class))
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+
 
     }
 }
