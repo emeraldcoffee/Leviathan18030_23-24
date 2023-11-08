@@ -7,18 +7,20 @@ public class RobotConstants {
     public static final int
         Finalthing          = 5,
         Otherfinalthing     = 3,
-        slideBottom         = (int)(8192 * .1),
-        slideLow            = 8192 * 2,
-        slideMiddle         = 8192 * 4,
-        slideTop            = 8192 * 6;
+        slideBottom         = 0,
+        slideLow            = 8192 * 3,
+        slideMiddle         = (int)(8192 * 4.5),
+        slideTop            = (int)(8192 * 6.1),
+        slideMinHeight      = 0,
+        slideMaxHeight      = (int)(8192 * 6.1);
 
 
     //Double variables
     public static final double
         //Drivetrain constants
-        speedMultiplier = .6,
-        maxVelo         = 1,
-        maxAccel        = 10,
+        speedMultiplier = 0.6,
+        maxVelo         = 20000,
+        maxAccel        = 300,
         driveSpeed      = 1,
         strafeSpeed     = 1,
         turnSpeed       = .6,
@@ -27,9 +29,9 @@ public class RobotConstants {
         resetTime       = .27,
         dropOpen        = .7,
         dropClosed      = .5,
-        transferSpeed = 1,
+        transferSpeed   = 1.0,
         intakeSpeed     = .6,
-        climbSpeed   = .6;
+        climbSpeed      = 1.0;
 
 
 
