@@ -3,16 +3,26 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
+import org.opencv.core.Rect;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous
 public class BlueFrontStart extends LinearOpMode {
 
+    public enum teamElementPosition {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
+    teamElementPosition propPos = teamElementPosition.RIGHT;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -23,12 +33,26 @@ public class BlueFrontStart extends LinearOpMode {
 
         hwMap.init(hardwareMap);
 
-        hwMap.webcam.setPipeline(colorMaskPipeline);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        hwMap.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
         hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             public void onOpened()
             {
+                hwMap.webcam.setPipeline(colorMaskPipeline);
+                /*if (ColorMask.getContourCoords().inside(new Rect(100, 300, 80, 180))) {
+                    propPos = teamElementPosition.LEFT;
+                }
+                else if (ColorMask.getContourCoords().inside(new Rect(200, 320, 180, 80))) {
+                    propPos = teamElementPosition.CENTER;
+                }
+                else {
+                    telemetry.addData("helpppp", propPos);
+                }
+                telemetry.addData("Position", propPos);*/
                 hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+
             }
 
             @Override
