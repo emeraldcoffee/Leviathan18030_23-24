@@ -91,6 +91,10 @@ public class RobotMethods {
         return "x: " + pose.getX() + " y: " + pose.getY() + " heading: " + pose.getHeading();
     }
 
+    public static String slideData(int targetPos, int currentPos, double slidePower, double P, double I, double D) {
+        return "Target Position:" + targetPos + " Current Position:" + currentPos + " Slide Power:" + slidePower + " PID Values: " + P+", "+I+", " + D;
+    }
+
     public static void outtakePlace (HwMap hwMap) {
         ElapsedTime dropTime = new ElapsedTime();
         hwMap.dropServo.setPosition(RobotConstants.dropOpen);

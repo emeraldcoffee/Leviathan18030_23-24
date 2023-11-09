@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 
+import static org.firstinspires.ftc.teamcode.robot.testTele.Climb.RELEASE;
+
+import android.widget.Switch;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -29,6 +33,11 @@ public class testTele extends LinearOpMode {
 
     int targetPos = RobotConstants.slideBottom;
 
+    enum DriveType {
+        ROBOT_CENTRIC,
+        FIELD_CENTRIC
+    }
+
     enum Drop {
         OPEN,
         CLOSED,
@@ -40,6 +49,12 @@ public class testTele extends LinearOpMode {
         LOW,
         MIDDLE,
         TOP
+    }
+
+    enum Climb {
+        RELEASE,
+        WAIT,
+        CLIMB
     }
 
     @Override
@@ -54,8 +69,13 @@ public class testTele extends LinearOpMode {
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
+        DriveType driveType = DriveType.ROBOT_CENTRIC;
+
         ElapsedTime dropTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
+
+        ElapsedTime climbTimer = new ElapsedTime();
+        Climb climb = RELEASE;
 
         ElapsedTime slideTimer = new ElapsedTime();
         Slide slidePos = Slide.BOTTOM;
@@ -65,13 +85,18 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
+        telemetry.setAutoClear(false);
+        Telemetry.Item driveMode = telemetry.addData("Drive Mode", "Robot Centric");
+
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
-        telemetry.update();
 
         //Adding odom pod encoders to telemetry
         Telemetry.Item odom = telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
+        Telemetry.Item slideData = telemetry.addData("Slide Data:", robot.liftEncoder.getCurrentPosition());
         telemetry.update();
+
+
 
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
@@ -87,7 +112,6 @@ public class testTele extends LinearOpMode {
         roboMethods.setTargetPos(robot.liftEncoder.getCurrentPosition(), RobotConstants.slideBottom);
 
         while (opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
@@ -103,10 +127,28 @@ public class testTele extends LinearOpMode {
             double strafe = -(gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed);
             double turn = gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed;
 
-            //Calculating and applying the powers for mecanum wheels
-            //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
-            RobotMethods.setMecanumDrive(drive, strafe, turn, maxSpeed, driveTrain);
 
+            //Adding ability to switch between field and drive centric
+            switch (driveType) {
+                case ROBOT_CENTRIC:
+                    //Calculating and applying the powers for mecanum wheels
+                    //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
+                    RobotMethods.setMecanumDrive(drive, strafe, turn, maxSpeed, driveTrain);
+
+                    if (gamepad1.left_bumper && gamepad1.dpad_right) {
+                        driveMode.setValue("Field Centric");
+                        driveType = DriveType.FIELD_CENTRIC;
+                    }
+                    break;
+                case FIELD_CENTRIC:
+                    RobotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
+
+                    if (gamepad1.left_bumper && gamepad1.dpad_left) {
+                        driveMode.setValue("Robot Centric");
+                        driveType = DriveType.ROBOT_CENTRIC;
+                    }
+                    break;
+            }
 
             //Driver 2 code
 
@@ -147,11 +189,11 @@ public class testTele extends LinearOpMode {
                         targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
                     }
-                    else if (gamepad2.y) {
-                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
-                        targetPos = RobotConstants.slideTop;
-                        slidePos = Slide.TOP;
-                    }
+//                    else if (gamepad2.y) {
+//                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
+//                        targetPos = RobotConstants.slideTop;
+//                        slidePos = Slide.TOP;
+//                    }
                     break;
                 case LOW:
                     if (gamepad2.a) {
@@ -164,11 +206,11 @@ public class testTele extends LinearOpMode {
                         targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
                     }
-                    else if (gamepad2.y) {
-                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
-                        targetPos = RobotConstants.slideTop;
-                        slidePos = Slide.TOP;
-                    }
+//                    else if (gamepad2.y) {
+//                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
+//                        targetPos = RobotConstants.slideTop;
+//                        slidePos = Slide.TOP;
+//                    }
                     break;
                 case MIDDLE:
                     if (gamepad2.a) {
@@ -181,11 +223,11 @@ public class testTele extends LinearOpMode {
                         targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
                     }
-                    else if (gamepad2.y) {
-                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
-                        targetPos = RobotConstants.slideTop;
-                        slidePos = Slide.TOP;
-                    }
+//                    else if (gamepad2.y) {
+//                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
+//                        targetPos = RobotConstants.slideTop;
+//                        slidePos = Slide.TOP;
+//                    }
                     break;
                 case TOP:
                     if (gamepad2.a) {
@@ -208,7 +250,6 @@ public class testTele extends LinearOpMode {
 
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
-            telemetry.addData("Slide Encoder Pos", slideCurPos);
 
             targetPos = Range.clip(targetPos, RobotConstants.slideMinHeight, RobotConstants.slideMaxHeight);
 
@@ -216,14 +257,10 @@ public class testTele extends LinearOpMode {
 
             slideI += distRemain * slidePIDVals.i;
 
-            telemetry.addData("POWER!!!!!!!!!", (distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
-            telemetry.addData("Dist remaining", distRemain);
-            telemetry.addData("Proportional", slidePIDVals.p);
-            telemetry.addData("Integral", slidePIDVals.i);
-            telemetry.addData("Derivative", slidePIDVals.d);
-            telemetry.addData("Target pos", targetPos);
 
-            robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
+            double slidePower = (distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d);
+
+            robot.liftMotor.setPower(slidePower);
 
             /*if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
                 robot.liftMotor.setPower(-(distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
@@ -231,23 +268,59 @@ public class testTele extends LinearOpMode {
 
             if (gamepad2.dpad_down) {
                 robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
+            } else if (gamepad2.dpad_up) {
+                robot.intakeMotor.setPower(-RobotConstants.intakeSpeed);
             } else {
                 robot.intakeMotor.setPower(0);
             }
 
             if (gamepad2.dpad_right) {
                 robot.transferMotor.setPower(RobotConstants.transferSpeed);
-            } else {
+            } else if(gamepad2.dpad_left) {
+                robot.transferMotor.setPower(-RobotConstants.transferSpeed);
+            }  else {
                 robot.transferMotor.setPower(0);
             }
 
 
-            if ((gamepad2.left_trigger != 0.0) && (gamepad2.right_trigger != 0.0)) {
-                robot.climbMotor.setPower(RobotConstants.climbSpeed);
+            switch (climb) {
+                case RELEASE:
+                    if (gamepad1.a) {
+                        robot.climbMotor.setPower(1);
+                        climbTimer.reset();
+                        climb = Climb.WAIT;
+                    }
+                    break;
+                case WAIT:
+                    if (climbTimer.seconds()>.3) {
+                        climb = Climb.CLIMB;
+                    }
+                    break;
+                case CLIMB:
+                    if (gamepad1.b) {
+                        robot.climbMotor.setPower(1);
+                    }
             }
-            else {
+
+            if(gamepad1.x) {
+                robot.climbMotor.setPower(-.6);
+            } else {
                 robot.climbMotor.setPower(0);
             }
+
+//            if ((gamepad2.left_trigger != 0.0) && (gamepad2.right_trigger != 0.0)) {
+//                robot.climbMotor.setPower(RobotConstants.climbSpeed);
+//            }
+//            else {
+//                robot.climbMotor.setPower(0);
+//            }
+
+            //Updating Telemetry Items
+            robotPose.setValue(RobotMethods.updateRobotPosition(myPose));
+
+            odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
+
+            slideData.setValue(RobotMethods.slideData(slideCurPos, targetPos, slidePower, distRemain * slidePIDVals.p, slideI, slideVelo * slidePIDVals.d));
 
 
             //Updating telemetry
