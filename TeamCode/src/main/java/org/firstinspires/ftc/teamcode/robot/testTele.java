@@ -266,6 +266,7 @@ public class testTele extends LinearOpMode {
                 robot.liftMotor.setPower(-(distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
             }*/
 
+            // intake
             if (gamepad2.dpad_down) {
                 robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
             } else if (gamepad2.dpad_up) {
@@ -280,6 +281,12 @@ public class testTele extends LinearOpMode {
                 robot.transferMotor.setPower(-RobotConstants.transferSpeed);
             }  else {
                 robot.transferMotor.setPower(0);
+            }
+
+            if ((gamepad2.right_trigger > 0.8) && (gamepad2.left_trigger > 0.8)) {
+                robot.climbMotor.setPower(RobotConstants.climbSpeed);
+            } else {
+                robot.climbMotor.setPower(0);
             }
 
 
