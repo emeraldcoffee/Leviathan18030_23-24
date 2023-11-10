@@ -1,6 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
+    //maven { url 'file://C://Users//3dbkb//Downloads//ftc-dashboard-0.4.14//ftc-dashboard-0.4.14'}
     maven { url = 'https://maven.brott.dev/' }
     flatDir {
         dirs rootProject.file('libs')
@@ -22,5 +23,7 @@ dependencies {
     runtimeOnly 'org.tensorflow:tensorflow-lite:2.12.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.13'
+    implementation('com.acmerobotics.dashboard:dashboard:0.4.14') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }

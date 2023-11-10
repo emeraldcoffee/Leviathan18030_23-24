@@ -21,19 +21,19 @@ public class RobotConstants {
     //Double variables
     public static final double
         //Drivetrain constants
-        speedMultiplier = 0.6,
+        speedMultiplier = 0.7,
         maxVelo         = 20000,
         maxAccel        = 300,
         driveSpeed      = 1,
         strafeSpeed     = 1,
         turnSpeed       = .6,
 
-        dropTime        = .12,
-        resetTime       = .27,
+        dropTime        = .14,
+        resetTime       = .32,
         dropOpen        = .7,
         dropClosed      = .5,
         transferSpeed   = 1.0,
-        intakeSpeed     = 1,
+        intakeSpeed     = .7,
         climbSpeed      = 1.0;
 
     public static final PIDCoefficients slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
