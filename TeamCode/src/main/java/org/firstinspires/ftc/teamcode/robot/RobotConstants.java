@@ -10,13 +10,12 @@ public class RobotConstants {
         Finalthing          = 5,
         Otherfinalthing     = 3,
         slideBottom         = 0,
-        slideGround         = (int)(8192*1.3),
+        slideGround         = (int)(8192 * 1.3),
         slideLow            = 8192 * 3,
         slideMiddle         = (int)(8192 * 4.5),
         slideTop            = (int)(8192 * 6.1),
         slideMinHeight      = 0,
-        slideMaxHeight      = (int)(8192 * 6.1),
-        slideGround         = (int)(8192 * 1.3);
+        slideMaxHeight      = (int)(8192 * 6.1);
 
 
     //Double variables
@@ -38,9 +37,5 @@ public class RobotConstants {
         climbSpeed      = 1.0;
 
     public static final PIDCoefficients slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
-
-
-    public static final PIDCoefficients
-            slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
 
 }

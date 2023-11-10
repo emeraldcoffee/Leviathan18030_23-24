@@ -131,9 +131,9 @@ public class ColorMask extends OpenCvPipeline {
             double maxContour = 0;
 
             MatOfPoint largestContour = contours.get(0);
-            for(MatOfPoint contour : contours)
+            for (MatOfPoint contour : contours)
             {
-                if(Imgproc.contourArea(contour) > maxContour)
+                if (Imgproc.contourArea(contour) > maxContour)
                 {
                     maxContour = Imgproc.contourArea(contour);
                     largestContour = contour;
