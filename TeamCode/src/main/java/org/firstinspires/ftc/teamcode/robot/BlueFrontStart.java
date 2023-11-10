@@ -22,7 +22,7 @@ public class BlueFrontStart extends LinearOpMode {
         RIGHT
     }
 
-    teamElementPosition propPos = teamElementPosition.RIGHT;
+    teamElementPosition propPos = teamElementPosition.CENTER;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -41,18 +41,19 @@ public class BlueFrontStart extends LinearOpMode {
             public void onOpened()
             {
                 hwMap.webcam.setPipeline(colorMaskPipeline);
-                /*if (ColorMask.getContourCoords().inside(new Rect(100, 300, 80, 180))) {
-                    propPos = teamElementPosition.LEFT;
+                if (!ColorMask.getContourCoords().equals(null)) {
+                    if (ColorMask.getContourCoords().inside(new Rect(0, 0, 200, 480))) {
+                        propPos = teamElementPosition.LEFT;
+                    }
+                    else if (ColorMask.getContourCoords().inside(new Rect(440, 0, 200, 480))) {
+                        propPos = teamElementPosition.RIGHT;
+                    }
+                    else {
+                        telemetry.addData("helpppp", propPos);
+                    }
+                    telemetry.addData("Position", propPos);
+                    hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
                 }
-                else if (ColorMask.getContourCoords().inside(new Rect(200, 320, 180, 80))) {
-                    propPos = teamElementPosition.CENTER;
-                }
-                else {
-                    telemetry.addData("helpppp", propPos);
-                }
-                telemetry.addData("Position", propPos);*/
-                hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
-
             }
 
             @Override
