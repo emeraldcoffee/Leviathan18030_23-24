@@ -3,6 +3,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -12,9 +13,35 @@ public class meepMeepCode {
     public static void main(String args[]) {
         MeepMeep meepMeep = new MeepMeep(800);
 
+
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13.75)
                 .setColorScheme(new ColorSchemeBlueLight())
+                        .followTrajectorySequence(drive ->
+                                drive.trajectorySequenceBuilder(new Pose2d(12, 56, Math.toRadians(-90)))
+                                        .lineToSplineHeading(new Pose2d(12, 33, Math.toRadians(180)))
+                                        .addTemporalMarker(.2, () -> {/*targetPos = RobotConstants.slideGround;*/})
+                                        .lineToSplineHeading(new Pose2d(8, 33, Math.toRadians(180)))
+                                        .addDisplacementMarker(() -> {})
+                                        .waitSeconds(.4)
+                                        .addDisplacementMarker(() -> {})
+                                        .addDisplacementMarker(() -> {/*robot.dropServo.setPosition(RobotConstants.dropOpen);*/})
+                                        .forward(-5)
+                                        .splineToSplineHeading(new Pose2d(50, 29, Math.toRadians(0)), Math.toRadians(0))
+                                        .addDisplacementMarker(() -> {})
+                                        .forward(-4)
+                                        .addDisplacementMarker(() -> {})
+                                        .lineTo(new Vector2d(46,60))
+                                        .build());
+
+
+
+
+
+
+
+
 
                 // in front of trusses on blue alliance
                 /*.followTrajectorySequence(drive ->
@@ -58,29 +85,29 @@ public class meepMeepCode {
                 );*/
 
                 // behind trusses on blue alliance
-                .followTrajectorySequence(drive ->
-                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(90)))
-                            .back(19)
-
-                            // uses Vision to detect where the team prop is
-                            .addDisplacementMarker(() -> {})
-                            .waitSeconds(1)
-
-                            // places down pixel where team prop is
-                            .addDisplacementMarker(() -> {
-                                // turn depending on where the team prop is
-                            })
-                            .waitSeconds(1)
-                            
-                            .back(8)
-                            .turn(Math.toRadians(90))
-                            .back(40)
-                            // places down pixel on backdrop
-                            .addDisplacementMarker(() -> {})
-
-                            .build()
-                    )
-                );
+//                .followTrajectorySequence(drive ->
+//                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(90)))
+//                            .back(19)
+//
+//                            // uses Vision to detect where the team prop is
+//                            .addDisplacementMarker(() -> {})
+//                            .waitSeconds(1)
+//
+//                            // places down pixel where team prop is
+//                            .addDisplacementMarker(() -> {
+//                                // turn depending on where the team prop is
+//                            })
+//                            .waitSeconds(1)
+//
+//                            .back(8)
+//                            .turn(Math.toRadians(90))
+//                            .back(40)
+//                            // places down pixel on backdrop
+//                            .addDisplacementMarker(() -> {})
+//
+//                            .build()
+//                    )
+//                );
 
                 /*.followTrajectorySequence(drive ->
                         // in front of trusses on red alliance

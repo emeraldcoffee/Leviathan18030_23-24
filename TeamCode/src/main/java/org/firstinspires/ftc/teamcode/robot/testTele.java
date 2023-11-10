@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.slidePIDVals;
 import static org.firstinspires.ftc.teamcode.robot.testTele.Climb.RELEASE;
 
 import android.widget.Switch;
@@ -79,7 +80,6 @@ public class testTele extends LinearOpMode {
 
         ElapsedTime slideTimer = new ElapsedTime();
         Slide slidePos = Slide.BOTTOM;
-        final PIDCoefficients slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
         double slideI = 0.0;
 
         //Getting last pose
@@ -283,34 +283,30 @@ public class testTele extends LinearOpMode {
                 robot.transferMotor.setPower(0);
             }
 
-            if ((gamepad2.right_trigger > 0.8) && (gamepad2.left_trigger > 0.8)) {
-                robot.climbMotor.setPower(RobotConstants.climbSpeed);
-            } else {
-                robot.climbMotor.setPower(0);
-            }
 
-
-            switch (climb) {
-                case RELEASE:
-                    if (gamepad1.a) {
-                        robot.climbMotor.setPower(1);
-                        climbTimer.reset();
-                        climb = Climb.WAIT;
-                    }
-                    break;
-                case WAIT:
-                    if (climbTimer.seconds()>.3) {
-                        climb = Climb.CLIMB;
-                    }
-                    break;
-                case CLIMB:
-                    if (gamepad1.b) {
-                        robot.climbMotor.setPower(1);
-                    }
-            }
+//            switch (climb) {
+//                case RELEASE:
+//                    if (gamepad1.a) {
+//                        robot.climbMotor.setPower(1);
+//                        climbTimer.reset();
+//                        climb = Climb.WAIT;
+//                    }
+//                    break;
+//                case WAIT:
+//                    if (climbTimer.seconds()>.3) {
+//                        climb = Climb.CLIMB;
+//                    }
+//                    break;
+//                case CLIMB:
+//                    if (gamepad1.b) {
+//                        robot.climbMotor.setPower(1);
+//                    }
+//            }
 
             if(gamepad1.x) {
-                robot.climbMotor.setPower(-.6);
+                robot.climbMotor.setPower(-1);
+            } else if(gamepad1.b) {
+                robot.climbMotor.setPower(1);
             } else {
                 robot.climbMotor.setPower(0);
             }
