@@ -41,8 +41,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     * Y multiplier is the same process but in teh strafing direction
     * road runner tuning 3 wheel odometry
      */
-    public static double X_MULTIPLIER = 0.510;
-    public static double Y_MULTIPLIER = 0.495;
+    public static double X_MULTIPLIER = 1.02;
+    public static double Y_MULTIPLIER = 1.98;
 
     public static Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -64,7 +64,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
-        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+
     }
 
     public static double encoderTicksToInches(double ticks) {

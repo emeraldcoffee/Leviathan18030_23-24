@@ -32,8 +32,8 @@ public class RobotConstants {
         resetTime       = .32,
         dropOpen        = .7,
         dropClosed      = .5,
-        transferSpeed   = 1.0,
-        intakeSpeed     = .7,
+        transferSpeed   = .8,
+        intakeSpeed     = .6,
         climbSpeed      = 1.0;
 
     public static final PIDCoefficients slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
