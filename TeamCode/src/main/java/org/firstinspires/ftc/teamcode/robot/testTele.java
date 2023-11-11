@@ -121,7 +121,7 @@ public class testTele extends LinearOpMode {
             //Driver 1 code
 
             //Front triggers being used to speedup or slowdown robots driving
-            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
+            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - (.6 * gamepad1.left_trigger)) / 1.2); // 1.1
 
             //Getting joystick values for driving
             double drive = gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed;
@@ -184,11 +184,13 @@ public class testTele extends LinearOpMode {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
                         targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
+                        slideTimer.reset();
                     }
                     else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
                         targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
+                        slideTimer.reset();
                     }
 //                    else if (gamepad2.y) {
 //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
@@ -201,11 +203,13 @@ public class testTele extends LinearOpMode {
                         roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
                         targetPos = RobotConstants.slideBottom;
                         slidePos = Slide.BOTTOM;
+                        slideTimer.reset();
                     }
                     else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
                         targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
+                        slideTimer.reset();
                     }
 //                    else if (gamepad2.y) {
 //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
@@ -218,11 +222,13 @@ public class testTele extends LinearOpMode {
                         roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
                         targetPos = RobotConstants.slideBottom;
                         slidePos = Slide.BOTTOM;
+                        slideTimer.reset();
                     }
                     else if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
                         targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
+                        slideTimer.reset();
                     }
 //                    else if (gamepad2.y) {
 //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
@@ -235,16 +241,19 @@ public class testTele extends LinearOpMode {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
                         targetPos = RobotConstants.slideBottom;
                         slidePos = Slide.BOTTOM;
+                        slideTimer.reset();
                     }
                     else if (gamepad2.b) {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
                         targetPos = RobotConstants.slideMiddle;
                         slidePos = Slide.MIDDLE;
+                        slideTimer.reset();
                     }
                     else if (gamepad2.x) {
                         roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
                         targetPos = RobotConstants.slideLow;
                         slidePos = Slide.LOW;
+                        slideTimer.reset();
                     }
                     break;
             }
@@ -262,6 +271,10 @@ public class testTele extends LinearOpMode {
             double slidePower = (distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d);
 
             robot.liftMotor.setPower(slidePower);
+
+            if (slideTimer.seconds() > 3) { // hopefully prevents "smokin' motors"
+                robot.liftMotor.setPower(0);
+            }
 
             /*if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
                 robot.liftMotor.setPower(-(distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));

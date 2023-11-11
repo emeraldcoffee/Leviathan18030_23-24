@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -41,19 +43,18 @@ public class BlueFrontStart extends LinearOpMode {
             public void onOpened()
             {
                 hwMap.webcam.setPipeline(colorMaskPipeline);
-                if (!ColorMask.getContourCoords().equals(null)) {
-                    if (ColorMask.getContourCoords().inside(new Rect(0, 0, 200, 480))) {
-                        propPos = teamElementPosition.LEFT;
-                    }
-                    else if (ColorMask.getContourCoords().inside(new Rect(440, 0, 200, 480))) {
-                        propPos = teamElementPosition.RIGHT;
-                    }
-                    else {
-                        telemetry.addData("helpppp", propPos);
-                    }
-                    telemetry.addData("Position", propPos);
-                    hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                int coord = (int)ColorMask.xCoord;
+                if ((coord >= 0) && (coord <= 200)) {
+                    propPos = teamElementPosition.LEFT;
                 }
+                else if ((coord >= 440) && (coord <= 640)) {
+                    propPos = teamElementPosition.RIGHT;
+                }
+                else {
+                    propPos = teamElementPosition.CENTER;
+                }
+                telemetry.addData("Position", propPos);
+                hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override

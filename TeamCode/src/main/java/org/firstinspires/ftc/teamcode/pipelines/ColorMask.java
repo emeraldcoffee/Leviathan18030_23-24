@@ -25,6 +25,9 @@ public class ColorMask extends OpenCvPipeline {
         RIGHT
     }
 
+    public static double xCoord;
+    public static double yCoord;
+
     private volatile ColorMask.teamElementPosition position;
 
     //Colors that will be used as rectangle border
@@ -142,12 +145,13 @@ public class ColorMask extends OpenCvPipeline {
 
             Rect rect = Imgproc.boundingRect(largestContour);
             Imgproc.rectangle(input, rect, new Scalar(255,0, 0));
-            double xCoord = rect.x + rect.width / 2;
-            double yCoord = rect.y + rect.height / 2;
+            xCoord = rect.x + rect.width / 2;
+            yCoord = rect.y + rect.height / 2;
 
             List<Point> coords = new ArrayList<>();
             Converters.Mat_to_vector_Point(largestContour, coords);
-            contourCoords = coords.get(0);
+            if (coords.size() > 0)
+                contourCoords = coords.get(0);
         }
 
         return input;
