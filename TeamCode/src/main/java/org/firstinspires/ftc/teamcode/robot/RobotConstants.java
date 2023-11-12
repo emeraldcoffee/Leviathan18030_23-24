@@ -9,9 +9,9 @@ public class RobotConstants {
     public static final int
         Finalthing          = 5,
         Otherfinalthing     = 3,
-        slideBottom         = 0,
-        slideGround         = (int)(8192*1.3),
-        slideLow            = 8192 * 3,
+        slideBottom         = (int)(8192 * 0),
+        slideGround         = (int)(8192 * 1),
+        slideLow            = (int)(8192 * 2.6),
         slideMiddle         = (int)(8192 * 4.5),
         slideTop            = (int)(8192 * 6.1),
         slideMinHeight      = 0,
@@ -28,7 +28,7 @@ public class RobotConstants {
         strafeSpeed     = 1,
         turnSpeed       = .6,
 
-        dropTime        = .14,
+        dropTime        = .18,
         resetTime       = .32,
         dropOpen        = .7,
         dropClosed      = .5,

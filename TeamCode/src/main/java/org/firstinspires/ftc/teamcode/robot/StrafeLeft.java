@@ -15,7 +15,7 @@ public class StrafeLeft extends LinearOpMode {
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
-        robot.transferMotor.setPower(-.2);
+        robot.transferMotor.setPower(-.5);
         waitForStart();
 
         RobotMethods.setMecanumDrive(0, 1,0, 1, driveTrain);
