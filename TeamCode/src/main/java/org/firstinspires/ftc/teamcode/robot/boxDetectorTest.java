@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.qualcomm.robotCore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotCore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pipelines.CameraDetectionTest;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -48,7 +48,5 @@ public class boxDetectorTest extends LinearOpMode {
                 //
             webcam.stopStreaming();
         }
-
-
     }
 }
