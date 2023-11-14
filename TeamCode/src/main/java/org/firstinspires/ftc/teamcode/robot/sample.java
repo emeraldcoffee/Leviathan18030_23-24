@@ -10,9 +10,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp
-public class sample extends LinearOpMode {
-    private Gyroscope imu;
+//@TeleOp
+public class sample {
+    //public class sample extends LinearOpMode {
+    /*private Gyroscope imu;
     private DcMotor motorTest;
     private DigitalChannel digitalTouch;
     private DistanceSensor sensorColorRange;
@@ -52,6 +53,6 @@ public class sample extends LinearOpMode {
             telemetry.update();
 
         }
-    }
+    }*/
 }
 
