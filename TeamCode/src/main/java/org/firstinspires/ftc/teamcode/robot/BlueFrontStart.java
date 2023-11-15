@@ -5,9 +5,12 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
@@ -18,12 +21,17 @@ public class BlueFrontStart extends LinearOpMode {
 
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
         HwMap hwMap = new HwMap();
+        ColorMask colorMaskPipeline = new ColorMask();
 
-        hwMap.init(hardwareMap);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        hwMap.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
         hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
+
             public void onOpened()
             {
+                hwMap.webcam.setPipeline(colorMaskPipeline);
+
                 hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -35,7 +43,7 @@ public class BlueFrontStart extends LinearOpMode {
 
         waitForStart();
 
-        /*Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
+        Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
         Pose2d bBStartPose = new Pose2d(12, 63, Math.toRadians(270));
         Pose2d rFStartPose = new Pose2d(-35, -63, Math.toRadians(90));
         Pose2d rBStartPose = new Pose2d(12, -63, Math.toRadians(90));
@@ -48,7 +56,10 @@ public class BlueFrontStart extends LinearOpMode {
                 .forward(19)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
+                    String pos = ColorMask.getPos();
+                    if (pos.equals("left")) {
 
+                    }
                 })
                 // places down pixel where team prop is
                 .addDisplacementMarker(() -> {
@@ -81,9 +92,9 @@ public class BlueFrontStart extends LinearOpMode {
                 .build();
 
         waitForStart();
-
-        if (!isStopRequested()) {
+    
+        if (!isStopRequested() && isStarted()) {
             dt.followTrajectorySequence(blueFront);
-        }*/
+        }
     }
 }
