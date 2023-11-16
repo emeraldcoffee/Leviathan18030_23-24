@@ -48,7 +48,5 @@ public class boxDetectorTest extends LinearOpMode {
                 //
             webcam.stopStreaming();
         }
-
-
     }
 }

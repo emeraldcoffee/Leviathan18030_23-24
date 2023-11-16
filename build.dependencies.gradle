@@ -1,7 +1,6 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    //maven { url 'file://C://Users//3dbkb//Downloads//ftc-dashboard-0.4.14//ftc-dashboard-0.4.14'}
     maven { url = 'https://maven.brott.dev/' }
     flatDir {
         dirs rootProject.file('libs')

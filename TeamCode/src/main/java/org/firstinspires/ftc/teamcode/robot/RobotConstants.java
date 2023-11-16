@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-
 //Use this file to set up values that will be used by the robot like servo positions
 public class RobotConstants {
 
@@ -9,34 +7,29 @@ public class RobotConstants {
     public static final int
         Finalthing          = 5,
         Otherfinalthing     = 3,
-        slideBottom         = 0,
-        slideGround         = (int)(8192*1.3),
-        slideLow            = 8192 * 3,
-        slideMiddle         = (int)(8192 * 4.5),
-        slideTop            = (int)(8192 * 6.1),
-        slideMinHeight      = 0,
-        slideMaxHeight      = (int)(8192 * 6.1);
+        slideBottom         = (int)(8192 * .1),
+        slideLow            = 8192 * 2,
+        slideMiddle         = 8192 * 4,
+        slideTop            = 8192 * 6;
 
 
     //Double variables
     public static final double
         //Drivetrain constants
-        speedMultiplier = 0.7,
-        maxVelo         = 20000,
-        maxAccel        = 300,
+        speedMultiplier = .6,
+        maxVelo         = 1,
+        maxAccel        = 10,
         driveSpeed      = 1,
         strafeSpeed     = 1,
         turnSpeed       = .6,
 
-        dropTime        = .14,
-        resetTime       = .32,
+        dropTime        = .12,
+        resetTime       = .27,
         dropOpen        = .7,
         dropClosed      = .5,
-        transferSpeed   = .8,
+        transferSpeed = 1,
         intakeSpeed     = .6,
-        climbSpeed      = 1.0;
-
-    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(0.8 / 8192, .01 / 8192, .001 / 8192);
+        climbSpeed   = .6;
 
 
 

@@ -1,59 +1,38 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
-import org.opencv.core.Rect;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 @Autonomous
 public class BlueFrontStart extends LinearOpMode {
 
-    public enum teamElementPosition {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-    teamElementPosition propPos = teamElementPosition.CENTER;
     @Override
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
-        Camera3BoxDetection camBoxPipeline = new Camera3BoxDetection();
-        ColorMask colorMaskPipeline = new ColorMask();
         HwMap hwMap = new HwMap();
-
-        hwMap.init(hardwareMap);
-
+        ColorMask colorMaskPipeline = new ColorMask();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         hwMap.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
         hwMap.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
+
             public void onOpened()
             {
                 hwMap.webcam.setPipeline(colorMaskPipeline);
-                if (!ColorMask.getContourCoords().equals(null)) {
-                    if (ColorMask.getContourCoords().inside(new Rect(0, 0, 200, 480))) {
-                        propPos = teamElementPosition.LEFT;
-                    }
-                    else if (ColorMask.getContourCoords().inside(new Rect(440, 0, 200, 480))) {
-                        propPos = teamElementPosition.RIGHT;
-                    }
-                    else {
-                        telemetry.addData("helpppp", propPos);
-                    }
-                    telemetry.addData("Position", propPos);
-                    hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
-                }
+
+                hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -64,11 +43,7 @@ public class BlueFrontStart extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive() && !isStopRequested()) {
-
-        }
-
-        /*Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
+        Pose2d bFStartPose = new Pose2d(-35, 63, Math.toRadians(270));
         Pose2d bBStartPose = new Pose2d(12, 63, Math.toRadians(270));
         Pose2d rFStartPose = new Pose2d(-35, -63, Math.toRadians(90));
         Pose2d rBStartPose = new Pose2d(12, -63, Math.toRadians(90));
@@ -81,7 +56,10 @@ public class BlueFrontStart extends LinearOpMode {
                 .forward(19)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
+                    String pos = ColorMask.getPos();
+                    if (pos.equals("left")) {
 
+                    }
                 })
                 // places down pixel where team prop is
                 .addDisplacementMarker(() -> {
@@ -114,9 +92,9 @@ public class BlueFrontStart extends LinearOpMode {
                 .build();
 
         waitForStart();
-
-        if (!isStopRequested()) {
+    
+        if (!isStopRequested() && isStarted()) {
             dt.followTrajectorySequence(blueFront);
-        }*/
+        }
     }
 }
