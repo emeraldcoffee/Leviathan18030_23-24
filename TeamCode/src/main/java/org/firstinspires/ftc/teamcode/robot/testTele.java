@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,6 +18,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 
 @TeleOp()
@@ -40,6 +45,7 @@ public class testTele extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry.setAutoClear(false);
         //Updating Status
         Telemetry.Item status = telemetry.addData("Status", "Initializing");
         telemetry.update();
@@ -49,6 +55,24 @@ public class testTele extends LinearOpMode {
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
+
+        AprilTagProcessor frontAprilTagProcessor = null;
+        VisionPortal frontVisionPortal;
+        frontAprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
+
+        //Creates visionPortal with configured setting, passes the webcam and the aprilTag Processor
+        frontVisionPortal = new VisionPortal.Builder()
+                .addProcessor(frontAprilTagProcessor)
+                .setCamera(robot.frontCamera)
+                //sets camera resolution to 640 by 480 so that we can use a default calibration
+                .setCameraResolution(new Size(640,480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .build();
 
         ElapsedTime dropTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
@@ -63,11 +87,11 @@ public class testTele extends LinearOpMode {
 
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
-        telemetry.update();
 
         //Adding odom pod encoders to telemetry
         Telemetry.Item odom = telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
-        telemetry.update();
+
+        Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
 
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
@@ -83,11 +107,20 @@ public class testTele extends LinearOpMode {
         roboMethods.setTargetPos(robot.liftEncoder.getCurrentPosition(), RobotConstants.slideBottom);
 
         while (opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
+//            telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
             robotPose.setValue(RobotMethods.updateRobotPosition(myPose));
+
+            //Getting aprilTag detections
+            if (frontAprilTagProcessor.getDetections().size() > 0) {
+                //Gets all the april tag data for the 1st detection
+                AprilTagDetection frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
+                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
+            } else {
+                aprilTagPosEstimate.setValue("No tags detected");
+            }
 
             //Driver 1 code
 
@@ -192,7 +225,7 @@ public class testTele extends LinearOpMode {
 
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
-            telemetry.addData("Slide Encoder Pos", slideCurPos);
+//            telemetry.addData("Slide Encoder Pos", slideCurPos);
 
             double distRemain = roboMethods.slidesUpdate() - slideCurPos;
 

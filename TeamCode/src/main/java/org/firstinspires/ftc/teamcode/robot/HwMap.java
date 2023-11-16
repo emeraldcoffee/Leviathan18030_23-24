@@ -55,7 +55,8 @@ public class HwMap {
     public Servo dropServo;
 
     //Camera name
-    public OpenCvCamera webcam;
+    public OpenCvCamera webcam, webcamR;
+    public WebcamName frontCamera;
 
     private List<DcMotorEx> motors;
 
@@ -67,8 +68,9 @@ public class HwMap {
 
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
-
+//        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
+//        webcamR = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "cameraR"), cameraMonitorViewId);
+        frontCamera = hwMap.get(WebcamName.class, "camera");
 
         //Mapping encoder
         liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftMotor"));

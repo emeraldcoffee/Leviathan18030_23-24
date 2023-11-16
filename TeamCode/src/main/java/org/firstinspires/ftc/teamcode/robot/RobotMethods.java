@@ -5,11 +5,17 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.maxVelo;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class RobotMethods {
 
@@ -89,6 +95,10 @@ public class RobotMethods {
     //Adds telemetry data for robot position
     public static String updateRobotPosition(Pose2d pose) {
         return "x: " + pose.getX() + " y: " + pose.getY() + " heading: " + pose.getHeading();
+    }
+
+    public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {
+        return "x: " + aprilTag.ftcPose.x + " y: " + aprilTag.ftcPose.y + " heading: " + aprilTag.ftcPose.yaw + " confidence: " + aprilTag.decisionMargin;
     }
 
     public static void outtakePlace (HwMap hwMap) {
@@ -208,6 +218,8 @@ public class RobotMethods {
             return startPosStore + cruise_distance + max_velocity * deceleration_time - 0.5 * maxAccel * Math.pow(deceleration_time, 2);
         }
     }
+
+
     /*public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)
 
         ElapsedTime timer = new ElapsedTime();
