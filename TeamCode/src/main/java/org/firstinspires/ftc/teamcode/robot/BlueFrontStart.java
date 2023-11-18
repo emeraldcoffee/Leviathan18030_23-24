@@ -53,27 +53,34 @@ public class BlueFrontStart extends LinearOpMode {
 
         dt.setPoseEstimate(bFStartPose);
         TrajectorySequence blueFront = dt.trajectorySequenceBuilder(bFStartPose)
-                .forward(19)
+                .forward(50)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
                     String pos = ColorMask.getPos();
                     if (pos.equals("left")) {
 
                     }
+                    else if (pos.equals("right")) {
+
+                    }
+                    else {
+
+                    }
                 })
                 // places down pixel where team prop is
                 .addDisplacementMarker(() -> {
                     // turn depending on where the team prop is
-                    RobotMethods.outtakePlace(hwMap);
+                    //RobotMethods.outtakePlace(hwMap);
                 })
-                .splineTo(new Vector2d(-12, 35), Math.toRadians(0))
-                .forward(60)
+                .turn(Math.toRadians(90))
+                //.splineTo(new Vector2d(-12, 35), Math.toRadians(0))
+                .forward(90)
                 // places down pixel on backdrop
                 .addDisplacementMarker(() -> {
                     //RobotMethods.slideExtend(hwMap, 50);
                 })
                 // cycling
-                .waitSeconds(1)
+                /*.waitSeconds(1)
                 .back(10)
                 .turn(Math.toRadians(180))
                 .forward(90)
@@ -88,13 +95,13 @@ public class BlueFrontStart extends LinearOpMode {
                 // place down pixel on backdrop
                 .addDisplacementMarker(() -> {
                     //RobotMethods.slideExtend(hwMap, 50);
-                })
+                })*/
                 .build();
 
         waitForStart();
     
         if (!isStopRequested() && isStarted()) {
-            dt.followTrajectorySequence(blueFront);
+           dt.followTrajectorySequence(blueFront);
         }
     }
 }
