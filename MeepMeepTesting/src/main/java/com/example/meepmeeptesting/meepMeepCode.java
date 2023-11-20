@@ -17,7 +17,7 @@ public class meepMeepCode {
                 .setColorScheme(new ColorSchemeBlueLight())
 
                 // in front of trusses on blue alliance
-                /*.followTrajectorySequence(drive ->
+                .followTrajectorySequence(drive ->
                     (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(90)))
 
                     .back(19)
@@ -55,10 +55,10 @@ public class meepMeepCode {
                     })
                     .build()
                     )
-                );*/
+                );
 
                 // behind trusses on blue alliance
-                .followTrajectorySequence(drive ->
+                /*.followTrajectorySequence(drive ->
                     (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(90)))
                             .back(19)
 
