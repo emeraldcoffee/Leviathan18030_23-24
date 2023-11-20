@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 
+import static java.lang.Math.abs;
+
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -29,6 +31,20 @@ public class testTele extends LinearOpMode {
     //Establish variables
     double maxSpeed = 1;
     RobotMethods roboMethods;
+
+    enum DriveStates {
+        GAMEPAD,
+        GAMEPAD_FIELDCENTRIC,
+        RELOCALIZE,
+        ALIGN,
+        HOLD
+    }
+
+    //target positions
+    double targetX, targetY;
+
+    //decides if robot uses field centric or robot centric driving
+    boolean fieldCentric = false;
 
     enum Drop {
         OPEN,
@@ -65,6 +81,7 @@ public class testTele extends LinearOpMode {
                 .setDrawTagOutline(true)
                 .build();
 
+
         //Creates visionPortal with configured setting, passes the webcam and the aprilTag Processor
         frontVisionPortal = new VisionPortal.Builder()
                 .addProcessor(frontAprilTagProcessor)
@@ -73,6 +90,19 @@ public class testTele extends LinearOpMode {
                 .setCameraResolution(new Size(640,480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
+
+        //Used to store data from april tags
+        AprilTagDetection frontCamAprilTags = null;
+
+        //Used to tell if camera has detected april tags
+        boolean tagDetection;
+
+        DriveStates driveStates = null;
+        if (fieldCentric) {
+            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+        } else {
+            driveStates = DriveStates.GAMEPAD;
+        }
 
         ElapsedTime dropTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
@@ -116,10 +146,12 @@ public class testTele extends LinearOpMode {
             //Getting aprilTag detections
             if (frontAprilTagProcessor.getDetections().size() > 0) {
                 //Gets all the april tag data for the 1st detection
-                AprilTagDetection frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
+                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
                 aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
+                tagDetection = true;
             } else {
                 aprilTagPosEstimate.setValue("No tags detected");
+                tagDetection = false;
             }
 
             //Driver 1 code
@@ -127,14 +159,85 @@ public class testTele extends LinearOpMode {
             //Front triggers being used to speedup or slowdown robots driving
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
 
-            //Getting joystick values for driving
-            double drive = gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed;
-            double strafe = gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed;
-            double turn = gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed;
 
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
-            RobotMethods.setMecanumDrive(drive, strafe, turn, maxSpeed, driveTrain);
+            switch (driveStates) {
+                case GAMEPAD:
+                    //Setting drive speeds for the robot
+                    RobotMethods.setMecanumDrive(gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+                            gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed,
+                            gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
+                            maxSpeed, driveTrain);
+
+                    //Aligns robot to backboard if april tags have a detection
+                    if (gamepad1.left_bumper && tagDetection) {
+                        driveStates = DriveStates.RELOCALIZE;
+                    }
+                    break;
+                case GAMEPAD_FIELDCENTRIC:
+                    //Setting drive speeds for the robot
+                    RobotMethods.setMecanumDriveFieldCentric(gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+                            gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed,
+                            gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
+                            maxSpeed, driveTrain.getPoseEstimate().getHeading(), driveTrain);
+
+                    //Aligns robot to backboard if april tags have a detection
+                    if (gamepad1.left_bumper && tagDetection) {
+                        driveStates = DriveStates.RELOCALIZE;
+                    }
+                    break;
+                case RELOCALIZE:
+                    //Setting the pose of the robot to pose detected by april tags
+                    driveTrain.setPoseEstimate(new Pose2d(frontCamAprilTags.ftcPose.x, frontCamAprilTags.ftcPose.y, frontCamAprilTags.ftcPose.yaw));
+
+                    //Setting target X of the robot
+                    targetX = RobotConstants.backDropAlignX;
+
+                    //Deciding which backboard to align to based on the robots pose
+                    if (frontCamAprilTags.ftcPose.y>0) {
+                        targetY = RobotConstants.backDropLeftY;
+                    } else {
+                        targetY = RobotConstants.backDropRightY;
+                    }
+                    driveStates = DriveStates.ALIGN;
+                    break;
+
+                case ALIGN:
+                    //sets state back to default if drive1 exits the mode
+                    if (!gamepad1.left_bumper) {
+                        if (fieldCentric) {
+                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+                        } else {
+                            driveStates = DriveStates.GAMEPAD;
+                        }
+                    }
+
+                    RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
+                    if (abs(targetX-driveTrain.getPoseEstimate().getX())<.3 && abs(targetY-driveTrain.getPoseEstimate().getY())<.3) {
+                        driveStates = DriveStates.HOLD;
+                    }
+                    break;
+                case HOLD:
+                    //sets state back to default if drive1 exits the mode
+                    if (!gamepad1.left_bumper) {
+                        if (fieldCentric) {
+                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+                        } else {
+                            driveStates = DriveStates.GAMEPAD;
+                        }
+                    }
+
+                    RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
+                    break;
+                default:
+                    if (fieldCentric) {
+                        driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+                    } else {
+                        driveStates = DriveStates.GAMEPAD;
+                    }
+            }
+
 
 
             //Driver 2 code

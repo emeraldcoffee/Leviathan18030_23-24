@@ -15,7 +15,7 @@ public class RobotConstants {
 
     //Double variables
     public static final double
-        //Drivetrain constants
+    //Drivetrain variables
         speedMultiplier = .6,
         maxVelo         = 1,
         maxAccel        = 10,
@@ -23,10 +23,18 @@ public class RobotConstants {
         strafeSpeed     = 1,
         turnSpeed       = .6,
 
+    //Backdrop align variables
+        backDropAlignX = 42,
+        backDropX = 50,
+        backDropLeftY = 35.2,
+        backDropRightY = -35.2,
+
+    //Outtake variables
         dropTime        = .12,
         resetTime       = .27,
         dropOpen        = .7,
         dropClosed      = .5,
+
         transferSpeed = 1,
         intakeSpeed     = .6,
         climbSpeed   = .6;

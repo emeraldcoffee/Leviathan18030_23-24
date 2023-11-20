@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.maxAccel;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.maxVelo;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.lang.Math.round;
 
 import android.util.Size;
 
@@ -63,13 +64,14 @@ public class RobotMethods {
 
         //rotating Joystick values to account for robot heading
         double rotatedForward = forward*Math.cos(-heading)-strafe*Math.sin(-heading),
-                rotatedStrafe = forward*Math.cos(-heading)+strafe*Math.sin(-heading);
+                rotatedStrafe = forward*Math.sin(-heading)+strafe*Math.cos(-heading);
 
         //Find value to make all motor powers less than 1
         double scalePower = max(abs(rotatedForward) + abs(rotatedStrafe) + abs(turn), 1);
 
         //Creating string with all drive powers for mecanum drive
-        Double[] driveSpeeds = {rotatedForward+rotatedStrafe+turn/scalePower, rotatedForward-rotatedStrafe+turn/scalePower, rotatedForward-rotatedStrafe-turn/scalePower, rotatedForward+rotatedStrafe-turn/scalePower};
+        Double[] driveSpeeds = {rotatedForward+rotatedStrafe+turn/scalePower, rotatedForward-rotatedStrafe+turn/scalePower,
+                                rotatedForward-rotatedStrafe-turn/scalePower, rotatedForward+rotatedStrafe-turn/scalePower};
 
         //Setting motors to their new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
@@ -80,25 +82,45 @@ public class RobotMethods {
 
         //rotating Joystick values to account for robot heading
         double rotatedForward = forward*Math.cos(-heading)-strafe*Math.sin(-heading),
-               rotatedStrafe = forward*Math.cos(-heading)+strafe*Math.sin(-heading);
+               rotatedStrafe = forward*Math.sin(-heading)+strafe*Math.cos(-heading);
 
         //Find value to make all motor powers less than maxPower
         double scalePower = max(abs(rotatedForward) + abs(rotatedStrafe) + abs(turn), maxPower);
 
         //Creating string with all drive powers for mecanum drive
-        Double[] driveSpeeds = {rotatedForward+rotatedStrafe+turn/scalePower, rotatedForward-rotatedStrafe+turn/scalePower, rotatedForward-rotatedStrafe-turn/scalePower, rotatedForward+rotatedStrafe-turn/scalePower};
+        Double[] driveSpeeds = {rotatedForward+rotatedStrafe+turn/scalePower, rotatedForward-rotatedStrafe+turn/scalePower,
+                                rotatedForward-rotatedStrafe-turn/scalePower, rotatedForward+rotatedStrafe-turn/scalePower};
 
         //Setting motors to their new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
 
+    public static void goToPoint(double targetX, double targetY, double targetHeading, SampleMecanumDrive driveTrain) {
+        double forward = targetX-driveTrain.getPoseEstimate().getX()/4;
+        double strafe = targetY-driveTrain.getPoseEstimate().getY()/4;
+        double turn = targetHeading-driveTrain.getPoseEstimate().getHeading()/10;
+
+        setMecanumDriveFieldCentric(forward, strafe, turn, 1, driveTrain.getPoseEstimate().getHeading(), driveTrain);
+
+    }
+
+    public static void goToLineY(double targetX, double powerY, double targetHeading, SampleMecanumDrive driveTrain) {
+        double forward = targetX-driveTrain.getPoseEstimate().getX()/4;
+        double turn = targetHeading-driveTrain.getPoseEstimate().getHeading()/10;
+
+        setMecanumDriveFieldCentric(forward, powerY, turn, 1, driveTrain.getPoseEstimate().getHeading(), driveTrain);
+
+    }
+
     //Adds telemetry data for robot position
     public static String updateRobotPosition(Pose2d pose) {
-        return "x: " + pose.getX() + " y: " + pose.getY() + " heading: " + pose.getHeading();
+        //Adds roadrunner pose data to string, rounded to nearest 2 decimal places
+        return "x: " + round(pose.getX()*100)/100 + " y: " + round(pose.getY()*100)/100 + " heading: " + round(pose.getHeading()*100)/100;
     }
 
     public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {
-        return "x: " + aprilTag.ftcPose.x + " y: " + aprilTag.ftcPose.y + " heading: " + aprilTag.ftcPose.yaw + " confidence: " + aprilTag.decisionMargin;
+        //Adding all april tag pose data to a string, numbers are rounded to nearest 2 decimal places
+        return "x: " + round(aprilTag.ftcPose.x*100)/100 + " y: " + round(aprilTag.ftcPose.y*100)/100 + " heading: " + round(aprilTag.ftcPose.yaw*100)/100 + " confidence: " + round(aprilTag.decisionMargin*100)/100;
     }
 
     public static void outtakePlace (HwMap hwMap) {
