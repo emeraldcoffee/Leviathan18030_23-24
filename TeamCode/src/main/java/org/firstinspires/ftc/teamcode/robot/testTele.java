@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
@@ -24,13 +25,17 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import kotlin.jvm.Synchronized;
+
 
 @TeleOp()
 public class testTele extends LinearOpMode {
 
     //Establish variables
     double maxSpeed = 1;
-    RobotMethods roboMethods;
 
     enum DriveStates {
         GAMEPAD,
@@ -44,7 +49,7 @@ public class testTele extends LinearOpMode {
     double targetX, targetY;
 
     //decides if robot uses field centric or robot centric driving
-    boolean fieldCentric = false;
+    DriveStates driveMode = DriveStates.GAMEPAD;
 
     enum Drop {
         OPEN,
@@ -52,12 +57,21 @@ public class testTele extends LinearOpMode {
         RESET
     }
 
+    //Using AtomicReference bc variables are accessed by multiple threads
+    //True when color black is not sensed in outtake
+    AtomicReference<Boolean > outtakePixel = new AtomicReference<>(false);
+    short outtakePixelCount = 0;
+    //True when distance sensor reads less than certain value
+    AtomicReference<Boolean> intakePixel = new AtomicReference<>(false);
+    short intakePixelCount = 0;
+
     enum Slide {
         BOTTOM,
         LOW,
         MIDDLE,
         TOP
     }
+    int targetPos = RobotConstants.slideBottom;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,7 +81,6 @@ public class testTele extends LinearOpMode {
         telemetry.update();
 
         //Init code
-        roboMethods = new RobotMethods();
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
@@ -97,12 +110,7 @@ public class testTele extends LinearOpMode {
         //Used to tell if camera has detected april tags
         boolean tagDetection;
 
-        DriveStates driveStates = null;
-        if (fieldCentric) {
-            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
-        } else {
-            driveStates = DriveStates.GAMEPAD;
-        }
+        DriveStates driveStates = driveMode;
 
         ElapsedTime dropTimer = new ElapsedTime();
         Drop drop = Drop.CLOSED;
@@ -111,6 +119,10 @@ public class testTele extends LinearOpMode {
         Slide slidePos = Slide.BOTTOM;
         final PIDCoefficients slidePIDVals = new PIDCoefficients(2.0 / 8192, .01 / 8192, .001 / 8192);
         double slideI = 0.0;
+
+        Runnable updateColorSensor = () -> outtakePixel.set(robot.outtakeColorSensor.red() > RobotConstants.outtakeValue);
+
+        Runnable updateDistanceSenor = () -> intakePixel.set(robot.intakeDistanceSensor.getDistance(DistanceUnit.CM)< RobotConstants.intakeValue);
 
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
@@ -126,6 +138,8 @@ public class testTele extends LinearOpMode {
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
+
+
         //Updating Status
         status.setValue("Initialized");
         telemetry.update();
@@ -134,10 +148,13 @@ public class testTele extends LinearOpMode {
         if (isStopRequested()) return;
 
         status.setValue("Running");
-        roboMethods.setTargetPos(robot.liftEncoder.getCurrentPosition(), RobotConstants.slideBottom);
 
         while (opModeIsActive() && !isStopRequested()) {
-//            telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
+
+            //Threads read i2c sensors and update variables async bc reading the sensors can be slow
+            updateColorSensor.run();
+            updateDistanceSenor.run();
+
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
@@ -154,11 +171,10 @@ public class testTele extends LinearOpMode {
                 tagDetection = false;
             }
 
-            //Driver 1 code
 
+            //Driver 1 code
             //Front triggers being used to speedup or slowdown robots driving
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
-
 
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
@@ -202,15 +218,10 @@ public class testTele extends LinearOpMode {
                     }
                     driveStates = DriveStates.ALIGN;
                     break;
-
                 case ALIGN:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
-                        if (fieldCentric) {
-                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
-                        } else {
-                            driveStates = DriveStates.GAMEPAD;
-                        }
+                        driveStates = driveMode;
                     }
 
                     RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
@@ -221,27 +232,17 @@ public class testTele extends LinearOpMode {
                 case HOLD:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
-                        if (fieldCentric) {
-                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
-                        } else {
-                            driveStates = DriveStates.GAMEPAD;
-                        }
+                        driveStates = driveMode;
                     }
 
                     RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
                     break;
                 default:
-                    if (fieldCentric) {
-                        driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
-                    } else {
-                        driveStates = DriveStates.GAMEPAD;
-                    }
+                    driveStates = driveMode;
             }
 
 
-
             //Driver 2 code
-
             //Code for dropping pixels out of outtake
             switch (drop) {
                 case CLOSED:
@@ -266,80 +267,83 @@ public class testTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
+            if (abs(gamepad2.left_stick_y)>.1) {
+                targetPos -= 10*gamepad2.left_stick_y;
+            } else {
+                switch (slidePos) {
+                    case BOTTOM:
+                        if (gamepad2.x) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
+                            slidePos = Slide.LOW;
+                            targetPos = RobotConstants.slideLow;
+                        } else if (gamepad2.b) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
+                            slidePos = Slide.MIDDLE;
+                            targetPos = RobotConstants.slideMiddle;
+                        } else if (gamepad2.y) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
+                            slidePos = Slide.TOP;
+                            targetPos = RobotConstants.slideTop;
+                        }
+                        break;
+                    case LOW:
+                        if (gamepad2.a) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
+                            slidePos = Slide.BOTTOM;
+                            targetPos = RobotConstants.slideBottom;
+                        } else if (gamepad2.b) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
+                            slidePos = Slide.MIDDLE;
+                            targetPos = RobotConstants.slideMiddle;
+                        } else if (gamepad2.y) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
+                            slidePos = Slide.TOP;
+                            targetPos = RobotConstants.slideTop;
 
-            switch (slidePos) {
-                case BOTTOM:
-                    if (gamepad2.x) {
-                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
-                        slidePos = Slide.LOW;
-                    }
-                    else if (gamepad2.b) {
-                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
-                        slidePos = Slide.MIDDLE;
-                    }
-                    else if (gamepad2.y) {
-                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
-                        slidePos = Slide.TOP;
-                    }
-                    break;
-                case LOW:
-                    if (gamepad2.a) {
-                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
-                        slidePos = Slide.BOTTOM;
-                    }
-                    else if (gamepad2.b) {
-                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
-                        slidePos = Slide.MIDDLE;
-                    }
-                    else if (gamepad2.y) {
-                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
-                        slidePos = Slide.TOP;
-                    }
-                    break;
-                case MIDDLE:
-                    if (gamepad2.a) {
-                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
-                        slidePos = Slide.BOTTOM;
-                    }
-                    else if (gamepad2.x) {
-                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
-                        slidePos = Slide.LOW;
-                    }
-                    else if (gamepad2.y) {
-                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
-                        slidePos = Slide.TOP;
-                    }
-                    break;
-                case TOP:
-                    if (gamepad2.a) {
-                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
-                        slidePos = Slide.BOTTOM;
-                    }
-                    else if (gamepad2.b) {
-                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
-                        slidePos = Slide.MIDDLE;
-                    }
-                    else if (gamepad2.x) {
-                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
-                        slidePos = Slide.LOW;
-                    }
-                    break;
+                        }
+                        break;
+                    case MIDDLE:
+                        if (gamepad2.a) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
+                            slidePos = Slide.BOTTOM;
+                            targetPos = RobotConstants.slideBottom;
+                        } else if (gamepad2.x) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
+                            slidePos = Slide.LOW;
+                            targetPos = RobotConstants.slideLow;
+                        } else if (gamepad2.y) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
+                            slidePos = Slide.TOP;
+                            targetPos = RobotConstants.slideTop;
+                        }
+                        break;
+                    case TOP:
+                        if (gamepad2.a) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
+                            slidePos = Slide.BOTTOM;
+                            targetPos = RobotConstants.slideBottom;
+                        } else if (gamepad2.b) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
+                            slidePos = Slide.MIDDLE;
+                            targetPos = RobotConstants.slideMiddle;
+                        } else if (gamepad2.x) {
+                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
+                            slidePos = Slide.LOW;
+                            targetPos = RobotConstants.slideLow;
+                        }
+                        break;
+                }
             }
 
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
-//            telemetry.addData("Slide Encoder Pos", slideCurPos);
 
-            double distRemain = roboMethods.slidesUpdate() - slideCurPos;
+            double distRemain = targetPos - slideCurPos;
 
             slideI += distRemain * slidePIDVals.i;
 
+            robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
-            //robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
-
-            /*if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
-                robot.liftMotor.setPower(-(distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
-            }*/
 
             if (gamepad2.dpad_down) {
                 robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
@@ -353,9 +357,6 @@ public class testTele extends LinearOpMode {
                 robot.transferMotor.setPower(0);
             }
 
-
-
-
             //Updating telemetry
             telemetry.update();
 
@@ -364,24 +365,7 @@ public class testTele extends LinearOpMode {
         }
         robot.liftMotor.setPower(0.0);
 
-//            switch (slide) {
-//                case RETRACTED: // this needs to slowly let go of the slides to let the counterweight take over
-//                    if (gamepad2.right_bumper) { // this if statement needs to be outside in a loop, if bumper, then slide enum = EXTENDED
-//                        RobotMethods.slideExtend(robot, 50);
-//                        slide = Slide.EXTENDED;
-//                    }
-//                    break;
-//                case EXTENDED:
-//                    robot.climbMotor.setPower(0.2);
-//
-//                    if (slideTimer.seconds() > 2) { // slideTimer preferably needs to start timing when EXTENDED starts, like while loop (while (slideTimer.seconds() < 2))
-//                        robot.climbMotor.setPower(0);
-//                        slide = Slide.RETRACTED;
-//                    }
-//                    break;
-//                default:
-//                    slide = Slide.RETRACTED;
-//
-//            }
     }
+
+
 }
