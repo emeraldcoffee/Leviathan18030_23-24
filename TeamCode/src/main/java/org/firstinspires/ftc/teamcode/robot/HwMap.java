@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,8 +24,13 @@ import java.util.List;
 
 public class HwMap {
 
+
     //Encoder names
     public Encoder liftEncoder;
+
+    public ColorSensor outtakeColorSensor;
+
+    public DistanceSensor intakeDistanceSensor;
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
 
     /*
@@ -76,8 +84,9 @@ public class HwMap {
         liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftMotor"));
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
-        //Optionally reverse the encoders with encoder1.setDirection(Encoder.Direction.REVERSE);
+        outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
 
+        intakeDistanceSensor = hwMap.get(DistanceSensor.class, "intakeDistance");
 
         //Mapping motors
         climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
