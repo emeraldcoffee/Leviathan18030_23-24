@@ -5,12 +5,13 @@ public class RobotConstants {
 
     //Whole # variables
     public static final int
-        Finalthing          = 5,
-        Otherfinalthing     = 3,
+        intakeValue          = 3,
+        outtakeValue     = 50,
         slideBottom         = (int)(8192 * .1),
         slideLow            = 8192 * 2,
         slideMiddle         = 8192 * 4,
         slideTop            = 8192 * 6;
+
 
 
     //Double variables
