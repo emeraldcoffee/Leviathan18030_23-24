@@ -16,6 +16,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous
 public class BlueFrontStart extends LinearOpMode {
 
+    String pos = "";
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -31,6 +33,7 @@ public class BlueFrontStart extends LinearOpMode {
             public void onOpened()
             {
                 hwMap.webcam.setPipeline(colorMaskPipeline);
+                pos = colorMaskPipeline.getPos();
 
                 hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
@@ -56,7 +59,6 @@ public class BlueFrontStart extends LinearOpMode {
                 .forward(50)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
-                    String pos = ColorMask.getPos();
                     if (pos.equals("left")) {
 
                     }

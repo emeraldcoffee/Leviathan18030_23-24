@@ -16,16 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorMask extends OpenCvPipeline {
-    public enum teamElementPosition {
+    /*public enum teamElementPosition {
         LEFT,
         CENTER,
         RIGHT
-    }
+    }*/
 
-    public static int xCoord;
-    public static int yCoord;
+    String alliance;
+    static int xCoord;
+    static int yCoord;
 
-    public static ColorMask.teamElementPosition pos;
+    //public ColorMask.teamElementPosition pos;
 
     //Colors that will be used as rectangle border
     private final Scalar
@@ -44,7 +45,6 @@ public class ColorMask extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        String a = "Red";
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
@@ -58,22 +58,32 @@ public class ColorMask extends OpenCvPipeline {
         Scalar lowerHSV;
         Scalar higherHSV;
 
-        if (a.equals("Red")) {
-            lowHSV = new Scalar(0, 30, 80);
-            highHSV = new Scalar(30, 255, 255);
+        if (alliance.equals("Blue")) {
+            lowHSV = new Scalar(85, 0, 20);
+            highHSV = new Scalar(140, 100, 255);
             Core.inRange(mat, lowHSV, highHSV, thresh);
-            lowerHSV = new Scalar(50, 50, 150);
-            higherHSV = new Scalar(180, 255, 255);
+            lowerHSV = new Scalar(95, 0, 20);
+            higherHSV = new Scalar(135, 150, 255);
             Core.inRange(mat, lowerHSV, higherHSV, thresh);
+
+            /*lowHSV = new Scalar(85, 0, 20);
+            highHSV = new Scalar(120, 200, 255);
+            Core.inRange(mat, lowHSV, highHSV, thresh);
+            lowerHSV = new Scalar(95, 0, 20);
+            higherHSV = new Scalar(135, 150, 255);
+            Core.inRange(mat, lowerHSV, higherHSV, thresh);*/
         }
 
-        else if (a.equals("Blue")) {
-            lowHSV = new Scalar(100, 150, 0);
-            highHSV = new Scalar(140, 255, 255);
-            Core.inRange(mat, lowHSV, highHSV, thresh);
+        else if (alliance.equals("Red")) {
+            Mat threshLow = new Mat();
+            Mat threshHigh = new Mat();
+            //how to get both aspects, low and high? if make 2 mats, how combine? see later.
+            lowHSV = new Scalar(0, 150, 0);
+            highHSV = new Scalar(160, 255, 255);
+            Core.inRange(mat, lowHSV, highHSV, threshLow);
             lowerHSV = new Scalar(130, 180, 50);
             higherHSV = new Scalar(179, 255, 255);
-            Core.inRange(mat, lowerHSV, higherHSV, thresh);
+            Core.inRange(mat, lowerHSV, higherHSV, threshHigh);
         }
 
         Mat masked = new Mat();
@@ -136,8 +146,8 @@ public class ColorMask extends OpenCvPipeline {
 
             Rect rect = Imgproc.boundingRect(largestContour);
             Imgproc.rectangle(input, rect, new Scalar(255,0, 0));
-            xCoord = (int) (rect.x + rect.width / 2);
-            yCoord = (int) (rect.y + rect.height / 2);
+            xCoord = (int) (rect.x + (rect.width / 2));
+            yCoord = (int) (rect.y + (rect.height / 2));
 
             List<Point> coords = new ArrayList<>();
             Converters.Mat_to_vector_Point(largestContour, coords);
@@ -147,22 +157,22 @@ public class ColorMask extends OpenCvPipeline {
 
         return input;
     }
-    public static Point getContourCoords()
+    public void setAlliance(String a)
     {
-        return contourCoords;
+        alliance = a;
     }
 
-    public static String getPos() {
+    public String getPos() {
         if ((xCoord > 0) && (xCoord <= 215)) {
-            pos = teamElementPosition.LEFT;
+            //pos = teamElementPosition.LEFT;
             return "left";
         }
         else if ((xCoord > 430) && (xCoord <= 640)) {
-            pos = teamElementPosition.CENTER;
+            //pos = teamElementPosition.CENTER;
             return "center";
         }
         else {
-            pos = teamElementPosition.RIGHT;
+            //pos = teamElementPosition.RIGHT;
             return "right";
         }
 
