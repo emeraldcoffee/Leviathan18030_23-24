@@ -77,7 +77,7 @@ public class HwMap {
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
 //        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
-//        webcamR = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "cameraR"), cameraMonitorViewId);
+        webcamR = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "cameraR"), cameraMonitorViewId);
         frontCamera = hwMap.get(WebcamName.class, "camera");
 
         //Mapping encoder

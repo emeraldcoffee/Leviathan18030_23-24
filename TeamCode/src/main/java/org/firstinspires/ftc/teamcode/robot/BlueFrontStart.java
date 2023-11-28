@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -64,13 +65,43 @@ public class BlueFrontStart extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     timer.reset();
                     if (pos.equals("left")) {
+
                         // for a certain amount of time or for motor encoders, strafe to the left and then drop, then return.
+                        /*dt.trajectoryBuilder(new Pose2d())
+                                .strafeLeft(30)
+                                .build();
+
+                        RobotMethods.outtakePlace(hwMap);
+                        dt.trajectoryBuilder(new Pose2d())
+                                .strafeRight(30)
+                                .build();
+                        */
                     }
                     else if (pos.equals("right")) {
                         // do the same thing for right
+                        /*dt.trajectoryBuilder(new Pose2d())
+                                .strafeRight(30)
+                                .build();
+
+                        RobotMethods.outtakePlace(hwMap);
+                        dt.trajectoryBuilder(new Pose2d())
+                                .strafeLeft(30)
+                                .build();
+
+                         */
                     }
                     else {
                         // do the same thing for center but just move forward, drop, then return
+                        /*
+                        dt.trajectoryBuilder(new Pose2d())
+                                .forward(40)
+                                .build();
+                        RobotMethods.outtakePlace(hwMap);
+                        dt.trajectoryBuilder(new Pose2d())
+                                .back(40)
+                                .build();
+
+                         */
                     }
                 })
                 // places down pixel where team prop is
