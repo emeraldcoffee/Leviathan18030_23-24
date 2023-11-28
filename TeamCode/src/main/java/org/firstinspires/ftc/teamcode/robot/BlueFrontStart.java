@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -24,6 +25,7 @@ public class BlueFrontStart extends LinearOpMode {
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
         HwMap hwMap = new HwMap();
         ColorMask colorMaskPipeline = new ColorMask();
+        ElapsedTime timer = new ElapsedTime();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         hwMap.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
@@ -32,6 +34,7 @@ public class BlueFrontStart extends LinearOpMode {
 
             public void onOpened()
             {
+                colorMaskPipeline.setAlliance("Blue");
                 hwMap.webcam.setPipeline(colorMaskPipeline);
                 pos = colorMaskPipeline.getPos();
 
@@ -59,14 +62,15 @@ public class BlueFrontStart extends LinearOpMode {
                 .forward(50)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
+                    timer.reset();
                     if (pos.equals("left")) {
-
+                        // for a certain amount of time or for motor encoders, strafe to the left and then drop, then return.
                     }
                     else if (pos.equals("right")) {
-
+                        // do the same thing for right
                     }
                     else {
-
+                        // do the same thing for center but just move forward, drop, then return
                     }
                 })
                 // places down pixel where team prop is
@@ -105,5 +109,9 @@ public class BlueFrontStart extends LinearOpMode {
         if (!isStopRequested() && isStarted()) {
            dt.followTrajectorySequence(blueFront);
         }
+    }
+
+    public void leftDrop() {
+
     }
 }

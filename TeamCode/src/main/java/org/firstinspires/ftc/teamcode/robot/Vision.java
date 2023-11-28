@@ -34,7 +34,7 @@ public class Vision extends LinearOpMode {
                 telemetry.addData("Position: ", pos);
                 System.out.println("Position: " + pos);
 
-                webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
