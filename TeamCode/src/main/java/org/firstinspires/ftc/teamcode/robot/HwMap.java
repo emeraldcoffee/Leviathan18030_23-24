@@ -34,28 +34,20 @@ public class HwMap {
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
 
     /*
-        front is towards the intake, back is towards the outtake
-        horizontal directions are from the back of the robot
+        hi celina :)
+        Control Hub
+        0: slideMotor, left encoder
+        1: climbMotor
+        2: leftFront
+        3: leftRear
 
-        control hub
-        motor port 0:
-            encoder port 0: liftEncoder
-        motor port 1: liftMotor
-            encoder port 1: leftEncoder
-        motor port 2: backLeft
-            encoder port 2:
-        motor port 3: frontLeft
-            encoder port 3: centEncoder
 
-        expansion hub
-        motor port 0: frontRight
-            encoder port 0:
-        motor port 1: backRight
-            encoder port 1:
-        motor port 2:
-            encoder port 2:
-        motor port 3:
-            encoder port 3: rightEncoder
+        Expansion Hub
+        0: rightRear (guess)
+        1: rightFront
+        2: intakeMotor
+        3: tranferMotor
+
      */
 
     public DcMotorEx liftMotor, climbMotor, intakeMotor, transferMotor;
