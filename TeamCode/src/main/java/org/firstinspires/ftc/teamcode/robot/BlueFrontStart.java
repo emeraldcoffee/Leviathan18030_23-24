@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -58,6 +59,23 @@ public class BlueFrontStart extends LinearOpMode {
 
         // in front of trusses on blue
 
+        TrajectorySequence left = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .strafeLeft(30)
+                .build();
+
+        TrajectorySequence right = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .strafeRight(30)
+                .build();
+
+        TrajectorySequence front = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .forward(40)
+                .build();
+
+        TrajectorySequence back = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .back(40)
+                .build();
+
+
         dt.setPoseEstimate(bFStartPose);
         TrajectorySequence blueFront = dt.trajectorySequenceBuilder(bFStartPose)
                 .forward(50)
@@ -65,43 +83,26 @@ public class BlueFrontStart extends LinearOpMode {
                 .addDisplacementMarker(() -> {
                     timer.reset();
                     if (pos.equals("left")) {
-
                         // for a certain amount of time or for motor encoders, strafe to the left and then drop, then return.
-                        /*dt.trajectoryBuilder(new Pose2d())
-                                .strafeLeft(30)
-                                .build();
-
+                        //dt.followTrajectorySequence(left);
+                        dt.turn(Math.toRadians(90));
                         RobotMethods.outtakePlace(hwMap);
-                        dt.trajectoryBuilder(new Pose2d())
-                                .strafeRight(30)
-                                .build();
-                        */
+                        dt.turn(Math.toRadians(270));
+                        //dt.followTrajectorySequence(right);
                     }
                     else if (pos.equals("right")) {
                         // do the same thing for right
-                        /*dt.trajectoryBuilder(new Pose2d())
-                                .strafeRight(30)
-                                .build();
-
+                        //dt.followTrajectorySequence(right);
+                        dt.turn(270);
                         RobotMethods.outtakePlace(hwMap);
-                        dt.trajectoryBuilder(new Pose2d())
-                                .strafeLeft(30)
-                                .build();
-
-                         */
+                        dt.turn(90);
+                        //dt.followTrajectorySequence(left);
                     }
                     else {
                         // do the same thing for center but just move forward, drop, then return
-                        /*
-                        dt.trajectoryBuilder(new Pose2d())
-                                .forward(40)
-                                .build();
+                        dt.followTrajectorySequence(front);
                         RobotMethods.outtakePlace(hwMap);
-                        dt.trajectoryBuilder(new Pose2d())
-                                .back(40)
-                                .build();
-
-                         */
+                        dt.followTrajectorySequence(back);
                     }
                 })
                 // places down pixel where team prop is
