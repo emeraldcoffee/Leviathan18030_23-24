@@ -43,8 +43,8 @@ public class HwMap {
 
 
         Expansion Hub
-        0: rightRear (guess)
-        1: rightFront
+        0: rightRear (guess), right encoder
+        1: rightFront, front encoder
         2: intakeMotor
         3: tranferMotor
 
