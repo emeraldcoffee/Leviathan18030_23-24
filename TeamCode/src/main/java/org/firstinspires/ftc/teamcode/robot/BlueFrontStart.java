@@ -100,9 +100,7 @@ public class BlueFrontStart extends LinearOpMode {
                     }
                     else {
                         // do the same thing for center but just move forward, drop, then return
-                        dt.followTrajectorySequence(front);
                         RobotMethods.outtakePlace(hwMap);
-                        dt.followTrajectorySequence(back);
                     }
                 })
                 // places down pixel where team prop is

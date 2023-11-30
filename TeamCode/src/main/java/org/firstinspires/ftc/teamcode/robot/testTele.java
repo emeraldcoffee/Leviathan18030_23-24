@@ -9,26 +9,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
-import kotlin.jvm.Synchronized;
 
 
 @TeleOp()
@@ -136,7 +129,7 @@ public class testTele extends LinearOpMode {
         Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
 
         //Set starting positions
-        robot.dropServo.setPosition(RobotConstants.dropClosed);
+        //robot.dropServo.setPosition(RobotConstants.dropClosed);
 
 
 
@@ -247,14 +240,14 @@ public class testTele extends LinearOpMode {
             switch (drop) {
                 case CLOSED:
                     if (gamepad2.left_bumper) {
-                        robot.dropServo.setPosition(RobotConstants.dropOpen);
+                        //robot.dropServo.setPosition(RobotConstants.dropOpen);
                         dropTimer.reset();
                         drop = Drop.OPEN;
                     }
                     break;
                 case OPEN:
                     if (dropTimer.seconds() > RobotConstants.dropTime) {
-                        robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        //robot.dropServo.setPosition(RobotConstants.dropClosed);
                         drop = Drop.RESET;
                     }
                     break;
@@ -342,7 +335,7 @@ public class testTele extends LinearOpMode {
 
             slideI += distRemain * slidePIDVals.i;
 
-            robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
+            robot.slideMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
 
             if (gamepad2.dpad_down) {
@@ -363,7 +356,7 @@ public class testTele extends LinearOpMode {
             //Updating for roadrunner
             driveTrain.update();
         }
-        robot.liftMotor.setPower(0.0);
+        robot.slideMotor.setPower(0.0);
 
     }
 
