@@ -382,7 +382,7 @@ public class testTele extends LinearOpMode {
 
             slideI += distRemain * slidePIDVals.i;
 
-            robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
+            robot.slideMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
 
             //i2c code is at end of loop to give threads time to finish
@@ -511,7 +511,7 @@ public class testTele extends LinearOpMode {
             //Updating for roadrunner
             driveTrain.update();
         }
-        robot.liftMotor.setPower(0.0);
+        robot.slideMotor.setPower(0.0);
 
     }
 
