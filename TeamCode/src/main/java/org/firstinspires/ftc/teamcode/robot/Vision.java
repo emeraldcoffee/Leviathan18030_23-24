@@ -7,46 +7,46 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
+import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp (name = "CameraTest", group = "testing")
 public class Vision extends LinearOpMode {
-    OpenCvCamera webcam;
-    Camera3BoxDetection Camera3BoxDetection;
-    HardwareMap hw;
-
+    String pos = "";
     @Override
     public void runOpMode() throws InterruptedException {
 
-        HwMap robot = new HwMap();
-        robot.init(hardwareMap);
-        Camera3BoxDetection = new Camera3BoxDetection();
+        //SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
+        ColorMask colorMaskPipeline = new ColorMask();
 
-        robot.webcam.setPipeline(Camera3BoxDetection);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "camera");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-
-        robot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        OpenCvCamera webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
-            @Override
+
             public void onOpened()
             {
-                robot.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                colorMaskPipeline.setAlliance("Blue");
+                webcam.setPipeline(colorMaskPipeline);
+                pos = colorMaskPipeline.getPos();
+                telemetry.addData("Position: ", pos);
+                System.out.println("Position: " + pos);
+
+                webcam.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {}
+            public void onError(int errorCode) {
+                telemetry.addData("Error: ", errorCode);
+            }
         });
 
         waitForStart();
 
-        while (opModeIsActive() && !isStopRequested()) {
-
+        while (isStarted() && !isStopRequested()) {
+            telemetry.addData("Position: ", pos);
         }
     }
 }

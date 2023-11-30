@@ -2,13 +2,16 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -16,12 +19,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous
 public class BlueFrontStart extends LinearOpMode {
 
+    String pos = "";
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive dt = new SampleMecanumDrive(hardwareMap);
         HwMap hwMap = new HwMap();
         ColorMask colorMaskPipeline = new ColorMask();
+        ElapsedTime timer = new ElapsedTime();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         hwMap.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
@@ -30,7 +36,9 @@ public class BlueFrontStart extends LinearOpMode {
 
             public void onOpened()
             {
+                colorMaskPipeline.setAlliance("Blue");
                 hwMap.webcam.setPipeline(colorMaskPipeline);
+                pos = colorMaskPipeline.getPos();
 
                 hwMap.webcam.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
             }
@@ -51,20 +59,48 @@ public class BlueFrontStart extends LinearOpMode {
 
         // in front of trusses on blue
 
+        TrajectorySequence left = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .strafeLeft(30)
+                .build();
+
+        TrajectorySequence right = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .strafeRight(30)
+                .build();
+
+        TrajectorySequence front = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .forward(40)
+                .build();
+
+        TrajectorySequence back = dt.trajectorySequenceBuilder(new Pose2d(-35, 113, Math.toRadians(270)))
+                .back(40)
+                .build();
+
+
         dt.setPoseEstimate(bFStartPose);
         TrajectorySequence blueFront = dt.trajectorySequenceBuilder(bFStartPose)
                 .forward(50)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
-                    String pos = ColorMask.getPos();
+                    timer.reset();
                     if (pos.equals("left")) {
-
+                        // for a certain amount of time or for motor encoders, strafe to the left and then drop, then return.
+                        //dt.followTrajectorySequence(left);
+                        dt.turn(Math.toRadians(90));
+                        RobotMethods.outtakePlace(hwMap);
+                        dt.turn(Math.toRadians(270));
+                        //dt.followTrajectorySequence(right);
                     }
                     else if (pos.equals("right")) {
-
+                        // do the same thing for right
+                        //dt.followTrajectorySequence(right);
+                        dt.turn(270);
+                        RobotMethods.outtakePlace(hwMap);
+                        dt.turn(90);
+                        //dt.followTrajectorySequence(left);
                     }
                     else {
-
+                        // do the same thing for center but just move forward, drop, then return
+                        RobotMethods.outtakePlace(hwMap);
                     }
                 })
                 // places down pixel where team prop is
@@ -103,5 +139,9 @@ public class BlueFrontStart extends LinearOpMode {
         if (!isStopRequested() && isStarted()) {
            dt.followTrajectorySequence(blueFront);
         }
+    }
+
+    public void leftDrop() {
+
     }
 }

@@ -64,7 +64,7 @@ public class slideTuner extends LinearOpMode {
 
             //robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
         }
-        robot.liftMotor.setPower(0);
+        robot.slideMotor.setPower(0);
 
 
     }

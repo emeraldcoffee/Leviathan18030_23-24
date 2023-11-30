@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,31 +33,23 @@ public class HwMap {
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
 
     /*
-        front is towards the intake, back is towards the outtake
-        horizontal directions are from the back of the robot
+        hi celina :)
+        Control Hub
+        0: slideMotor, left encoder
+        1: climbMotor
+        2: leftFront
+        3: leftRear
 
-        control hub
-        motor port 0:
-            encoder port 0: liftEncoder
-        motor port 1: liftMotor
-            encoder port 1: leftEncoder
-        motor port 2: backLeft
-            encoder port 2:
-        motor port 3: frontLeft
-            encoder port 3: centEncoder
 
-        expansion hub
-        motor port 0: frontRight
-            encoder port 0:
-        motor port 1: backRight
-            encoder port 1:
-        motor port 2:
-            encoder port 2:
-        motor port 3:
-            encoder port 3: rightEncoder
+        Expansion Hub
+        0: rightRear (guess), right encoder
+        1: rightFront, front encoder
+        2: intakeMotor
+        3: tranferMotor
+
      */
 
-    public DcMotorEx liftMotor, climbMotor, intakeMotor, transferMotor;
+    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
     public Servo dropServo;
 
@@ -77,11 +68,11 @@ public class HwMap {
         //Setting up camera
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
 //        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
-//        webcamR = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "cameraR"), cameraMonitorViewId);
+        //webcamR = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "cameraR"), cameraMonitorViewId);
         frontCamera = hwMap.get(WebcamName.class, "camera");
 
         //Mapping encoder
-        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftMotor"));
+        //liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftMotor"));
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
         outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
@@ -92,10 +83,10 @@ public class HwMap {
         climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
         intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
         transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
-        liftMotor = hwMap.get(DcMotorEx.class, "liftMotor");
+        slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
         //Creating list of motors to setup
-        motors = Arrays.asList(climbMotor, intakeMotor, liftMotor, transferMotor);
+        motors = Arrays.asList(climbMotor, intakeMotor, slideMotor, transferMotor);
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
@@ -110,7 +101,7 @@ public class HwMap {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         transferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         //Mapping Servos
-        dropServo = hwMap.servo.get("dropServo");
+        //dropServo = hwMap.servo.get("dropServo");
 
         //Optionally reverse them with: servo1.setDirection(Servo.Direction.REVERSE);
 
