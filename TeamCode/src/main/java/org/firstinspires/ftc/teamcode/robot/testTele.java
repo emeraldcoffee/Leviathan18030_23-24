@@ -9,26 +9,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.robocol.TelemetryMessage;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
-import kotlin.jvm.Synchronized;
 
 
 @TeleOp()
@@ -51,19 +44,58 @@ public class testTele extends LinearOpMode {
     //decides if robot uses field centric or robot centric driving
     DriveStates driveMode = DriveStates.GAMEPAD;
 
+    DriveStates driveStates = driveMode;
+
     enum Drop {
         OPEN,
         CLOSED,
         RESET
     }
+    Drop drop = Drop.CLOSED;
+
+    enum IntakeCount {
+        CLEAR,
+        PIXEL
+    }
+    IntakeCount intakeCount = IntakeCount.CLEAR;
+    short robotPixelCount = 0;
+
+    enum OuttakeCount {
+        CLEAR,
+        WAIT,
+        RECHECK,
+        BLOCKED
+    }
+    OuttakeCount outtakeCount = OuttakeCount.CLEAR;
+
+    short outtakePixelCount = 0;
 
     //Using AtomicReference bc variables are accessed by multiple threads
     //True when color black is not sensed in outtake
     AtomicReference<Boolean > outtakePixel = new AtomicReference<>(false);
-    short outtakePixelCount = 0;
     //True when distance sensor reads less than certain value
     AtomicReference<Boolean> intakePixel = new AtomicReference<>(false);
-    short intakePixelCount = 0;
+
+    enum SmartTransfer {
+        STOPPED,
+        MANUAL_SPIN_IN,
+        MANUAL_SPIN_OUT,
+        AUTO_SPIN
+    }
+    SmartTransfer smartTransfer = SmartTransfer.STOPPED;
+    boolean useSmartTransfer = false;
+
+    enum SmartIntake {
+        STOPPED,
+        MANUAL_SPIN_IN,
+        WAIT,
+        KICK_OUT,
+        WAIT_FOR_RELEASE,
+        MANUAL_SPIN_OUT
+    }
+    SmartIntake smartIntake = SmartIntake.STOPPED;
+    boolean useSmartIntake = false;
+
 
     enum Slide {
         BOTTOM,
@@ -71,7 +103,18 @@ public class testTele extends LinearOpMode {
         MIDDLE,
         TOP
     }
+    Slide slidePos = Slide.BOTTOM;
+
     int targetPos = RobotConstants.slideBottom;
+
+    final PIDCoefficients slidePIDVals = new PIDCoefficients(2.0 / 8192, .01 / 8192, .001 / 8192);
+    double slideI = 0.0;
+
+    //Used to store data from april tags
+    AprilTagDetection frontCamAprilTags = null;
+
+    //Used to tell if camera has detected april tags
+    boolean tagDetection;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,7 +128,7 @@ public class testTele extends LinearOpMode {
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
-        AprilTagProcessor frontAprilTagProcessor = null;
+        AprilTagProcessor frontAprilTagProcessor;
         VisionPortal frontVisionPortal;
         frontAprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
@@ -104,21 +147,15 @@ public class testTele extends LinearOpMode {
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
 
-        //Used to store data from april tags
-        AprilTagDetection frontCamAprilTags = null;
-
-        //Used to tell if camera has detected april tags
-        boolean tagDetection;
-
-        DriveStates driveStates = driveMode;
 
         ElapsedTime dropTimer = new ElapsedTime();
-        Drop drop = Drop.CLOSED;
 
-        ElapsedTime slideTimer = new ElapsedTime();
-        Slide slidePos = Slide.BOTTOM;
-        final PIDCoefficients slidePIDVals = new PIDCoefficients(2.0 / 8192, .01 / 8192, .001 / 8192);
-        double slideI = 0.0;
+        ElapsedTime outtakeTimer = new ElapsedTime();
+
+        ElapsedTime intakeTimer = new ElapsedTime();
+
+
+//        ElapsedTime slideTimer = new ElapsedTime();
 
         Runnable updateColorSensor = () -> outtakePixel.set(robot.outtakeColorSensor.red() > RobotConstants.outtakeValue);
 
@@ -150,7 +187,6 @@ public class testTele extends LinearOpMode {
         status.setValue("Running");
 
         while (opModeIsActive() && !isStopRequested()) {
-
             //Threads read i2c sensors and update variables async bc reading the sensors can be slow
             updateColorSensor.run();
             updateDistanceSenor.run();
@@ -248,6 +284,7 @@ public class testTele extends LinearOpMode {
                 case CLOSED:
                     if (gamepad2.left_bumper) {
                         robot.dropServo.setPosition(RobotConstants.dropOpen);
+                        robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
                     }
@@ -261,12 +298,15 @@ public class testTele extends LinearOpMode {
                 case RESET:
                     if (dropTimer.seconds() > RobotConstants.resetTime) {
                         drop = Drop.CLOSED;
+                        //Sets to clear so outtake will start checking for pixels again
+                        outtakeCount = OuttakeCount.CLEAR;
                     }
                     break;
                 default:
                     drop = Drop.RESET;
             }
 
+            //Code to change target position of slides
             if (abs(gamepad2.left_stick_y)>.1) {
                 targetPos -= 10*gamepad2.left_stick_y;
             } else {
@@ -345,16 +385,124 @@ public class testTele extends LinearOpMode {
             robot.liftMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
 
 
-            if (gamepad2.dpad_down) {
-                robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
-            } else {
-                robot.intakeMotor.setPower(0);
+            //i2c code is at end of loop to give threads time to finish
+            //Adds to the robotPixelCount when pixel is detected
+            switch (intakeCount) {
+                case CLEAR:
+                    if (intakePixel.get()) {
+                        robotPixelCount += 1;
+                        intakeCount = IntakeCount.PIXEL;
+                    }
+                    break;
+                case PIXEL:
+                    if (!outtakePixel.get()) {
+                        intakeCount = IntakeCount.CLEAR;
+                    }
+                    break;
             }
 
-            if (gamepad2.dpad_right) {
-                robot.transferMotor.setPower(RobotConstants.transferSpeed);
-            } else {
-                robot.transferMotor.setPower(0);
+            //Sets outtakePixelCount to 1 if pixel is temporarily detected and 2 if pixel remains
+            switch (outtakeCount) {
+                case CLEAR:
+                    if (outtakePixel.get()) {
+                        outtakePixelCount = 1;
+                        outtakeTimer.reset();
+                        outtakeCount = OuttakeCount.WAIT;
+                    }
+                    break;
+                case WAIT:
+                    if (outtakeTimer.milliseconds()>RobotConstants.outtakeCountDelay) {
+                        outtakeCount = OuttakeCount.RECHECK;
+                    }
+                    break;
+                case RECHECK:
+                    if (outtakePixel.get()) {
+                        outtakePixelCount = 2;
+                        //Sets to blocked so switch doesn't keep looping, OuttakeCount is set back to clear in the drop switch statement when a pixel is dropped
+                        outtakeCount = OuttakeCount.BLOCKED;
+                    } else {
+                        outtakeCount = OuttakeCount.CLEAR;
+                    }
+                    break;
+            }
+
+            //Automatically runs the transfer if pixels are in the robot but not in the outtake
+            switch (smartTransfer) {
+                case STOPPED:
+                    if (gamepad2.dpad_right) {
+                        robot.transferMotor.setPower(RobotConstants.transferSpeed);
+                        smartTransfer = SmartTransfer.MANUAL_SPIN_IN;
+                    } else if (gamepad2.dpad_left) {
+                        robot.transferMotor.setPower(-RobotConstants.transferSpeed);
+                        smartTransfer = SmartTransfer.MANUAL_SPIN_OUT;
+                    } else if (!(outtakePixelCount==2) && outtakePixelCount<robotPixelCount && useSmartTransfer) {
+                        robot.transferMotor.setPower(RobotConstants.transferSpeed);
+                        smartTransfer = SmartTransfer.AUTO_SPIN;
+                    }
+                    break;
+                case MANUAL_SPIN_IN:
+                    if (!gamepad2.dpad_right) {
+                        robot.transferMotor.setPower(0);
+                        smartTransfer = SmartTransfer.STOPPED;
+                    }
+                    break;
+                case MANUAL_SPIN_OUT:
+                    if (!gamepad2.dpad_left) {
+                        robot.transferMotor.setPower(0);
+                        smartTransfer = SmartTransfer.STOPPED;
+                    }
+                    break;
+                case AUTO_SPIN:
+                    if (outtakePixelCount==2 || outtakePixelCount>=robotPixelCount && !gamepad2.dpad_right && !gamepad2.dpad_left) {
+                        robot.transferMotor.setPower(0);
+                        smartTransfer = SmartTransfer.STOPPED;
+                    }
+                    break;
+            }
+
+            //Temporarily reverses intake shortly after robot detects that it has 2 pixels,
+            switch (smartIntake) {
+                case STOPPED:
+                    if(gamepad2.dpad_down) {
+                        robot.transferMotor.setPower(RobotConstants.intakeSpeed);
+                        smartIntake = SmartIntake.MANUAL_SPIN_IN;
+                    } else if (gamepad2.dpad_up) {
+                        robot.transferMotor.setPower(-RobotConstants.intakeSpeed);
+                        smartIntake = SmartIntake.MANUAL_SPIN_OUT;
+                    }
+                    break;
+                case MANUAL_SPIN_IN:
+                    if (!gamepad2.dpad_down) {
+                        robot.transferMotor.setPower(0);
+                        smartIntake = SmartIntake.STOPPED;
+                    } else if (robotPixelCount>=2 && useSmartIntake) {
+                        intakeTimer.reset();
+                        smartIntake = SmartIntake.WAIT;
+                    }
+                        break;
+                case WAIT:
+                    if (intakeTimer.milliseconds()>RobotConstants.intakeReverseDelay) {
+                        robot.transferMotor.setPower(-RobotConstants.intakeSpeed);
+                        intakeTimer.reset();
+                        smartIntake = SmartIntake.KICK_OUT;
+                    }
+                    break;
+                case KICK_OUT:
+                    if (intakeTimer.milliseconds()>RobotConstants.intakeReverseTime) {
+                        robot.transferMotor.setPower(0);
+                        //Uses wait for release so that robot wont start in-taking until the button is released and unpressed; otherwise robot will keep reversing until the button is released
+                        smartIntake = SmartIntake.WAIT_FOR_RELEASE;
+                    }
+                    break;
+                case WAIT_FOR_RELEASE:
+                    if (!gamepad2.dpad_down) {
+                        smartIntake = SmartIntake.STOPPED;
+                    }
+                case MANUAL_SPIN_OUT:
+                    if (!gamepad2.dpad_up) {
+                        robot.transferMotor.setPower(0);
+                        smartIntake = SmartIntake.STOPPED;
+                    }
             }
 
             //Updating telemetry

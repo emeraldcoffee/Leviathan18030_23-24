@@ -5,8 +5,6 @@ public class RobotConstants {
 
     //Whole # variables
     public static final int
-        intakeValue          = 3,
-        outtakeValue     = 50,
         slideBottom         = (int)(8192 * .1),
         slideLow            = 8192 * 2,
         slideMiddle         = 8192 * 4,
@@ -16,6 +14,7 @@ public class RobotConstants {
 
     //Double variables
     public static final double
+
     //Drivetrain variables
         speedMultiplier = .6,
         maxVelo         = 1,
@@ -38,8 +37,13 @@ public class RobotConstants {
 
         transferSpeed = 1,
         intakeSpeed     = .6,
-        climbSpeed   = .6;
-
+        intakeReverseDelay = 300,
+        intakeReverseTime = 200,
+        climbSpeed   = .6,
+    //Pixel tracking variables
+        intakeValue          = 3,
+        outtakeValue     = 50,
+        outtakeCountDelay = 200;
 
 
 }
