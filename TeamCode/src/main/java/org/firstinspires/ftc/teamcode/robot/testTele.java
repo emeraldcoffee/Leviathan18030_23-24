@@ -173,7 +173,7 @@ public class testTele extends LinearOpMode {
         Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
 
         //Set starting positions
-        robot.dropServo.setPosition(RobotConstants.dropClosed);
+        //robot.dropServo.setPosition(RobotConstants.dropClosed);
 
 
 
@@ -283,7 +283,7 @@ public class testTele extends LinearOpMode {
             switch (drop) {
                 case CLOSED:
                     if (gamepad2.left_bumper) {
-                        robot.dropServo.setPosition(RobotConstants.dropOpen);
+                        //robot.dropServo.setPosition(RobotConstants.dropOpen);
                         robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
@@ -291,7 +291,7 @@ public class testTele extends LinearOpMode {
                     break;
                 case OPEN:
                     if (dropTimer.seconds() > RobotConstants.dropTime) {
-                        robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        //robot.dropServo.setPosition(RobotConstants.dropClosed);
                         drop = Drop.RESET;
                     }
                     break;
@@ -307,8 +307,8 @@ public class testTele extends LinearOpMode {
             }
 
             //Code to change target position of slides
-            if (abs(gamepad2.left_stick_y)>.1) {
-                targetPos -= 10*gamepad2.left_stick_y;
+            /*if (abs(gamepad2.left_stick_y)>.1) {
+                targetPos -= 10 * gamepad2.left_stick_y;
             } else {
                 switch (slidePos) {
                     case BOTTOM:
@@ -382,7 +382,7 @@ public class testTele extends LinearOpMode {
 
             slideI += distRemain * slidePIDVals.i;
 
-            robot.slideMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));
+            robot.slideMotor.setPower((distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d));*/
 
 
             //i2c code is at end of loop to give threads time to finish
