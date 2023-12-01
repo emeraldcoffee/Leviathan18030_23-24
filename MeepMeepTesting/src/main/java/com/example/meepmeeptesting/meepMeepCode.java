@@ -13,14 +13,14 @@ public class meepMeepCode {
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13.75)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
                 // in front of trusses on blue alliance
                 .followTrajectorySequence(drive ->
-                    (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(90)))
+                    (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
 
-                    .back(19)
+                    .forward(28)
                     // uses Vision to detect where the team prop is
                     .addDisplacementMarker(() -> {
 
@@ -31,17 +31,16 @@ public class meepMeepCode {
                         // turn depending on where the team prop is
                         //RobotMethods.outtakePlace(hwMap);
                     })
-                    .back(8)
                     .turn(Math.toRadians(90))
 
-                    .back(80)
+                    .forward(84)
                     // places down pixel on backdrop
                     .addDisplacementMarker(() -> {
                         //RobotMethods.slideExtend(hwMap, 5.0);
                     })
 
                     // cycling
-                    .waitSeconds(1)
+                    /*.waitSeconds(1)
                     .forward(100)
                     // picks up pixels
                     .addDisplacementMarker(() -> {
@@ -52,7 +51,7 @@ public class meepMeepCode {
                     // place down pixel on backdrop
                     .addDisplacementMarker(() -> {
                         //RobotMethods.slideExtend(hwMap, 5.0);
-                    })
+                    })*/
                     .build()
                     )
                 );

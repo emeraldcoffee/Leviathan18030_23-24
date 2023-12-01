@@ -78,7 +78,7 @@ public class BlueFrontStart extends LinearOpMode {
 
         dt.setPoseEstimate(bFStartPose);
         TrajectorySequence blueFront = dt.trajectorySequenceBuilder(bFStartPose)
-                .forward(50)
+                .forward(28)
                 // uses Vision to detect where the team prop is
                 .addDisplacementMarker(() -> {
                     timer.reset();
@@ -86,7 +86,8 @@ public class BlueFrontStart extends LinearOpMode {
                         // for a certain amount of time or for motor encoders, strafe to the left and then drop, then return.
                         //dt.followTrajectorySequence(left);
                         dt.turn(Math.toRadians(90));
-                        RobotMethods.outtakePlace(hwMap);
+                        // hwMap.autoServo.setPosition(RobotConstants.downPos);
+                        // RobotMethods.outtakePlace(hwMap);
                         dt.turn(Math.toRadians(270));
                         //dt.followTrajectorySequence(right);
                     }
@@ -110,7 +111,7 @@ public class BlueFrontStart extends LinearOpMode {
                 })
                 .turn(Math.toRadians(90))
                 //.splineTo(new Vector2d(-12, 35), Math.toRadians(0))
-                .forward(90)
+                .forward(85)
                 // places down pixel on backdrop
                 .addDisplacementMarker(() -> {
                     //RobotMethods.slideExtend(hwMap, 50);

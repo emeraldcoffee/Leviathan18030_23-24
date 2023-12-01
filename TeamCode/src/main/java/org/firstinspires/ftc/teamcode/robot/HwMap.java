@@ -38,12 +38,12 @@ public class HwMap {
         0: slideMotor, left encoder
         1: climbMotor
         2: leftFront
-        3: leftRear
+        3: leftRight
 
 
         Expansion Hub
-        0: rightRear (guess), right encoder
-        1: rightFront, front encoder
+        0: rightFront (guess), right encoder
+        1: rightRear, front encoder
         2: intakeMotor
         3: tranferMotor
 
