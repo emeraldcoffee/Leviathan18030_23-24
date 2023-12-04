@@ -5,7 +5,7 @@ public class RobotConstants {
 
     //Whole # variables
     public static final int
-        slideBottom         = (int)(8192 * .1),
+        slideBottom         = (int)(8192 * 0),
         slideLow            = 8192 * 2,
         slideMiddle         = 8192 * 4,
         slideTop            = 8192 * 6;
@@ -14,6 +14,13 @@ public class RobotConstants {
 
     //Double variables
     public static final double
+
+    //Left + right servo limits
+        leftOut = .8,
+        leftIn = .6,
+        rightOut = .31,
+        rightIn = .6,
+
 
     //Drivetrain variables
         speedMultiplier = .6,

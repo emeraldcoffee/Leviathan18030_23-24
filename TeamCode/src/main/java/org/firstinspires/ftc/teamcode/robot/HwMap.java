@@ -51,7 +51,7 @@ public class HwMap {
 
     public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
-    public Servo dropServo;
+    public Servo dropServo, leftServo, rightServo;
 
     //Camera name
     public OpenCvCamera webcam, webcamR;
@@ -72,7 +72,7 @@ public class HwMap {
         frontCamera = hwMap.get(WebcamName.class, "camera");
 
         //Mapping encoder
-        //liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "liftMotor"));
+        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "climbMotor"));
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
         outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
@@ -97,11 +97,16 @@ public class HwMap {
         }
 
         //Optionally reverse them with: motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         transferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //Mapping Servos
-        //dropServo = hwMap.servo.get("dropServo");
+        dropServo = hwMap.servo.get("dropServo");
+        leftServo = hwMap.servo.get("leftServo");
+        rightServo = hwMap.servo.get("rightServo");
+
+
 
         //Optionally reverse them with: servo1.setDirection(Servo.Direction.REVERSE);
 

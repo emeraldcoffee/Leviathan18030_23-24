@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.oldCode;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+@Disabled
 @Autonomous
 public class aprilTagDetection extends OpMode {
     //Creates aprilTagProcessor of type aprilTagProcessor
@@ -19,6 +21,7 @@ public class aprilTagDetection extends OpMode {
     private AprilTagProcessor aprilTagProcessor;
     //VisionPortal is provided by the FTC SDK and is an easy way to handle camera feed
     private VisionPortal visionPortal;
+
 
     @Override
     public void init() {

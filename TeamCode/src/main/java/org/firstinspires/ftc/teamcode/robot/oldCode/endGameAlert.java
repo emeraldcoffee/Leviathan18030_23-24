@@ -1,11 +1,12 @@
 //end game alert sends three rumbles to the driver to alert them about endgame
 //resource: LearnJavaForFTC page 107
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.oldCode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-
+@Disabled
 @TeleOp
 public class endGameAlert extends OpMode{
     boolean inEndGame;

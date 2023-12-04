@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.oldCode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.PoseStorage;
 
 /**
  * This opmode demonstrates how one would implement field centric control using
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * <p>
  * See lines 42-57.
  */
+@Disabled
 @TeleOp(group = "advanced")
 public class FieldCentricSample extends LinearOpMode {
     @Override

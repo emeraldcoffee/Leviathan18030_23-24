@@ -1,12 +1,17 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot.oldCode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.robot.HwMap;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 
+@Disabled
 @Config
 @Autonomous
 public class slideTuner extends LinearOpMode {
