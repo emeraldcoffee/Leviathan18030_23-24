@@ -16,30 +16,20 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(0))))
-                                .lineTo(new Vector2d(12.2, 62))
-                                .splineToSplineHeading(new Pose2d(14, 35, Math.toRadians(270)), Math.toRadians(270))
-                                .lineTo(new Vector2d(11, 35))
-                                .addDisplacementMarker(() -> {
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90))))
+                                .lineTo(new Vector2d(12, -60))
+                                .splineToSplineHeading(new Pose2d(23, -40), Math.toRadians(0))
+                                .addDisplacementMarker(() -> {})
+                                .lineTo(new Vector2d(24, -40))
+                                .splineToConstantHeading(new Vector2d(45, -45), Math.toRadians(0))
+                                .addSpatialMarker(new Vector2d(38, -45), () -> {})
+                                .lineTo(new Vector2d(50, -45))
+                                .addDisplacementMarker(() -> {})
+                                .lineTo(new Vector2d(40, -45))
 
-                                })
-                                .lineTo(new Vector2d(15, 35))
-                                .splineToSplineHeading(new Pose2d(45, 30, Math.toRadians(0)), Math.toRadians(0))
-                                .addSpatialMarker(new Vector2d(25, 34), () -> {
-
-                                })
-                                .lineTo(new Vector2d(50, 30))
-                                .addDisplacementMarker(() -> {
-
-                                })
-                                .lineTo(new Vector2d(45, 30))
-
-                                .lineTo(new Vector2d(43, 30))
-                                .addDisplacementMarker(() -> {
-
-                                })
-                                .lineTo(new Vector2d(43, 60))
-
+                                .addDisplacementMarker(() -> {})
+                                .lineTo(new Vector2d(40, -60))
+                                .lineTo(new Vector2d(43, -60))
 
                                 .build());
 

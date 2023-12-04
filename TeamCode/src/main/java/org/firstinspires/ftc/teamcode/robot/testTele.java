@@ -42,7 +42,7 @@ public class testTele extends LinearOpMode {
     double targetX, targetY;
 
     //decides if robot uses field centric or robot centric driving
-    DriveStates driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
+    DriveStates driveMode = DriveStates.GAMEPAD;
 
     DriveStates driveStates = driveMode;
 
@@ -52,6 +52,15 @@ public class testTele extends LinearOpMode {
         RESET
     }
     Drop drop = Drop.CLOSED;
+
+    enum Climb {
+        HOLD,
+        RELEASE,
+        WAIT,
+        STOPPED,
+        SPIN_IN
+    }
+    Climb climb = Climb.HOLD;
 
     enum Spin {
         STOPPED,
@@ -116,7 +125,7 @@ public class testTele extends LinearOpMode {
 
     int targetPos = RobotConstants.slideBottom;
 
-    final PIDCoefficients slidePIDVals = new PIDCoefficients(5.0 / 8192, .03 / 8192, .07 / 8192);
+
     double slideI = 0.0;
 
     //Used to store data from april tags
@@ -159,9 +168,9 @@ public class testTele extends LinearOpMode {
 
         ElapsedTime dropTimer = new ElapsedTime();
 
-        ElapsedTime outtakeTimer = new ElapsedTime();
+        ElapsedTime climbTimer = new ElapsedTime();
 
-        ElapsedTime intakeTimer = new ElapsedTime();
+        ElapsedTime slideTimer = new ElapsedTime();
 
         ElapsedTime loopTimer = new ElapsedTime();
 
@@ -174,6 +183,8 @@ public class testTele extends LinearOpMode {
 
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
+
+        Telemetry.Item driveState = telemetry.addData("Drive Mode:", toString(),driveMode.name() + " Drive State: Drive");
 
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
@@ -229,6 +240,14 @@ public class testTele extends LinearOpMode {
             //Front triggers being used to speedup or slowdown robots driving
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
 
+            if (gamepad1.back) {
+                driveStates = DriveStates.GAMEPAD;
+                driveMode = DriveStates.GAMEPAD;
+            } else if (gamepad1.start) {
+                driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
+                driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+            }
+
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
             switch (driveStates) {
@@ -241,6 +260,7 @@ public class testTele extends LinearOpMode {
 
                     //Aligns robot to backboard if april tags have a detection
                     if (gamepad1.left_bumper && tagDetection) {
+                        driveState.setValue(driveMode.name() + " Drive State: Re-localize");
                         driveStates = DriveStates.RELOCALIZE;
                     }
                     break;
@@ -253,6 +273,7 @@ public class testTele extends LinearOpMode {
 
                     //Aligns robot to backboard if april tags have a detection
                     if (gamepad1.left_bumper && tagDetection) {
+                        driveState.setValue(driveMode.name() + " Drive State: Re-localize");
                         driveStates = DriveStates.RELOCALIZE;
                     }
                     break;
@@ -269,28 +290,33 @@ public class testTele extends LinearOpMode {
                     } else {
                         targetY = RobotConstants.backDropRightY;
                     }
+                    driveState.setValue(driveMode.name() + " Drive State: Align");
                     driveStates = DriveStates.ALIGN;
                     break;
                 case ALIGN:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
+                        driveState.setValue("Drive Mode:", driveMode.name() + " Drive State: Drive");
                         driveStates = driveMode;
                     }
 
                     RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
                     if (abs(targetX-driveTrain.getPoseEstimate().getX())<.3 && abs(targetY-driveTrain.getPoseEstimate().getY())<.3) {
+                        driveState.setValue(driveMode.name() + " Drive State: Hold");
                         driveStates = DriveStates.HOLD;
                     }
                     break;
                 case HOLD:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
+                        driveState.setValue(driveMode.name() + " Drive State: Drive");
                         driveStates = driveMode;
                     }
 
                     RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
                     break;
                 default:
+                    driveState.setValue(driveMode.name() + " Drive State: Drive");
                     driveStates = driveMode;
             }
 
@@ -325,7 +351,7 @@ public class testTele extends LinearOpMode {
 
             //Code to change target position of slides
             if (abs(gamepad2.left_stick_y)>.1) {
-                targetPos -= 10 * gamepad2.left_stick_y;
+                targetPos -= .8 * gamepad2.left_stick_y*slideTimer.milliseconds();
             } else {
                 switch (slidePos) {
                     case BOTTOM:
@@ -391,19 +417,49 @@ public class testTele extends LinearOpMode {
                         break;
                 }
             }
-
+            slideTimer.reset();
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
 
             double distRemain = targetPos - slideCurPos;
 
-            slideI += distRemain * slidePIDVals.i;
+            slideI += distRemain * RobotConstants.slidePIDVals.i;
 
-            double slidePower = (distRemain * slidePIDVals.p) + slideI + (slideVelo * slidePIDVals.d);
+            double slidePower = (distRemain * RobotConstants.slidePIDVals.p) + slideI + (slideVelo * RobotConstants.slidePIDVals.d);
 
             robot.slideMotor.setPower(slidePower);
 
             slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetPos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
+
+            switch (climb) {
+                case HOLD:
+                    if (gamepad1.a) {
+                        robot.climbMotor.setPower(RobotConstants.climbReleaseSpeed);
+                        climbTimer.reset();
+                        climb = Climb.RELEASE;
+                    }
+                    break;
+                case RELEASE:
+                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
+                        robot.climbMotor.setPower(0);
+                        climb = Climb.WAIT;
+                    }
+                case WAIT:
+                    if (!gamepad1.a) {
+                        climb = Climb.STOPPED;
+                    }
+                case STOPPED:
+                    if (gamepad1.a) {
+                        robot.climbMotor.setPower(RobotConstants.climbSpeed);
+                        climb = Climb.SPIN_IN;
+                    }
+                case SPIN_IN:
+                    if (!gamepad1.a) {
+                        robot.climbMotor.setPower(0);
+                        climb = Climb.STOPPED;
+                    }
+            }
+
 
             switch (intake) {
                 case STOPPED:

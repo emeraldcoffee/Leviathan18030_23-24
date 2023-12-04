@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+
 //Use this file to set up values that will be used by the robot like servo positions
 public class RobotConstants {
 
@@ -44,13 +46,17 @@ public class RobotConstants {
 
         transferSpeed = 1,
         intakeSpeed     = .6,
+
+        climbReleaseDelay = 100,
         intakeReverseDelay = 300,
         intakeReverseTime = 200,
-        climbSpeed   = .6,
+        climbSpeed   = 1,
+        climbReleaseSpeed = .6,
     //Pixel tracking variables
         intakeValue          = 3,
         outtakeValue     = 50,
         outtakeCountDelay = 200;
 
+    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(5.0 / 8192, .03 / 8192, .07 / 8192);
 
 }
