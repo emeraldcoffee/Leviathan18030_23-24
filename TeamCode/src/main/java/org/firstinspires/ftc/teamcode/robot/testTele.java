@@ -444,20 +444,24 @@ public class testTele extends LinearOpMode {
                         robot.climbMotor.setPower(0);
                         climb = Climb.WAIT;
                     }
+                    break;
                 case WAIT:
                     if (!gamepad1.a) {
                         climb = Climb.STOPPED;
                     }
+                    break;
                 case STOPPED:
                     if (gamepad1.a) {
                         robot.climbMotor.setPower(RobotConstants.climbSpeed);
                         climb = Climb.SPIN_IN;
                     }
+                    break;
                 case SPIN_IN:
                     if (!gamepad1.a) {
                         robot.climbMotor.setPower(0);
                         climb = Climb.STOPPED;
                     }
+                    break;
             }
 
 
