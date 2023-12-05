@@ -18,8 +18,8 @@ public class RobotConstants {
     public static final double
 
     //Left + right servo limits
-        leftOut = .8,
-        leftIn = .6,
+        leftOut = .81,
+        leftIn = .62,
         rightOut = .31,
         rightIn = .6,
 
@@ -39,10 +39,10 @@ public class RobotConstants {
         backDropRightY = -35.2,
 
     //Outtake variables
-        dropTime        = .12,
-        resetTime       = .27,
-        dropOpen        = .7,
-        dropClosed      = .5,
+        dropTime        = .09,
+        resetTime       = .22,
+        dropOpen        = .73,
+        dropClosed      = .59,
 
         transferSpeed = 1,
         intakeSpeed     = .6,

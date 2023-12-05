@@ -198,7 +198,7 @@ public class testTele extends LinearOpMode {
 
         Telemetry.Item loopTime = telemetry.addData("Loop Time", "0ms");
         //Set starting positions
-        //robot.dropServo.setPosition(RobotConstants.dropClosed);
+        robot.dropServo.setPosition(RobotConstants.dropClosed);
 
 
 
@@ -326,7 +326,7 @@ public class testTele extends LinearOpMode {
             switch (drop) {
                 case CLOSED:
                     if (gamepad2.left_bumper) {
-                        //robot.dropServo.setPosition(RobotConstants.dropOpen);
+                        robot.dropServo.setPosition(RobotConstants.dropOpen);
 //                        robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
@@ -334,7 +334,7 @@ public class testTele extends LinearOpMode {
                     break;
                 case OPEN:
                     if (dropTimer.seconds() > RobotConstants.dropTime) {
-                        //robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        robot.dropServo.setPosition(RobotConstants.dropClosed);
                         drop = Drop.RESET;
                     }
                     break;

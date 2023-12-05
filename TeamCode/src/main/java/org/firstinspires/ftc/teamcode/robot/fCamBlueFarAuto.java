@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous(name = "fCam Blue Close Auto")
-public class fCamBlueCloseAuto extends LinearOpMode {
+public class fCamBlueFarAuto extends LinearOpMode {
 
     enum AutoPath {
         LEFT,
@@ -26,13 +26,13 @@ public class fCamBlueCloseAuto extends LinearOpMode {
     SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
     HwMap robot = new HwMap();
 
-    TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
-            .lineTo(new Vector2d(12, 61))
-            .lineTo(new Vector2d(13, 59))
-            .splineToSplineHeading(new Pose2d(26, 37), Math.toRadians(270))
-            .addSpatialMarker(new Vector2d(26, 37), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+    TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+            .lineTo(new Vector2d(-35, 60))
+            .splineToSplineHeading(new Pose2d(-31, 34), Math.toRadians(0))
+            .splineToConstantHeading(new Vector2d(-21.5, 35), Math.toRadians(0))
+            .addSpatialMarker(new Vector2d(-21.6, 35), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
             .waitSeconds(.2)
-            .lineTo(new Vector2d(27, 37))
+            .lineTo(new Vector2d(30, 35))
             .splineToConstantHeading(new Vector2d(45, 43), Math.toRadians(0))
             .addSpatialMarker(new Vector2d(38, 39), () -> targetSlidePos = RobotConstants.slideLow)
             .lineTo(new Vector2d(54.5, 43))
@@ -45,12 +45,13 @@ public class fCamBlueCloseAuto extends LinearOpMode {
             .lineTo(new Vector2d(45, 60))
             .build();
 
-    TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
-            .lineTo(new Vector2d(12, 60))
-            .splineToSplineHeading(new Pose2d(18, 34), Math.toRadians(270))
-            .addSpatialMarker(new Vector2d(18, 34), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+    TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+            .lineTo(new Vector2d(-35, 60))
+            .splineToSplineHeading(new Pose2d(-31, 34), Math.toRadians(0))
+            .addSpatialMarker(new Vector2d(-31, 34), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
             .waitSeconds(.2)
-            .lineTo(new Vector2d(19, 34))
+            .splineToConstantHeading(new Vector2d(-25, 35), Math.toRadians(0))
+            .lineTo(new Vector2d(30, 35))
             .splineToConstantHeading(new Vector2d(45, 39), Math.toRadians(0))
             .addSpatialMarker(new Vector2d(38, 39), () -> targetSlidePos = RobotConstants.slideLow)
             .lineTo(new Vector2d(54.5, 39))
@@ -63,13 +64,15 @@ public class fCamBlueCloseAuto extends LinearOpMode {
             .lineTo(new Vector2d(45, 60))
             .build();
 
-    TrajectorySequence right = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
-            .lineTo(new Vector2d(12, 45))
-            .splineToConstantHeading(new Vector2d(10, 33), Math.toRadians(270))
-            .addSpatialMarker(new Vector2d(45, 29), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+    TrajectorySequence right = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
+            .lineTo(new Vector2d(-35, 60))
+            .splineToConstantHeading(new Vector2d(-37, 32), Math.toRadians(270))
+            .addSpatialMarker(new Vector2d(-37,32), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
             .waitSeconds(.2)
-            .lineTo(new Vector2d(20, 33))
-            .splineToSplineHeading(new Pose2d(45, 29, Math.toRadians(0)), Math.toRadians(0))
+            .lineTo(new Vector2d(-36, 33))
+            .splineToSplineHeading(new Pose2d(-28, 35, Math.toRadians(0)), Math.toRadians(0))
+            .lineTo(new Vector2d(30, 35))
+            .splineToConstantHeading(new Vector2d(45, 29), Math.toRadians(0))
             .addSpatialMarker(new Vector2d(38, 29), () -> targetSlidePos = RobotConstants.slideLow)
             .lineTo(new Vector2d(54.5, 29))
             .lineTo(new Vector2d(54.6, 29))
@@ -95,7 +98,7 @@ public class fCamBlueCloseAuto extends LinearOpMode {
 
         waitForStart();
 
-        driveTrain.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
+        driveTrain.setPoseEstimate(new Pose2d(-35, 63, Math.toRadians(270)));
 
         switch (autoPath) {
             case LEFT:
