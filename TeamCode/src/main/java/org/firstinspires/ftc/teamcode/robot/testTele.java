@@ -44,6 +44,8 @@ public class testTele extends LinearOpMode {
     //decides if robot uses field centric or robot centric driving
     DriveStates driveMode = DriveStates.GAMEPAD;
 
+    String driveModeName = "Robot-centric";
+
     DriveStates driveStates = driveMode;
 
     enum Drop {
@@ -184,7 +186,7 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
-        Telemetry.Item driveState = telemetry.addData("Drive Mode:", toString(),driveMode.name() + " Drive State: Drive");
+        Telemetry.Item driveState = telemetry.addData("Drive Mode", toString(),driveModeName + " Drive State: Drive");
 
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
@@ -240,12 +242,27 @@ public class testTele extends LinearOpMode {
             //Front triggers being used to speedup or slowdown robots driving
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
 
-            if (gamepad1.back) {
-                driveStates = DriveStates.GAMEPAD;
-                driveMode = DriveStates.GAMEPAD;
-            } else if (gamepad1.start) {
-                driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
-                driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+            switch (driveMode) {
+                case GAMEPAD:
+                    if (gamepad1.start) {
+                        driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
+                        driveModeName = "Field-centric";
+                        if (driveStates == DriveStates.GAMEPAD) {
+                            driveState.setValue(driveModeName + " Drive State: Drive");
+                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+                        }
+                    }
+                    break;
+                case GAMEPAD_FIELDCENTRIC:
+                    if (gamepad1.back) {
+                        driveMode = DriveStates.GAMEPAD;
+                        driveModeName = "Robot-centric";
+                        if (driveStates == DriveStates.GAMEPAD_FIELDCENTRIC) {
+                            driveState.setValue(driveModeName + " Drive State: Drive");
+                            driveStates = DriveStates.GAMEPAD;
+                        }
+                    }
+                    break;
             }
 
             //Calculating and applying the powers for mecanum wheels
@@ -260,7 +277,7 @@ public class testTele extends LinearOpMode {
 
                     //Aligns robot to backboard if april tags have a detection
                     if (gamepad1.left_bumper && tagDetection) {
-                        driveState.setValue(driveMode.name() + " Drive State: Re-localize");
+                        driveState.setValue(driveModeName + " Drive State: Re-localize");
                         driveStates = DriveStates.RELOCALIZE;
                     }
                     break;
@@ -273,7 +290,7 @@ public class testTele extends LinearOpMode {
 
                     //Aligns robot to backboard if april tags have a detection
                     if (gamepad1.left_bumper && tagDetection) {
-                        driveState.setValue(driveMode.name() + " Drive State: Re-localize");
+                        driveState.setValue(driveModeName + " Drive State: Re-localize");
                         driveStates = DriveStates.RELOCALIZE;
                     }
                     break;
@@ -290,33 +307,33 @@ public class testTele extends LinearOpMode {
                     } else {
                         targetY = RobotConstants.backDropRightY;
                     }
-                    driveState.setValue(driveMode.name() + " Drive State: Align");
+                    driveState.setValue(driveModeName + " Drive State: Align");
                     driveStates = DriveStates.ALIGN;
                     break;
                 case ALIGN:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
-                        driveState.setValue("Drive Mode:", driveMode.name() + " Drive State: Drive");
+                        driveState.setValue(driveModeName + " Drive State: Drive");
                         driveStates = driveMode;
                     }
 
                     RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
                     if (abs(targetX-driveTrain.getPoseEstimate().getX())<.3 && abs(targetY-driveTrain.getPoseEstimate().getY())<.3) {
-                        driveState.setValue(driveMode.name() + " Drive State: Hold");
+                        driveState.setValue(driveModeName + " Drive State: Hold");
                         driveStates = DriveStates.HOLD;
                     }
                     break;
                 case HOLD:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
-                        driveState.setValue(driveMode.name() + " Drive State: Drive");
+                        driveState.setValue(driveModeName + " Drive State: Drive");
                         driveStates = driveMode;
                     }
 
                     RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
                     break;
                 default:
-                    driveState.setValue(driveMode.name() + " Drive State: Drive");
+                    driveState.setValue(driveModeName + " Drive State: Drive");
                     driveStates = driveMode;
             }
 

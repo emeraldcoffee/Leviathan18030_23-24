@@ -76,8 +76,8 @@ public class ColorMask extends OpenCvPipeline {
         }
 
         else if (alliance.equals("Red")) {
-            Mat threshLow = new Mat();
-            Mat threshHigh = new Mat();
+//            Mat threshLow = new Mat();
+//            Mat threshHigh = new Mat();
             //how to get both aspects, low and high? if make 2 mats, how combine? see later.
             lowHSV = new Scalar(150, 30, 20);
             highHSV = new Scalar(180, 255, 255);
