@@ -16,30 +16,13 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270))))
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270))))
 
-//                                .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
-                                .lineTo(new Vector2d(-35, 60))
-                                .splineToSplineHeading(new Pose2d(-30, 37), Math.toRadians(0))
-                                .splineToConstantHeading(new Vector2d(-22.5, 40.5), Math.toRadians(0))
-//                                .addSpatialMarker(new Vector2d(-22.5, 38), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                                .waitSeconds(.2)
-                                .splineToConstantHeading(new Vector2d(-12, 40), Math.toRadians(0))
-                                //wait so that other team can run their auto
-                                .waitSeconds(2)
-                                .lineTo(new Vector2d(30, 40))
-                                .splineToConstantHeading(new Vector2d(45, 42), Math.toRadians(0))
-                                .addSpatialMarker(new Vector2d(35, 39), () -> {})
-//                                .addSpatialMarker(new Vector2d(38, 39), () -> targetSlidePos = RobotConstants.slideLow)
-                                .lineTo(new Vector2d(54.5, 42))
-                                .lineTo(new Vector2d(54.6, 42))
-//                                .addSpatialMarker(new Vector2d(54.6, 42), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                                .waitSeconds(.3)
-                                .lineTo(new Vector2d(40, 42))
-//                                .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                                .lineTo(new Vector2d(40, 10))
-                                .lineTo(new Vector2d(45, 10))
-
+                                .lineTo(new Vector2d(12, 60))
+                                .splineToSplineHeading(new Pose2d(15, 32), Math.toRadians(270))
+                                .addSpatialMarker(new Vector2d(15, 34), () -> {})
+//                                .addSpatialMarker(new Vector2d(15, 34), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                                .lineTo(new Vector2d(15,35))
                                 .build());
 
                 // in front of trusses on blue alliance

@@ -148,6 +148,8 @@ public class ColorMask extends OpenCvPipeline {
 
             Rect rect = Imgproc.boundingRect(largestContour);
             Imgproc.rectangle(input, rect, new Scalar(255,0, 0));
+//            Imgproc.rectangle(input, rect);
+
             xCoord = (int) (rect.x + (rect.width / 2));
             yCoord = (int) (rect.y + (rect.height / 2));
 
@@ -165,11 +167,11 @@ public class ColorMask extends OpenCvPipeline {
     }
 
     public String getPos() {
-        if ((xCoord > 0) && (xCoord <= 215)) {
+        if ((xCoord > 0) && (xCoord <= 250)) {
             //pos = teamElementPosition.LEFT;
             return "left";
         }
-        else if ((xCoord > 430) && (xCoord <= 640)) {
+        else if (xCoord <= 400) {
             //pos = teamElementPosition.CENTER;
             return "center";
         }

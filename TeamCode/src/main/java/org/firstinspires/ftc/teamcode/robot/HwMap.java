@@ -49,9 +49,9 @@ public class HwMap {
 
      */
 
-    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
+    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor, liftEncoderMotor;
     //Servo names
-    public Servo dropServo, leftServo, rightServo;
+    public Servo dropServo, leftServo, rightServo, droneServo;
 
     //Camera name
     public OpenCvCamera webcam, webcamR;
@@ -71,8 +71,12 @@ public class HwMap {
         //webcamR = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "cameraR"), cameraMonitorViewId);
         frontCamera = hwMap.get(WebcamName.class, "camera");
 
+
         //Mapping encoder
-        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "climbMotor"));
+        liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "slideMotor"));
+
+        //lift encoder was set to go to the climbMotor config/motor, i'm not sure which one is the correct wire and
+        // i'm lowkey scared of screwing it up, hope judging went well tho! have fun for the rest of today <3 -selena
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
         outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
@@ -84,6 +88,8 @@ public class HwMap {
         intakeMotor = hwMap.get(DcMotorEx.class, "intakeMotor");
         transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
+
+        //liftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Creating list of motors to setup
         motors = Arrays.asList(climbMotor, intakeMotor, slideMotor, transferMotor);
@@ -101,10 +107,19 @@ public class HwMap {
         transferMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         slideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        climbMotor.setTargetPosition(0);
+        climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        climbMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        climbMotor.setPower(1);
+
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //Mapping Servos
         dropServo = hwMap.servo.get("dropServo");
         leftServo = hwMap.servo.get("leftServo");
         rightServo = hwMap.servo.get("rightServo");
+        droneServo = hwMap.servo.get("droneServo");
 
 
 
