@@ -16,8 +16,7 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270))))
-
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90))))
 //                                .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
                                 .lineTo(new Vector2d(-35, -60))
                                 .splineToSplineHeading(new Pose2d(-45, -21, Math.toRadians(0)), Math.toRadians(100))
@@ -32,8 +31,9 @@ public class meepMeepCode {
 //                                .addSpatialMarker(new Vector2d(38, -36), () -> targetSlidePos = RobotConstants.slideAuto)
                                 .lineTo(new Vector2d(54.5, -32))
                                 .lineTo(new Vector2d(54.6, -32))
-                                .addSpatialMarker(new Vector2d(54.6, -32), () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
-                                .waitSeconds(.3)
+                                .addTemporalMarker(6.3+1, () -> {})
+//                                .addSpatialMarker(new Vector2d(54.6, -32), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                                .waitSeconds(.6)
                                 .lineTo(new Vector2d(40, -32))
 //                                .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
                                 .lineTo(new Vector2d(40, -10))
