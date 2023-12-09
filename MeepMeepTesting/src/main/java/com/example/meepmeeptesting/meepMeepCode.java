@@ -16,13 +16,19 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270))))
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90))))
 
-                                .lineTo(new Vector2d(12, 60))
-                                .splineToSplineHeading(new Pose2d(15, 32), Math.toRadians(270))
-                                .addSpatialMarker(new Vector2d(15, 34), () -> {})
-//                                .addSpatialMarker(new Vector2d(15, 34), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                                .lineTo(new Vector2d(15,35))
+//                                .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
+                                .lineTo(new Vector2d(-35, -60))
+                                .splineToSplineHeading(new Pose2d(-30, -37), Math.toRadians(0))
+                                .splineToConstantHeading(new Vector2d(-22.5, -40.5), Math.toRadians(0))
+                                .addSpatialMarker(new Vector2d(-22.5, -37), () -> {})
+//                                .addSpatialMarker(new Vector2d(-22.5, -38), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+                                .waitSeconds(.2)
+                                .splineToConstantHeading(new Vector2d(-12, -38), Math.toRadians(0))
+                                //wait so that other team can run their auto
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(30, -40))
                                 .build());
 
                 // in front of trusses on blue alliance

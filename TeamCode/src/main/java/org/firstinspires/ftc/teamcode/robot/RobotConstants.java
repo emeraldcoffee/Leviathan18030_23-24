@@ -8,7 +8,7 @@ public class RobotConstants {
     //Whole # variables
     public static final int
         slideBottom         = (int)(8192 * 0.01),
-        slideAuto = (int)(8192 * 2.2),
+        slideAuto = (int)(8192 * 2.1),
         slideLow            = (int)(8192 * 3),
         slideMiddle         = (int) (8192 * 4.2),
         slideTop            = (int)(8192 * 6);
@@ -43,9 +43,9 @@ public class RobotConstants {
 
     //Outtake variables
         dropTime        = .09,
-        resetTime       = .25,
-        dropOpen        = .73,
-        dropClosed      = .59,
+        resetTime       = .27,
+        dropOpen        = .71,
+        dropClosed      = .63,
 
         transferSpeed = 1,
         intakeSpeed     = .6,

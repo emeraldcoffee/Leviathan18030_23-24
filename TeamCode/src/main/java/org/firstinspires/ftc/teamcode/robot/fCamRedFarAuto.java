@@ -33,7 +33,7 @@ public class fCamRedFarAuto extends LinearOpMode {
 //    }
 //    AutoPath autoPath = AutoPath.LEFT;
 
-    int targetSlidePos = RobotConstants.slideLow;
+    int targetSlidePos = RobotConstants.slideAuto;
 
     double slideI = 0;
 
@@ -73,10 +73,10 @@ public class fCamRedFarAuto extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-22.5, -40.5), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(-22.5, -38), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
                 .waitSeconds(.2)
-                .splineToConstantHeading(new Vector2d(-12, -40), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-12, -38), Math.toRadians(0))
                 //wait so that other team can run their auto
                 .waitSeconds(10)
-                .lineTo(new Vector2d(30, -40))
+                .lineTo(new Vector2d(30, -38))
                 .splineToConstantHeading(new Vector2d(45, -42), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(35, -39), () -> targetSlidePos = RobotConstants.slideLow)
                 .lineTo(new Vector2d(54.5, -42))
@@ -98,7 +98,7 @@ public class fCamRedFarAuto extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-27, -36), Math.toRadians(0))
                 .lineTo(new Vector2d(-12, -36))
                 //wait so that other team can run their auto
-                .waitSeconds(10)
+                .waitSeconds(1)
                 .lineTo(new Vector2d(30, -36))
                 .splineToConstantHeading(new Vector2d(45, -35), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(38, -35), () -> targetSlidePos = RobotConstants.slideLow)
@@ -122,7 +122,7 @@ public class fCamRedFarAuto extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(-28, -35, Math.toRadians(0)), Math.toRadians(0))
                 .lineTo(new Vector2d(-12, -35))
                 //wait so that other team can run their auto
-                .waitSeconds(10)
+                .waitSeconds(1)
                 .lineTo(new Vector2d(30, -35))
                 .splineToConstantHeading(new Vector2d(45, -23), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(38, -36), () -> targetSlidePos = RobotConstants.slideLow)
@@ -144,7 +144,7 @@ public class fCamRedFarAuto extends LinearOpMode {
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
 
-        robot.rightServo.setPosition(RobotConstants.rightOut);
+        robot.leftServo.setPosition(RobotConstants.leftOut);
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
         waitForStart();

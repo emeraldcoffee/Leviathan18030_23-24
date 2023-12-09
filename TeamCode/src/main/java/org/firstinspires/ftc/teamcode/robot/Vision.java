@@ -28,13 +28,13 @@ public class Vision extends LinearOpMode {
 
             public void onOpened()
             {
-                colorMaskPipeline.setAlliance("Blue");
+                colorMaskPipeline.setAlliance("Red");
                 webcam.setPipeline(colorMaskPipeline);
                 pos = colorMaskPipeline.getPos();
                 System.out.println("Position: " + pos);
                 telemetry.addData("Position: ", pos);
 
-                webcam.startStreaming(1920,1080, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(640,480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
 

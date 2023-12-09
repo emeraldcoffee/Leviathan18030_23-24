@@ -4,20 +4,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@Disabled
+
 @TeleOp
-public class power_dt extends LinearOpMode {
-    public DcMotorEx leftFront;
+public class inspection extends LinearOpMode {
+    public DcMotorEx intakeMotor;
     @Override
     public void runOpMode() throws InterruptedException {
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            leftFront.setPower(1);
+            intakeMotor.setPower(.7);
         }
-        leftFront.setPower(0);
+        intakeMotor.setPower(0);
 
 
     }

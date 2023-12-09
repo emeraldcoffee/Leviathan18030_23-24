@@ -46,6 +46,8 @@ public class ColorMask extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
+        Mat output = input;
+
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
@@ -79,11 +81,11 @@ public class ColorMask extends OpenCvPipeline {
 //            Mat threshLow = new Mat();
 //            Mat threshHigh = new Mat();
             //how to get both aspects, low and high? if make 2 mats, how combine? see later.
-            lowHSV = new Scalar(150, 30, 20);
-            highHSV = new Scalar(180, 255, 255);
+            lowHSV = new Scalar(0, 30, 20);
+            highHSV = new Scalar(25, 255, 255);
             Core.inRange(mat, lowHSV, highHSV, thresh);
-            lowerHSV = new Scalar(160, 50, 50);
-            higherHSV = new Scalar(180, 255, 255);
+            lowerHSV = new Scalar(0, 50, 50);
+            higherHSV = new Scalar(20, 255, 255);
             Core.inRange(mat, lowerHSV, higherHSV, thresh);
             //bitwise_and(threshLow, threshHigh, thresh);
         }
@@ -133,6 +135,8 @@ public class ColorMask extends OpenCvPipeline {
         // return thresh;
         // note that you must not do thresh.release() if you want to return thresh
         // you also need to release the input if you return thresh(release as much as possible)
+//        Mat image = new Mat();
+
         if (contours.size() > 0) {
             double maxContour = 0;
             MatOfPoint largestContour = contours.get(0);
@@ -147,8 +151,13 @@ public class ColorMask extends OpenCvPipeline {
             }
 
             Rect rect = Imgproc.boundingRect(largestContour);
-            Imgproc.rectangle(input, rect, new Scalar(255,0, 0));
-//            Imgproc.rectangle(input, rect);
+            Scalar red = new Scalar(255, 0, 0);
+
+
+//            Core.bitwise_and(input, output, image);
+
+            Imgproc.rectangle(output, rect, red);
+
 
             xCoord = (int) (rect.x + (rect.width / 2));
             yCoord = (int) (rect.y + (rect.height / 2));
@@ -158,8 +167,11 @@ public class ColorMask extends OpenCvPipeline {
             if (coords.size() > 0)
                 contourCoords = coords.get(0);
         }
+        Rect centerBox = new Rect(213, 0, 450-213, 480);
+        Scalar green = new Scalar(44, 235, 28);
+        Imgproc.rectangle(output, centerBox, green, 2);
 
-        return input;
+        return output;
     }
     public void setAlliance(String a)
     {
@@ -167,11 +179,11 @@ public class ColorMask extends OpenCvPipeline {
     }
 
     public String getPos() {
-        if ((xCoord > 0) && (xCoord <= 250)) {
+        if ((xCoord > 0) && (xCoord <= 213)) {
             //pos = teamElementPosition.LEFT;
             return "left";
         }
-        else if (xCoord <= 400) {
+        else if (xCoord <= 450) {
             //pos = teamElementPosition.CENTER;
             return "center";
         }
