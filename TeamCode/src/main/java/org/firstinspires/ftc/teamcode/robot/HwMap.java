@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorHuskyLens;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -57,6 +59,8 @@ public class HwMap {
     public OpenCvCamera webcam, webcamR;
     public WebcamName frontCamera;
 
+    public HuskyLens huskylens;
+
     private List<DcMotorEx> motors;
 
     private ElapsedTime period = new ElapsedTime();
@@ -85,8 +89,12 @@ public class HwMap {
         transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
+        huskylens = hwMap.get(HuskyLens.class, "huskylens");
+
         //Creating list of motors to setup
         motors = Arrays.asList(climbMotor, intakeMotor, slideMotor, transferMotor);
+
+
 
         //Configuring motors
         for (DcMotorEx motor : motors) {

@@ -202,6 +202,8 @@ public class testTele extends LinearOpMode {
 
 
 
+
+
         //Updating Status
         status.setValue("Initialized");
         telemetry.update();
