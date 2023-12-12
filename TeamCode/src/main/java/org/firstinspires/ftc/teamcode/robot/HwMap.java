@@ -59,7 +59,7 @@ public class HwMap {
     public OpenCvCamera webcam, webcamR;
     public WebcamName frontCamera;
 
-    public HuskyLens huskylens;
+    public HuskyLens rightHusky, leftHusky;
 
     private List<DcMotorEx> motors;
 
@@ -94,7 +94,8 @@ public class HwMap {
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
 
-        huskylens = hwMap.get(HuskyLens.class, "huskylens");
+        rightHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
+        leftHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
 
         //liftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
