@@ -41,7 +41,7 @@ public class HuskyAutoTest extends LinearOpMode {
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
 
-        HuskyLens huskylens = robot.huskylens;
+        HuskyLens huskylens = robot.rightHusky;
 
         pos = h.getPos(huskylens);
 
