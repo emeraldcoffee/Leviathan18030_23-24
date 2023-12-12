@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -44,10 +45,13 @@ public class testTele extends LinearOpMode {
     //decides if robot uses field centric or robot centric driving
     DriveStates driveMode = DriveStates.GAMEPAD;
 
+    String driveModeName = "Robot-centric";
+
     DriveStates driveStates = driveMode;
 
     enum Drop {
         OPEN,
+        DOUBLE_OPEN,
         CLOSED,
         RESET
     }
@@ -58,7 +62,8 @@ public class testTele extends LinearOpMode {
         RELEASE,
         WAIT,
         STOPPED,
-        SPIN_IN
+//        SPIN_IN,
+//        SPIN_OUT
     }
     Climb climb = Climb.HOLD;
 
@@ -128,6 +133,8 @@ public class testTele extends LinearOpMode {
 
     double slideI = 0.0;
 
+    int targetClimbPos;
+
     //Used to store data from april tags
     AprilTagDetection frontCamAprilTags = null;
 
@@ -184,7 +191,7 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
-        Telemetry.Item driveState = telemetry.addData("Drive Mode:", toString(),driveMode.name() + " Drive State: Drive");
+        Telemetry.Item driveState = telemetry.addData("Drive Mode", toString(),driveModeName + " Drive State: Drive");
 
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
@@ -198,7 +205,7 @@ public class testTele extends LinearOpMode {
 
         Telemetry.Item loopTime = telemetry.addData("Loop Time", "0ms");
         //Set starting positions
-        //robot.dropServo.setPosition(RobotConstants.dropClosed);
+        robot.dropServo.setPosition(RobotConstants.dropClosed);
 
 
 
@@ -227,28 +234,43 @@ public class testTele extends LinearOpMode {
             odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
             //Getting aprilTag detections
-            if (frontAprilTagProcessor.getDetections().size() > 0) {
-                //Gets all the april tag data for the 1st detection
-                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
-                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
-                tagDetection = true;
-            } else {
-                aprilTagPosEstimate.setValue("No tags detected");
-                tagDetection = false;
-            }
+//            if (frontAprilTagProcessor.getDetections().size() > 0) {
+//                //Gets all the april tag data for the 1st detection
+//                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
+//                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
+//                tagDetection = true;
+//            } else {
+//                aprilTagPosEstimate.setValue("No tags detected");
+//                tagDetection = false;
+//            }
 
 
             //Driver 1 code
             //Front triggers being used to speedup or slowdown robots driving
-            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - gamepad1.left_trigger) / 1.2);
+            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - (gamepad1.left_trigger)*.6) / 1.2);
 
-            if (gamepad1.back) {
-                driveStates = DriveStates.GAMEPAD;
-                driveMode = DriveStates.GAMEPAD;
-            } else if (gamepad1.start) {
-                driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
-                driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
-            }
+//            switch (driveMode) {
+//                case GAMEPAD:
+//                    if (gamepad1.start) {
+//                        driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
+//                        driveModeName = "Field-centric";
+//                        if (driveStates == DriveStates.GAMEPAD) {
+//                            driveState.setValue(driveModeName + " Drive State: Drive");
+//                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
+//                        }
+//                    }
+//                    break;
+//                case GAMEPAD_FIELDCENTRIC:
+//                    if (gamepad1.back) {
+//                        driveMode = DriveStates.GAMEPAD;
+//                        driveModeName = "Robot-centric";
+//                        if (driveStates == DriveStates.GAMEPAD_FIELDCENTRIC) {
+//                            driveState.setValue(driveModeName + " Drive State: Drive");
+//                            driveStates = DriveStates.GAMEPAD;
+//                        }
+//                    }
+//                    break;
+//            }
 
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
@@ -261,10 +283,10 @@ public class testTele extends LinearOpMode {
                             maxSpeed, driveTrain);
 
                     //Aligns robot to backboard if april tags have a detection
-                    if (gamepad1.left_bumper && tagDetection) {
-                        driveState.setValue(driveMode.name() + " Drive State: Re-localize");
-                        driveStates = DriveStates.RELOCALIZE;
-                    }
+//                    if (gamepad1.left_bumper && tagDetection) {
+//                        driveState.setValue(driveModeName + " Drive State: Re-localize");
+//                        driveStates = DriveStates.RELOCALIZE;
+//                    }
                     break;
                 case GAMEPAD_FIELDCENTRIC:
                     //Setting drive speeds for the robot
@@ -275,7 +297,7 @@ public class testTele extends LinearOpMode {
 
                     //Aligns robot to backboard if april tags have a detection
                     if (gamepad1.left_bumper && tagDetection) {
-                        driveState.setValue(driveMode.name() + " Drive State: Re-localize");
+                        driveState.setValue(driveModeName + " Drive State: Re-localize");
                         driveStates = DriveStates.RELOCALIZE;
                     }
                     break;
@@ -292,33 +314,33 @@ public class testTele extends LinearOpMode {
                     } else {
                         targetY = RobotConstants.backDropRightY;
                     }
-                    driveState.setValue(driveMode.name() + " Drive State: Align");
+                    driveState.setValue(driveModeName + " Drive State: Align");
                     driveStates = DriveStates.ALIGN;
                     break;
                 case ALIGN:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
-                        driveState.setValue("Drive Mode:", driveMode.name() + " Drive State: Drive");
+                        driveState.setValue(driveModeName + " Drive State: Drive");
                         driveStates = driveMode;
                     }
 
                     RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
                     if (abs(targetX-driveTrain.getPoseEstimate().getX())<.3 && abs(targetY-driveTrain.getPoseEstimate().getY())<.3) {
-                        driveState.setValue(driveMode.name() + " Drive State: Hold");
+                        driveState.setValue(driveModeName + " Drive State: Hold");
                         driveStates = DriveStates.HOLD;
                     }
                     break;
                 case HOLD:
                     //sets state back to default if drive1 exits the mode
                     if (!gamepad1.left_bumper) {
-                        driveState.setValue(driveMode.name() + " Drive State: Drive");
+                        driveState.setValue(driveModeName + " Drive State: Drive");
                         driveStates = driveMode;
                     }
 
                     RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
                     break;
                 default:
-                    driveState.setValue(driveMode.name() + " Drive State: Drive");
+                    driveState.setValue(driveModeName + " Drive State: Drive");
                     driveStates = driveMode;
             }
 
@@ -328,15 +350,27 @@ public class testTele extends LinearOpMode {
             switch (drop) {
                 case CLOSED:
                     if (gamepad2.left_bumper) {
-                        //robot.dropServo.setPosition(RobotConstants.dropOpen);
+                        robot.dropServo.setPosition(RobotConstants.dropOpen);
 //                        robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
+                    } else if (gamepad2.right_bumper) {
+                        robot.dropServo.setPosition(RobotConstants.dropPartial);
+                        dropTimer.reset();
+                        drop = Drop.DOUBLE_OPEN;
                     }
                     break;
                 case OPEN:
                     if (dropTimer.seconds() > RobotConstants.dropTime) {
-                        //robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        dropTimer.reset();
+                        drop = Drop.RESET;
+                    }
+                    break;
+                case DOUBLE_OPEN:
+                    if (dropTimer.seconds() > RobotConstants.doubleDropTime) {
+                        robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        dropTimer.reset();
                         drop = Drop.RESET;
                     }
                     break;
@@ -353,7 +387,8 @@ public class testTele extends LinearOpMode {
 
             //Code to change target position of slides
             if (abs(gamepad2.left_stick_y)>.1) {
-                targetPos -= .8 * gamepad2.left_stick_y*slideTimer.milliseconds();
+                targetPos -= 8 * gamepad2.left_stick_y*slideTimer.milliseconds();
+                targetPos = Range.clip(targetPos, RobotConstants.slideBottom, RobotConstants.slideTop);
             } else {
                 switch (slidePos) {
                     case BOTTOM:
@@ -435,31 +470,48 @@ public class testTele extends LinearOpMode {
 
             switch (climb) {
                 case HOLD:
-                    if (gamepad1.a) {
-                        robot.climbMotor.setPower(RobotConstants.climbReleaseSpeed);
+                    if (gamepad1.dpad_down && gamepad1.right_bumper) {
+                        targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
+                        robot.climbMotor.setTargetPosition(targetClimbPos);
                         climbTimer.reset();
                         climb = Climb.RELEASE;
                     }
                     break;
                 case RELEASE:
                     if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
-                        robot.climbMotor.setPower(0);
+//                        robot.climbMotor.setPower(0);
                         climb = Climb.WAIT;
                     }
+                    break;
                 case WAIT:
-                    if (!gamepad1.a) {
+                    if (!gamepad1.dpad_down) {
+                        climbTimer.reset();
                         climb = Climb.STOPPED;
                     }
+                    break;
                 case STOPPED:
-                    if (gamepad1.a) {
-                        robot.climbMotor.setPower(RobotConstants.climbSpeed);
-                        climb = Climb.SPIN_IN;
+                    if (gamepad1.dpad_down) {
+                        targetClimbPos +=  2.5*climbTimer.milliseconds();
+                        robot.climbMotor.setTargetPosition(targetClimbPos);
+//                        climb = Climb.SPIN_IN;
+                    } else if (gamepad1.dpad_up) {
+                        targetClimbPos -=  2.5*climbTimer.milliseconds();
+                        robot.climbMotor.setTargetPosition(targetClimbPos);
+//                        climb = Climb.SPIN_OUT;
                     }
-                case SPIN_IN:
-                    if (!gamepad1.a) {
-                        robot.climbMotor.setPower(0);
-                        climb = Climb.STOPPED;
-                    }
+                    climbTimer.reset();
+                    break;
+//                case SPIN_IN:
+//                    if (!gamepad1.dpad_down) {
+//                        robot.climbMotor.setPower(0);
+//                        climb = Climb.STOPPED;
+//                    }
+//                    break;
+//                case SPIN_OUT:
+//                    if (!gamepad1.dpad_up) {
+//                        robot.climbMotor.setPower(0);
+//                        climb = Climb.STOPPED;
+//                    }
             }
 
 
@@ -509,6 +561,11 @@ public class testTele extends LinearOpMode {
                         transfer = Spin.STOPPED;
                     }
                     break;
+
+            }
+
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
+                robot.droneServo.setPosition(RobotConstants.droneRelease);
             }
 
             //Updating for roadrunner

@@ -3,6 +3,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -13,118 +14,148 @@ public class meepMeepCode {
         MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
+                .setConstraints(60, 60, Math.toRadians(310), Math.toRadians(250), 10.62)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90))))
-                                .lineTo(new Vector2d(12, -60))
-                                .splineToSplineHeading(new Pose2d(23, -40), Math.toRadians(0))
-                                .addDisplacementMarker(() -> {})
-                                .lineTo(new Vector2d(24, -40))
-                                .splineToConstantHeading(new Vector2d(45, -45), Math.toRadians(0))
-                                .addSpatialMarker(new Vector2d(38, -45), () -> {})
-                                .lineTo(new Vector2d(50, -45))
-                                .addDisplacementMarker(() -> {})
-                                .lineTo(new Vector2d(40, -45))
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(0))))
+                                .lineTo(new Vector2d(-35, 47))
+                                .splineToConstantHeading(new Vector2d(-20,35), Math.toRadians(0))
+                                .lineTo(new Vector2d(-28, 35))
+                                .splineToConstantHeading(new Vector2d(-36, 48), Math.toRadians(90))
+                                .splineToConstantHeading(new Vector2d(-20, 60), Math.toRadians(0))
+                                .lineTo(new Vector2d(13, 60))
+                                .splineToConstantHeading(new Vector2d(54.6, 42), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                //Driving back
+                                .lineTo(new Vector2d(54, 42))
+                                .splineToConstantHeading(new Vector2d(13, 60), Math.toRadians(180))
+                                .lineTo(new Vector2d(-20, 60))
+                                .splineToConstantHeading(new Vector2d(-55, 35.5), Math.toRadians(180))
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(-54, 35.5))
+                                .splineToConstantHeading(new Vector2d(-20, 60), Math.toRadians(0))
+                                .lineTo(new Vector2d(13, 60))
+                                .splineToConstantHeading(new Vector2d(54.6, 42), Math.toRadians(0))
+                                .waitSeconds(.2)
 
-                                .addDisplacementMarker(() -> {})
-                                .lineTo(new Vector2d(40, -60))
-                                .lineTo(new Vector2d(43, -60))
+                                //Cycle 2
+                                .lineTo(new Vector2d(54, 42))
+                                .splineToConstantHeading(new Vector2d(13, 60), Math.toRadians(180))
+                                .lineTo(new Vector2d(-20, 60))
+                                .splineToConstantHeading(new Vector2d(-55, 35.5), Math.toRadians(180))
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(-54, 35.5))
+                                .splineToConstantHeading(new Vector2d(-20, 60), Math.toRadians(0))
+                                .lineTo(new Vector2d(13, 60))
+                                .splineToConstantHeading(new Vector2d(54.6, 42), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                //Cycle 3
+                                .lineTo(new Vector2d(54, 42))
+                                .splineToConstantHeading(new Vector2d(13, 60), Math.toRadians(180))
+                                .lineTo(new Vector2d(-20, 60))
+                                .splineToConstantHeading(new Vector2d(-55, 23.5), Math.toRadians(180))
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(-54, 23.5))
+                                .splineToConstantHeading(new Vector2d(-20, 60), Math.toRadians(0))
+                                .lineTo(new Vector2d(13, 60))
+                                .splineToConstantHeading(new Vector2d(54.6, 42), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                .lineTo(new Vector2d(53, 44))
+                                .splineToConstantHeading(new Vector2d(55, 58), Math.toRadians(20))
+
 
                                 .build());
 
-                // in front of trusses on blue alliance
-//                .followTrajectorySequence(drive ->
-//                    (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
-//
-//                    .forward(28)
-//                    // uses Vision to detect where the team prop is
-//                    .addDisplacementMarker(() -> {
-//
-//                    })
-//                    .waitSeconds(1)
-//                    // places down pixel where team prop is
-//                    .addDisplacementMarker(() -> {
-//                        // turn depending on where the team prop is
-//                        //RobotMethods.outtakePlace(hwMap);
-//                    })
-//                    .turn(Math.toRadians(90))
-//
-//                    .forward(84)
-//                    // places down pixel on backdrop
-//                    .addDisplacementMarker(() -> {
-//                        //RobotMethods.slideExtend(hwMap, 5.0);
-//                    })
-//
-//                    // cycling
-//                    /*.waitSeconds(1)
-//                    .forward(100)
-//                    // picks up pixels
-//                    .addDisplacementMarker(() -> {
-//
-//                    })
-//                    .waitSeconds(1)
-//                    .back(102)
-//                    // place down pixel on backdrop
-//                    .addDisplacementMarker(() -> {
-//                        //RobotMethods.slideExtend(hwMap, 5.0);
-//                    })*/
-//                    .build()
-//                    )
-//                );
+        /*close 3 cycle auto
+        .lineTo(new Vector2d(12, 43))
+                                .splineToConstantHeading(new Vector2d(1, 34), Math.toRadians(180))
+                                .lineTo(new Vector2d(5, 34))
+                                .splineToConstantHeading(new Vector2d(54.6,30), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                //Driving Back
+                                .lineTo(new Vector2d(54, 30))
+                                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
+                                .lineTo(new Vector2d(-30, 12))
+                                .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(-54, 11))
+                                .splineToConstantHeading(new Vector2d(-30, 12), Math.toRadians(0))
+                                .lineTo(new Vector2d(15, 12))
+                                .splineToConstantHeading(new Vector2d(54.6, 30), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                //Cycle 2
+                                .lineTo(new Vector2d(54, 30))
+                                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
+                                .lineTo(new Vector2d(-30, 12))
+                                .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(-54, 11))
+                                .splineToConstantHeading(new Vector2d(-30, 12), Math.toRadians(0))
+                                .lineTo(new Vector2d(15, 12))
+                                .splineToConstantHeading(new Vector2d(54.6, 30), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                //Cycle 3
+                                .lineTo(new Vector2d(54, 30))
+                                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
+                                .lineTo(new Vector2d(-30, 12))
+                                .splineToConstantHeading(new Vector2d(-55, 23), Math.toRadians(180))
+                                .waitSeconds(1)
+                                .lineTo(new Vector2d(-54, 23))
+                                .splineToConstantHeading(new Vector2d(-30, 12), Math.toRadians(0))
+                                .lineTo(new Vector2d(15, 12))
+                                .splineToConstantHeading(new Vector2d(54.6, 30), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                .lineTo(new Vector2d(53, 28))
+                                .splineToConstantHeading(new Vector2d(55, 13), Math.toRadians(-20))
+         */
 
-                // behind trusses on blue alliance
-                /*.followTrajectorySequence(drive ->
-                    (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(90)))
-                            .back(19)
-
-                            // uses Vision to detect where the team prop is
-                            .addDisplacementMarker(() -> {})
-                            .waitSeconds(1)
-
-                            // places down pixel where team prop is
-                            .addDisplacementMarker(() -> {
-                                // turn depending on where the team prop is
-                            })
-                            .waitSeconds(1)
-                            
-                            .back(8)
-                            .turn(Math.toRadians(90))
-                            .back(40)
-                            // places down pixel on backdrop
-                            .addDisplacementMarker(() -> {})
-
-                            .build()
-                    )
-                );
-
-                /*.followTrajectorySequence(drive ->
-                        // in front of trusses on red alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                                .forward(19)
+        /*
+        .lineTo(new Vector2d(13, 62))
+                                .splineToConstantHeading(new Vector2d(54.6, 34), Math.toRadians(0))
+                                .waitSeconds(.2)
+                                .lineTo(new Vector2d(54, 34))
+                                .splineToConstantHeading(new Vector2d(22, 32), Math.toRadians(180))
                                 .addDisplacementMarker(() -> {})
-                                .waitSeconds(1)
-                                .addDisplacementMarker(() -> {})
-                                .waitSeconds(1)
-                                .splineTo(new Vector2d(-12, -35), Math.toRadians(0))
-                                .forward(60)
-                                .build()
-                        )
-                );*/
+                                .splineToConstantHeading(new Vector2d(0, 35), Math.toRadians(180))
 
-                /*.followTrajectorySequence(drive ->
-                        // behind trusses on red alliance
-                        (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                                .forward(20)
-                                .addDisplacementMarker(() -> {}) // pick up pixel and use vision to detect positions
+                                .lineTo(new Vector2d(-15, 35))
+                                .splineToConstantHeading(new Vector2d(-56, 35.5), Math.toRadians(180))
                                 .waitSeconds(1)
-                                .addDisplacementMarker(() -> {}) // places down corresponding pixels
+
+                                .lineTo(new Vector2d(-55, 35.5))
+                                .splineToConstantHeading(new Vector2d(-15, 35), Math.toRadians(0))
+                                .lineTo(new Vector2d(0, 35))
+                                .splineToConstantHeading(new Vector2d(54.6, 36), Math.toRadians(0))
+                                .waitSeconds(.2)
+
+                                //Cycle 2
+                                .lineTo(new Vector2d(54, 36))
+                                .splineToConstantHeading(new Vector2d(0, 35), Math.toRadians(180))
+                                .lineTo(new Vector2d(-15, 35))
+                                .splineToConstantHeading(new Vector2d(-56, 35.5), Math.toRadians(180))
                                 .waitSeconds(1)
-                                .splineTo(new Vector2d(30, -35), Math.toRadians(0))
-                                .forward(18)
-                                .build()
-                        )
-                );*/
+
+                                .lineTo(new Vector2d(-55, 35.5))
+                                .splineToConstantHeading(new Vector2d(-15, 35), Math.toRadians(0))
+                                .lineTo(new Vector2d(0, 35))
+                                .splineToConstantHeading(new Vector2d(54.6, 36), Math.toRadians(0))
+                                .waitSeconds(.2)
+
+                                //Cycle 3
+                                .lineTo(new Vector2d(54, 36))
+                                .splineToConstantHeading(new Vector2d(0, 35), Math.toRadians(180))
+                                .lineTo(new Vector2d(-15, 35))
+                                .splineToConstantHeading(new Vector2d(-56, 22.5), Math.toRadians(180))
+                                .waitSeconds(1)
+
+                                .lineTo(new Vector2d(-55, 22.5))
+                                .splineToConstantHeading(new Vector2d(-15, 35), Math.toRadians(0))
+                                .lineTo(new Vector2d(0, 35))
+                                .splineToConstantHeading(new Vector2d(54.6, 36), Math.toRadians(0))
+                                .waitSeconds(.2)
+         */
+
+
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK).setDarkMode(true)
                 // Background opacity from 0-1

@@ -7,10 +7,11 @@ public class RobotConstants {
 
     //Whole # variables
     public static final int
-        slideBottom         = (int)(8192 * 0),
-        slideLow            = 8192 * 2,
-        slideMiddle         = 8192 * 4,
-        slideTop            = 8192 * 6;
+        slideBottom         = (int)(8192 * 0.01),
+        slideAuto = (int)(8192 * 2.1),
+        slideLow            = (int)(8192 * 3),
+        slideMiddle         = (int) (8192 * 4.2),
+        slideTop            = (int)(8192 * 6);
 
 
 
@@ -18,10 +19,12 @@ public class RobotConstants {
     public static final double
 
     //Left + right servo limits
-        leftOut = .8,
-        leftIn = .6,
+        leftOut = .86,
+        leftIn = .5,
         rightOut = .31,
         rightIn = .6,
+
+        droneRelease = .65,
 
 
     //Drivetrain variables
@@ -39,13 +42,16 @@ public class RobotConstants {
         backDropRightY = -35.2,
 
     //Outtake variables
-        dropTime        = .12,
-        resetTime       = .27,
-        dropOpen        = .7,
-        dropClosed      = .5,
+        dropTime        = .09,
+        doubleDropTime = .27,
+        resetTime       = .16,
+        dropOpen        = .71,//71
+        dropPartial = .6275,//
+        dropClosed      = .545,//545
+
 
         transferSpeed = 1,
-        intakeSpeed     = .6,
+        intakeSpeed     = 1,
 
         climbReleaseDelay = 100,
         intakeReverseDelay = 300,
@@ -57,6 +63,6 @@ public class RobotConstants {
         outtakeValue     = 50,
         outtakeCountDelay = 200;
 
-    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(5.0 / 8192, .03 / 8192, .07 / 8192);
+    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(2.6 / 8192, .0 / 8192, .07 / 8192);
 
 }
