@@ -43,12 +43,15 @@ public class RobotConstants {
 
     //Outtake variables
         dropTime        = .09,
-        resetTime       = .27,
-        dropOpen        = .71,
-        dropClosed      = .63,
+        doubleDropTime = .27,
+        resetTime       = .16,
+        dropOpen        = .71,//71
+        dropPartial = .6275,//
+        dropClosed      = .545,//545
+
 
         transferSpeed = 1,
-        intakeSpeed     = .6,
+        intakeSpeed     = 1,
 
         climbReleaseDelay = 100,
         intakeReverseDelay = 300,
@@ -60,6 +63,6 @@ public class RobotConstants {
         outtakeValue     = 50,
         outtakeCountDelay = 200;
 
-    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(5.0 / 8192, .03 / 8192, .07 / 8192);
+    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(2.6 / 8192, .0 / 8192, .07 / 8192);
 
 }

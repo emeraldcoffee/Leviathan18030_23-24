@@ -51,6 +51,7 @@ public class testTele extends LinearOpMode {
 
     enum Drop {
         OPEN,
+        DOUBLE_OPEN,
         CLOSED,
         RESET
     }
@@ -351,11 +352,23 @@ public class testTele extends LinearOpMode {
 //                        robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
+                    } else if (gamepad2.right_bumper) {
+                        robot.dropServo.setPosition(RobotConstants.dropPartial);
+                        dropTimer.reset();
+                        drop = Drop.DOUBLE_OPEN;
                     }
                     break;
                 case OPEN:
                     if (dropTimer.seconds() > RobotConstants.dropTime) {
                         robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        dropTimer.reset();
+                        drop = Drop.RESET;
+                    }
+                    break;
+                case DOUBLE_OPEN:
+                    if (dropTimer.seconds() > RobotConstants.doubleDropTime) {
+                        robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        dropTimer.reset();
                         drop = Drop.RESET;
                     }
                     break;
@@ -455,7 +468,7 @@ public class testTele extends LinearOpMode {
 
             switch (climb) {
                 case HOLD:
-                    if (gamepad1.dpad_down) {
+                    if (gamepad1.dpad_down && gamepad1.right_bumper) {
                         targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
                         robot.climbMotor.setTargetPosition(targetClimbPos);
                         climbTimer.reset();
@@ -476,11 +489,11 @@ public class testTele extends LinearOpMode {
                     break;
                 case STOPPED:
                     if (gamepad1.dpad_down) {
-                        targetClimbPos +=  3*climbTimer.milliseconds();
+                        targetClimbPos +=  2.5*climbTimer.milliseconds();
                         robot.climbMotor.setTargetPosition(targetClimbPos);
 //                        climb = Climb.SPIN_IN;
                     } else if (gamepad1.dpad_up) {
-                        targetClimbPos -=  3*climbTimer.milliseconds();
+                        targetClimbPos -=  2.5*climbTimer.milliseconds();
                         robot.climbMotor.setTargetPosition(targetClimbPos);
 //                        climb = Climb.SPIN_OUT;
                     }
@@ -549,7 +562,7 @@ public class testTele extends LinearOpMode {
 
             }
 
-            if (gamepad1.left_bumper) {
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
                 robot.droneServo.setPosition(RobotConstants.droneRelease);
             }
 

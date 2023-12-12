@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robot;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -11,27 +11,29 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
+import org.firstinspires.ftc.teamcode.robot.HwMap;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "fCam Red Close Auto")
-public class fCamRedCloseAuto extends LinearOpMode {
+@Autonomous(name = "fCam Red Far Auto Avoid")
+public class fCamRedFarAutoAvoid extends LinearOpMode {
 
     enum Camera {
         WAIT,
         SAVE,
         FINISHED
     }
-    fCamBlueFarAuto.Camera camera = fCamBlueFarAuto.Camera.WAIT;
+    Camera camera = Camera.WAIT;
 
 //    enum AutoPath {
 //        LEFT,
 //        CENTER,
 //        RIGHT
 //    }
-//    AutoPath autoPath = AutoPath.RIGHT;
+//    AutoPath autoPath = AutoPath.LEFT;
 
     int targetSlidePos = RobotConstants.slideAuto;
 
@@ -41,7 +43,6 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
 
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
         ColorMask pipeline = new ColorMask();
@@ -67,62 +68,75 @@ public class fCamRedCloseAuto extends LinearOpMode {
             }
         });
 
-
-        TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(12, -45))
-                .splineToConstantHeading(new Vector2d(8.5, -36), Math.toRadians(90))
-                .addSpatialMarker(new Vector2d(8.5, -36), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+        TrajectorySequence right = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
+                .lineTo(new Vector2d(-35, -40))
+                .splineToConstantHeading(new Vector2d(-31, -34), Math.toRadians(100))
+                .addSpatialMarker(new Vector2d(-31, -34), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
                 .waitSeconds(.2)
-                .lineTo(new Vector2d(20, -36))
-                .splineToSplineHeading(new Pose2d(45, -30.5, Math.toRadians(0)), Math.toRadians(0))
-                .lineTo(new Vector2d(54.5, -30.5))
-                .lineTo(new Vector2d(54.6, -30.5))
-                .addSpatialMarker(new Vector2d(54.6, -30.5), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.3)
-                .lineTo(new Vector2d(40, -30.5))
+                .lineTo(new Vector2d(-38, -33))
+                .splineToSplineHeading(new Pose2d(-41, -20, Math.toRadians(0)), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-32, -10.5), Math.toRadians(0))
+                .lineTo(new Vector2d(-12, -10.5))
+                .waitSeconds(13)
+                .lineTo(new Vector2d(10, -10.5))
+                .splineToConstantHeading(new Vector2d(45, -54), Math.toRadians(0))
+                .addSpatialMarker(new Vector2d(25, -22), () -> targetSlidePos = RobotConstants.slideAuto)
+                .lineTo(new Vector2d(54.5, -54))
+                .lineTo(new Vector2d(54.6, -54))
+                .addTemporalMarker(7.2+13, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.6)
+                .lineTo(new Vector2d(40, -54))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                .lineTo(new Vector2d(40, -60))
-                .lineTo(new Vector2d(45, -60))
+                .lineTo(new Vector2d(40, -16))
+                .lineTo(new Vector2d(50, -16))
                 .build();
 
-        TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(12, -60))
-                .splineToSplineHeading(new Pose2d(17, -30), Math.toRadians(90))
-                .lineTo(new Vector2d(17,-36))
-                .addTemporalMarker(2.2, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
-//                                .addSpatialMarker(new Vector2d(15, 35), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+        TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
+                .lineTo(new Vector2d(-35, -60))
+                .splineToSplineHeading(new Pose2d(-36, -17, Math.toRadians(0)), Math.toRadians(100))
+                .addSpatialMarker(new Vector2d(-36, -17), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
                 .waitSeconds(.2)
-                .lineTo(new Vector2d(18, -36))
-                .splineToConstantHeading(new Vector2d(45, -37.5), Math.toRadians(0))
-                .lineTo(new Vector2d(54.5, -37.5))
-                .lineTo(new Vector2d(54.6, -37.5))
-                .addSpatialMarker(new Vector2d(54.6, -37.5), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.2)
-                .lineTo(new Vector2d(40, -37.5))
+                .lineTo(new Vector2d(-36, -16.5))
+                .splineToConstantHeading(new Vector2d(-12, -12), Math.toRadians(0))
+                .waitSeconds(13)
+                .lineTo(new Vector2d(10, -12))
+                .splineToConstantHeading(new Vector2d(45, -42), Math.toRadians(0))
+                .addSpatialMarker(new Vector2d(26, -22), () -> targetSlidePos = RobotConstants.slideAuto)
+                .lineTo(new Vector2d(55.5, -42))
+                .lineTo(new Vector2d(55.6, -42))
+                .addTemporalMarker(6.5+13, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.6)
+                .lineTo(new Vector2d(40, -42))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                .lineTo(new Vector2d(40, -60))
-                .lineTo(new Vector2d(45, -60))
+                .lineTo(new Vector2d(40, -16))
+                .lineTo(new Vector2d(50, -16))
                 .build();
 
-        TrajectorySequence right = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(12, -61))
-                .splineToLinearHeading(new Pose2d(25, -45), Math.toRadians(90))
-                .addSpatialMarker(new Vector2d(25, -45), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+        TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
+                .lineTo(new Vector2d(-35, -60))
+                .splineToSplineHeading(new Pose2d(-45, -19, Math.toRadians(0)), Math.toRadians(100))
+                .addSpatialMarker(new Vector2d(-45, -19), () -> robot.rightServo.setPosition(RobotConstants.rightIn))
                 .waitSeconds(.2)
-                .lineTo(new Vector2d(25, -46))
-                .lineTo(new Vector2d(26, -46))
-                .splineToConstantHeading(new Vector2d(45, -44), Math.toRadians(0))
-                .lineTo(new Vector2d(54.5, -44))
-                .lineTo(new Vector2d(54.6, -44))
-                .addSpatialMarker(new Vector2d(54.6, -44), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.2)
-                .lineTo(new Vector2d(40, -44))
+                .lineTo(new Vector2d(-44, -17))
+                .splineToConstantHeading(new Vector2d(-30, -11), Math.toRadians(0))
+                .lineTo(new Vector2d(-12, -11))
+                .waitSeconds(13)
+                .lineTo(new Vector2d(10, -11))
+                .splineToConstantHeading(new Vector2d(45, -34.5), Math.toRadians(0))
+                .addSpatialMarker(new Vector2d(38, -36), () -> targetSlidePos = RobotConstants.slideAuto)
+                .lineTo(new Vector2d(54.5, -34.5))
+                .lineTo(new Vector2d(54.6, -34.5))
+                .addTemporalMarker(6.5+13, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.6)
+                .lineTo(new Vector2d(40, -34.5))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                .lineTo(new Vector2d(40, -60))
-                .lineTo(new Vector2d(45, -60))
+                .lineTo(new Vector2d(40, -10))
+                .lineTo(new Vector2d(45, -10))
+
                 .build();
-
-
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();
 
@@ -131,7 +145,9 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
-        robot.leftServo.setPosition(RobotConstants.leftOut);
+
+
+        robot.rightServo.setPosition(RobotConstants.rightOut);
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
         waitForStart();
@@ -139,7 +155,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         robot.climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        driveTrain.setPoseEstimate(new Pose2d(12, -63, Math.toRadians(90)));
+        driveTrain.setPoseEstimate(new Pose2d(-35, -63, Math.toRadians(90)));
 
         cameraDelayTimer.reset();
 
@@ -147,9 +163,9 @@ public class fCamRedCloseAuto extends LinearOpMode {
             driveTrain.update();
 
             switch (camera) {
-                case WAIT:
+                 case WAIT:
                     if (cameraDelayTimer.seconds() > 1.5) {
-                        camera = fCamBlueFarAuto.Camera.SAVE;
+                        camera = Camera.SAVE;
                     }
                     break;
                 case SAVE:
@@ -172,7 +188,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-                    camera = fCamBlueFarAuto.Camera.FINISHED;
+                    camera = Camera.FINISHED;
                     break;
                 case FINISHED:
                     break;
