@@ -32,21 +32,28 @@ public class HuskyAutoTest extends LinearOpMode {
         FINISHED
     }
 
-    fCamRedCloseAuto.Camera camera = fCamRedCloseAuto.Camera.WAIT;
+    //fCamRedCloseAuto.Camera camera = fCamRedCloseAuto.Camera.WAIT;
 
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
-        ColorMask pipeline = new ColorMask();
+        //ColorMask pipeline = new ColorMask();
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
 
         HuskyLens huskylens = robot.rightHusky;
 
-        pos = h.getPos(huskylens);
 
+        waitForStart();
+        while (opModeIsActive() && !isStopRequested()) {
+            driveTrain.update();
+            pos = h.getPos(huskylens);
 
-        TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
+            telemetry.addData("position and id", pos);
+            telemetry.update();
+        }
+
+        /*TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(-35, 47))
                 .splineToConstantHeading(new Vector2d(-20,35), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(8.5, -36), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
@@ -125,14 +132,13 @@ public class HuskyAutoTest extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             driveTrain.update();
 
-            switch (camera) {
+            /*switch (camera) {
                 case WAIT:
                     if (cameraDelayTimer.seconds() > 1.5) {
                         camera = fCamRedCloseAuto.Camera.SAVE;
                     }
                     break;
                 case SAVE:
-                    pos = pipeline.getPos();
                     switch (pos) {
                         case "left":
                             driveTrain.followTrajectorySequenceAsync(left);
@@ -151,10 +157,8 @@ public class HuskyAutoTest extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-                    camera = fCamRedCloseAuto.Camera.FINISHED;
-                    break;
-                case FINISHED:
-                    break;
+
+
             }
 
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
@@ -169,7 +173,7 @@ public class HuskyAutoTest extends LinearOpMode {
             robot.slideMotor.setPower(slidePower);
 
             slideData.setValue("Encoder Val: " + slideCurPos + " Target Val: " + targetSlidePos + " Slide Power: " + (double) Math.round(slidePower * 100) / 100);
-
+            */
         }
     }
-}
+

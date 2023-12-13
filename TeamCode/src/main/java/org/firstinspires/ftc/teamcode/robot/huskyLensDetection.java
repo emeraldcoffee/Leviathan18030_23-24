@@ -6,24 +6,24 @@ import com.qualcomm.hardware.dfrobot.HuskyLens;
 public class huskyLensDetection {
 
     int xcoord = 0;
-
+    int objID = 0;
     public String getPos(HuskyLens h) {
+        h.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
+
         for (HuskyLens.Block b : h.blocks()) {
-            int objID = b.id;
-            if ((objID == 2) || (objID == 3)) {
-                xcoord = b.x;
-            }
+            xcoord = b.x;
         }
-        if ((xcoord > 0) && (xcoord <= 213)) {
+
+        if ((xcoord > 0) && (xcoord <= 80)) {
             //pos = teamElementPosition.LEFT;
             return "left";
-        } else if (xcoord <= 450) {
+        } else if (xcoord <= 240) {
             //pos = teamElementPosition.CENTER;
             return "center";
         } else {
             //pos = teamElementPosition.RIGHT;
             return "right";
-
         }
+
     }
 }

@@ -94,8 +94,8 @@ public class HwMap {
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
 
-        rightHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
-        leftHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
+        rightHusky = hwMap.get(HuskyLens.class, "rightHuskyLens");
+        //leftHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
 
         //liftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
