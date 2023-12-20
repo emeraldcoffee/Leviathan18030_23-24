@@ -51,9 +51,9 @@ public class HwMap {
 
      */
 
-    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor, liftEncoderMotor;
+    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
-    public Servo dropServo, leftServo, rightServo, droneServo;
+    public Servo dropServo, leftServo, rightServo, droneServo, leftLiftServo, rightLiftServo, leftDrawbridgeServo, rightDrawbridgeServo;
 
     //Camera name
     public OpenCvCamera webcam, webcamR;
@@ -94,7 +94,7 @@ public class HwMap {
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
 
-        huskylens = hwMap.get(HuskyLens.class, "huskylens");
+//        huskylens = hwMap.get(HuskyLens.class, "huskylens");
 
         //liftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -130,6 +130,14 @@ public class HwMap {
         leftServo = hwMap.servo.get("leftServo");
         rightServo = hwMap.servo.get("rightServo");
         droneServo = hwMap.servo.get("droneServo");
+        leftDrawbridgeServo = hwMap.servo.get("leftDrawbridgeServo");
+        rightDrawbridgeServo = hwMap.servo.get("rightDrawbridgeServo");
+        leftLiftServo = hwMap.servo.get("leftLiftServo");
+        rightLiftServo = hwMap.servo.get("rightLiftServo");
+
+
+        rightLiftServo.setDirection(Servo.Direction.REVERSE);
+        rightDrawbridgeServo.setDirection(Servo.Direction.REVERSE);
 
 
 

@@ -52,16 +52,26 @@ public class RobotConstants {
 
         transferSpeed = 1,
         intakeSpeed     = 1,
+    //Intake auto stack positions
+        intakeAdjustDelayTime = .2,
+        stackDrawbridgeDown = .28,
+        stackDrawbridgeUp = .11,
+        drawbridgeRightOffset = .02,
+        stack5 = .140,
+        stack4 = .111,
+        stack3 = .088,
+        stack2 = .061,
+        stack1 = .034,
+        stackLeftOffset = .017,
 
         climbReleaseDelay = 100,
-        intakeReverseDelay = 300,
-        intakeReverseTime = 200,
-        climbSpeed   = 1,
-        climbReleaseSpeed = .6,
-    //Pixel tracking variables
-        intakeValue          = 3,
-        outtakeValue     = 50,
-        outtakeCountDelay = 200;
+
+
+    //Auto variables
+        intakeInitalizeDelay = .6,
+        autoDropTime = 20,
+        intakeMaxSpinTime = 800,
+        autoTransferTime = 4;
 
     public static final PIDCoefficients slidePIDVals = new PIDCoefficients(2.6 / 8192, .0 / 8192, .07 / 8192);
 

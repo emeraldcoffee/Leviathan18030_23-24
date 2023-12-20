@@ -13,10 +13,10 @@ public class resetEncoders extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        leftEncoder = hardwareMap.get(DcMotorEx.class, "slideMotor");
+        leftEncoder = hardwareMap.get(DcMotorEx.class, "leftFront");
         rightEncoder = hardwareMap.get(DcMotorEx.class, "rightFront");
         frontEncoder = hardwareMap.get(DcMotorEx.class, "rightRear");
-        liftEncoder = hardwareMap.get(DcMotorEx.class, "climbMotor");
+        liftEncoder = hardwareMap.get(DcMotorEx.class, "slideMotor");
 
         waitForStart();
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
