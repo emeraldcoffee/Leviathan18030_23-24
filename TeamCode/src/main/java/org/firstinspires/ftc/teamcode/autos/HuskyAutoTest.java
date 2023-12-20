@@ -36,20 +36,21 @@ public class HuskyAutoTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
+        //SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
         //ColorMask pipeline = new ColorMask();
-        HwMap robot = new HwMap();
-        robot.init(hardwareMap);
+        //HwMap robot = new HwMap();
+        //robot.init(hardwareMap);
 
-        HuskyLens huskylens = robot.rightHusky;
+        //HuskyLens huskylens = robot.rightHusky;
+        HuskyLens huskyLens = hardwareMap.get(HuskyLens.class, "rightHusky");
 
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            driveTrain.update();
-            pos = h.getPos(huskylens);
+            //driveTrain.update();
+            pos = h.getPos(huskyLens);
 
-            telemetry.addData("position and id", pos);
+            telemetry.addData("position", pos);
             telemetry.update();
         }
 

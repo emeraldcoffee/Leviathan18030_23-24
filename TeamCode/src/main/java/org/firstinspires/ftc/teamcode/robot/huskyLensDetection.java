@@ -5,19 +5,21 @@ import com.qualcomm.hardware.dfrobot.HuskyLens;
 
 public class huskyLensDetection {
 
-    int xcoord = 0;
-    int objID = 0;
+    // add in method to set which huskylens is initiated (right/left) based on what the alliance is, called in autonomous codes
+
+    int id = 0;
+
     public String getPos(HuskyLens h) {
-        h.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
+        h.selectAlgorithm(HuskyLens.Algorithm.OBJECT_CLASSIFICATION);
 
         for (HuskyLens.Block b : h.blocks()) {
-            xcoord = b.x;
+            id = b.id;
         }
 
-        if ((xcoord > 0) && (xcoord <= 80)) {
+        if (id == 1) {
             //pos = teamElementPosition.LEFT;
             return "left";
-        } else if (xcoord <= 240) {
+        } else if (id == 2) {
             //pos = teamElementPosition.CENTER;
             return "center";
         } else {
