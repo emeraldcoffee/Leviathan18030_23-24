@@ -120,7 +120,7 @@ public class RobotMethods {
 
     public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {
         //Adding all april tag pose data to a string, numbers are rounded to nearest 2 decimal places
-        return "x: " + (double)Math.round(aprilTag.ftcPose.x*100)/100 + " y: " + (double)Math.round(aprilTag.ftcPose.y*100)/100 + " heading: " + (double)Math.round(aprilTag.ftcPose.yaw*100)/100 + " confidence: " + round(aprilTag.decisionMargin*100)/100;
+        return "x: " + (double) Math.round(aprilTag.ftcPose.x * 100) / 100 + " y: " + (double) Math.round(aprilTag.ftcPose.y * 100) / 100 + " heading: " + (double) Math.round(aprilTag.ftcPose.yaw * 100) / 100 + " confidence: " + round(aprilTag.decisionMargin * 100) / 100;
     }
 
     public static void outtakePlace (HwMap hwMap) {
