@@ -38,6 +38,7 @@ public class testTele extends LinearOpMode {
     //target positions
     double targetX, targetY;
     double turnPower = 0;
+    double lastTurn = 0;
 
     //decides if robot uses field centric or robot centric driving
     DriveStates driveMode = DriveStates.GAMEPAD;
@@ -296,8 +297,12 @@ public class testTele extends LinearOpMode {
 //                    }
 //                    break;
 //            }
+
+            double turnVelocity = (myPose.getHeading()-lastTurn)/driveTrainTimer.seconds();
+            lastTurn = myPose.getHeading();
+
             if (abs(gamepad1.right_stick_x)>.1) {
-                targetHeading -= Range.clip(gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed, -15, 15)*driveTrainTimer.seconds()*4;
+                targetHeading -= Range.clip(gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
 //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
                 //Keeping range inside of 2pi
                 if (targetHeading>2*Math.PI) {
@@ -306,7 +311,6 @@ public class testTele extends LinearOpMode {
                     targetHeading += 2*Math.PI;
                 }
             }
-            driveTrainTimer.reset();
 
             turnPower = (targetHeading-myPose.getHeading());
             if (turnPower>Math.PI) {
@@ -314,15 +318,19 @@ public class testTele extends LinearOpMode {
             } else if (turnPower < -Math.PI) {
                 turnPower += 2*Math.PI;
             }
-            turnValues.setValue((double)turnPower);
+            driveTrainTimer.reset();
+
+            turnValues.setValue("Power: " + (double)Math.round(turnPower*4-turnVelocity*.2*100)/100 + " Turn Vel: " + (double)Math.round(turnVelocity*100)/100);
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
             switch (driveStates) {
                 case GAMEPAD:
+                    //Calculating velocity
+
                     //Setting drive speeds for the robot
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , turnPower*.8,
+                            , Range.clip(turnPower*3-turnVelocity*.15, -4, 4),
                             maxSpeed, driveTrain);
 
                     //Aligns robot to backboard if april tags have a detection
