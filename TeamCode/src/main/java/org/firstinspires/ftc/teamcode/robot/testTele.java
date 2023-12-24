@@ -213,7 +213,7 @@ public class testTele extends LinearOpMode {
         double currentHeading = driveTrain.getPoseEstimate().getHeading();
         double targetHeading = currentHeading;
 
-        Telemetry.Item driveState = telemetry.addData("Drive Mode", toString(),driveModeName + " Drive State: Drive");
+        Telemetry.Item driveState = telemetry.addData("Drive Mode",driveModeName + " Drive State: Drive");
 
         Telemetry.Item turnValues = telemetry.addData("Turn vals", (double)currentHeading + "" + (double) targetHeading);
         //Adding roadrunner pose to telemetry
@@ -303,7 +303,7 @@ public class testTele extends LinearOpMode {
 
             if (abs(gamepad1.right_stick_x)>.1) {
                 targetHeading -= Range.clip(gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
-//gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
+                //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
                 //Keeping range inside of 2pi
                 if (targetHeading>2*Math.PI) {
                     targetHeading -= 2*Math.PI;
@@ -330,7 +330,7 @@ public class testTele extends LinearOpMode {
                     //Setting drive speeds for the robot
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , Range.clip(turnPower*3-turnVelocity*.15, -4, 4),
+                            , Range.clip(turnPower*2-turnVelocity*.16, -4, 4),
                             maxSpeed, driveTrain);
 
                     //Aligns robot to backboard if april tags have a detection
