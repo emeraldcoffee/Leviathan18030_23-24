@@ -54,7 +54,7 @@ public class blueClose3Cycle extends LinearOpMode {
     }
     Intake intake = Intake.WAIT;
 
-    double intakePos = RobotConstants.stack5;
+    double intakePos = RobotConstants.stackMax;
 
     enum Drop {
         WAIT,
@@ -80,6 +80,9 @@ public class blueClose3Cycle extends LinearOpMode {
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
 
+        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
+        robot.rightLiftServo.setPosition(intakePos);
+
         TrajectorySequence right = driveTrain.trajectorySequenceBuilder(startingPose)
                 .lineTo(new Vector2d(14, 43))
                 .splineToConstantHeading(new Vector2d(1, 34), Math.toRadians(180))
@@ -92,9 +95,10 @@ public class blueClose3Cycle extends LinearOpMode {
         TrajectorySequence rightToStack = driveTrain.trajectorySequenceBuilder(right.end())
                 //Driving Back
                 .lineTo(new Vector2d(54, 30))
-                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(15, 9), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
-                .lineTo(new Vector2d(-30, 12))
+                .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
+                .lineTo(new Vector2d(-30, 9))
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
 
@@ -112,6 +116,7 @@ public class blueClose3Cycle extends LinearOpMode {
                 .lineTo(new Vector2d(54, 36))
                 .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideAuto)
+                .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
                 .lineTo(new Vector2d(-30, 12))
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
@@ -130,11 +135,12 @@ public class blueClose3Cycle extends LinearOpMode {
                 .lineTo(new Vector2d(54, 40.5))
                 .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
+                .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
                 .lineTo(new Vector2d(-30, 12))
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
 
-        TrajectorySequence leftStackReturn = driveTrain.trajectorySequenceBuilder(right.end())
+        TrajectorySequence leftStackReturn = driveTrain.trajectorySequenceBuilder(rightToStack.end())
                 .lineTo(new Vector2d(-54, 11))
                 .splineToConstantHeading(new Vector2d(-30, 12), Math.toRadians(0))
                 .lineTo(new Vector2d(15, 12))
@@ -150,7 +156,7 @@ public class blueClose3Cycle extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
 
-        TrajectorySequence centerStackPickup = driveTrain.trajectorySequenceBuilder(leftStackPickup.end())
+        TrajectorySequence centerStackPickup = driveTrain.trajectorySequenceBuilder(leftStackReturn.end())
                 .lineTo(new Vector2d(54, 30))
                 .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
                 .lineTo(new Vector2d(-30, 12))
@@ -180,7 +186,6 @@ public class blueClose3Cycle extends LinearOpMode {
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
         robot.rightServo.setPosition(RobotConstants.rightOut);
-
 
         waitForStart();
         if (isStopRequested()) return;
@@ -246,12 +251,12 @@ public class blueClose3Cycle extends LinearOpMode {
                 case WAIT_DROP_RIGHT:
                     if (!wait) {
                         driveTrain.followTrajectorySequenceAsync(rightToStack);
-                        intake = Intake.INTAKE_DEPLOY;
                         followPath = FollowPath.INIT_PATH;
                     }
                     break;
                 case INIT_PATH:
                     if (!driveTrain.isBusy()) {
+                        intakePos = RobotConstants.stack5;
                         intake = Intake.START_SPIN;
                         wait = true;
                         followPath = FollowPath.WAIT_STACK1;
@@ -286,7 +291,7 @@ public class blueClose3Cycle extends LinearOpMode {
 
             switch (intake) {
                 case INTAKE_DEPLOY:
-                    robot.transferMotor.setPower(-.3);
+                    robot.transferMotor.setPower(.3);
                     robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
                     robot.rightLiftServo.setPosition(intakePos);
                     intakeTimer.reset();
@@ -312,7 +317,7 @@ public class blueClose3Cycle extends LinearOpMode {
                             intakePos = RobotConstants.stack2;
                         }
 
-                        robot.transferMotor.setPower(-1);
+                        robot.transferMotor.setPower(1);
                         robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
                         robot.rightLiftServo.setPosition(intakePos);
                         intakeTimer.reset();
