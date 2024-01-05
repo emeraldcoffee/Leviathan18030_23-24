@@ -16,16 +16,15 @@ public class huskyLensDetection {
             id = b.id;
         }
 
-        if (id == 1) {
-            //pos = teamElementPosition.LEFT;
-            return "left";
-        } else if (id == 2) {
-            //pos = teamElementPosition.CENTER;
-            return "center";
-        } else {
-            //pos = teamElementPosition.RIGHT;
-            return "right";
-        }
-
+            if (id == 1) {
+                //pos = teamElementPosition.LEFT;
+                return "left";
+            } else if (id == 2) {
+                //pos = teamElementPosition.CENTER;
+                return "center";
+            } else {
+                //pos = teamElementPosition.RIGHT;
+                return "right";
+            }
     }
 }
