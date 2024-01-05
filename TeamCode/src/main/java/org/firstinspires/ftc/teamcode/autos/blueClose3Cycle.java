@@ -84,22 +84,23 @@ public class blueClose3Cycle extends LinearOpMode {
         robot.rightLiftServo.setPosition(intakePos);
 
         TrajectorySequence right = driveTrain.trajectorySequenceBuilder(startingPose)
-                .lineTo(new Vector2d(14, 43))
-                .splineToConstantHeading(new Vector2d(1, 34), Math.toRadians(180))
-                .addTemporalMarker(1.5, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                .addTemporalMarker(2.1, () -> targetSlidePos = RobotConstants.slideAuto)
-                .lineTo(new Vector2d(5, 34))
-                .splineToConstantHeading(new Vector2d(54.6,30), Math.toRadians(0))
+                .lineTo(new Vector2d(14, 35))
+                .splineToConstantHeading(new Vector2d(-3, 34), Math.toRadians(180))
+                .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .addTemporalMarker(2.2, () -> targetSlidePos = RobotConstants.slideAuto)
+                .splineToConstantHeading(new Vector2d(0, 35.2), Math.toRadians(180))
+                .lineTo(new Vector2d(8, 34))
+                .splineToConstantHeading(new Vector2d(54.2,29), Math.toRadians(0))
                 .build();
 
         TrajectorySequence rightToStack = driveTrain.trajectorySequenceBuilder(right.end())
                 //Driving Back
-                .lineTo(new Vector2d(54, 30))
-                .splineToConstantHeading(new Vector2d(15, 9), Math.toRadians(180))
+                .lineTo(new Vector2d(52, 27))
+                .splineToConstantHeading(new Vector2d(15, 5), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
                 .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
-                .lineTo(new Vector2d(-30, 9))
-                .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
+                .lineTo(new Vector2d(-30, 5))
+                .splineToConstantHeading(new Vector2d(-54, 14), Math.toRadians(180))
                 .build();
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(startingPose)
@@ -141,15 +142,15 @@ public class blueClose3Cycle extends LinearOpMode {
                 .build();
 
         TrajectorySequence leftStackReturn = driveTrain.trajectorySequenceBuilder(rightToStack.end())
-                .lineTo(new Vector2d(-54, 11))
-                .splineToConstantHeading(new Vector2d(-30, 12), Math.toRadians(0))
-                .lineTo(new Vector2d(15, 12))
+                .lineTo(new Vector2d(-50, 14))
+                .splineToConstantHeading(new Vector2d(-30, 5), Math.toRadians(0))
+                .lineTo(new Vector2d(15, 5))
                 .addTemporalMarker(1.7, () -> targetSlidePos = RobotConstants.slideLow)
-                .splineToConstantHeading(new Vector2d(54.6, 30), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(54.6, 32), Math.toRadians(0))
                 .build();
 
         TrajectorySequence leftStackPickup = driveTrain.trajectorySequenceBuilder(leftStackReturn.end())
-                .lineTo(new Vector2d(54, 30))
+                .lineTo(new Vector2d(52, 30))
                 .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
                 .lineTo(new Vector2d(-30, 12))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
@@ -173,9 +174,9 @@ public class blueClose3Cycle extends LinearOpMode {
                 .build();
 
         TrajectorySequence park = driveTrain.trajectorySequenceBuilder(centerReturn.end())
-                .lineTo(new Vector2d(53, 28))
+                .lineTo(new Vector2d(54.2, 30))
                 .addTemporalMarker(.3, () -> targetSlidePos = RobotConstants.slideLow)
-                .splineToConstantHeading(new Vector2d(55, 13), Math.toRadians(-20))
+                .splineToConstantHeading(new Vector2d(54.2, 32), Math.toRadians(0))
                 .build();
 
 
@@ -293,7 +294,7 @@ public class blueClose3Cycle extends LinearOpMode {
                 case INTAKE_DEPLOY:
                     robot.transferMotor.setPower(.3);
                     robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
-                    robot.rightLiftServo.setPosition(intakePos);
+                    robot.rightLiftServo.setPosition(intakePos-0.06);
                     intakeTimer.reset();
                     intake = Intake.INTAKE_DEPLOY_ENDING_SEQUENCE;
                     break;
@@ -310,22 +311,26 @@ public class blueClose3Cycle extends LinearOpMode {
                     break;
                 case PIXEL_A:
                     //Later look into detecting the pixel with motor voltage
-                    if (intakeTimer.seconds() > .5) {
+                    if (intakeTimer.seconds() > .7) {
                         if (intakePos == RobotConstants.stack5) {
                             intakePos = RobotConstants.stack4;
+                        } else if (intakePos == RobotConstants.stack4) {
+                            intakePos = RobotConstants.stack3;
                         } else if (intakePos == RobotConstants.stack3) {
                             intakePos = RobotConstants.stack2;
+                        } else if (intakePos == RobotConstants.stack2) {
+                            intakePos = RobotConstants.stack1;
                         }
 
                         robot.transferMotor.setPower(1);
                         robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
-                        robot.rightLiftServo.setPosition(intakePos);
+                        robot.rightLiftServo.setPosition(intakePos-0.04);
                         intakeTimer.reset();
                         intake = Intake.PIXEL_B;
                     }
                     break;
                 case PIXEL_B:
-                    if (intakeTimer.seconds() > .5) {
+                    if (intakeTimer.seconds() > .7) {
                         intakeTimer.reset();
                         //Makes robot resume driving
                         wait = false;

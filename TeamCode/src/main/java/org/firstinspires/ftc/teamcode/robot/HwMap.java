@@ -79,8 +79,6 @@ public class HwMap {
         //Mapping encoder
         liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "slideMotor"));
 
-        //lift encoder was set to go to the climbMotor config/motor, i'm not sure which one is the correct wire and
-        // i'm lowkey scared of screwing it up, hope judging went well tho! have fun for the rest of today <3 -selena
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
         outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");

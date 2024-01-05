@@ -8,7 +8,7 @@ public class RobotConstants {
     //Whole # variables
     public static final int
         slideBottom         = (int)(8192 * 0.01),
-        slideAuto = (int)(8192 * 2.1),
+        slideAuto           = (int)(8192 * 2.1),
         slideLow            = (int)(8192 * 3),
         slideMiddle         = (int) (8192 * 4.2),
         slideTop            = (int)(8192 * 6);
@@ -74,6 +74,6 @@ public class RobotConstants {
         intakeMaxSpinTime = 800,
         autoTransferTime = 4;
 
-    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(2.6 / 8192, .0 / 8192, .07 / 8192);
+    public static final PIDCoefficients slidePIDVals = new PIDCoefficients(1.575 / 8192, .005 / 8192, .038 / 8192);
 
 }
