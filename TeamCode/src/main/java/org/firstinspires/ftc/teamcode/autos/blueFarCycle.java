@@ -129,16 +129,17 @@ public class blueFarCycle extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(22, 30), Math.toRadians(270))
                 .lineTo(new Vector2d(22, 35))
                 .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .addTemporalMarker(2.1, () -> targetSlidePos = RobotConstants.slideAuto)
                 .lineTo(new Vector2d(24, 35.5))
                 .splineToConstantHeading(new Vector2d(54.6,41), Math.toRadians(0))
                 .build();
 
         TrajectorySequence leftToStack = driveTrain.trajectorySequenceBuilder(left.end())
                 .lineTo(new Vector2d(54, 40.5))
-                .splineToConstantHeading(new Vector2d(15, 10), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
                 .addTemporalMarker(1.2, () -> intake = blueClose3Cycle.Intake.INTAKE_DEPLOY)
-                .lineTo(new Vector2d(-30, 10))
+                .lineTo(new Vector2d(-30, 12))
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
 
