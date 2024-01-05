@@ -17,14 +17,13 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(310), Math.toRadians(250), 10.62)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(54.6, 30, Math.toRadians(0))))
-                                .lineTo(new Vector2d(54, 40.5))
-                                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
-                                .addTemporalMarker(1, () -> {})//targetSlidePos = RobotConstants.slideBottom)
-                                .lineTo(new Vector2d(-30, 12))
-                                .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
-
-
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(0))))
+                                .lineTo(new Vector2d(12, 43))
+                                .splineToConstantHeading(new Vector2d(13, 27), Math.toRadians(270))
+                                .lineTo(new Vector2d(13, 30))
+                                .addTemporalMarker(1.8, () -> {})//robot.rightServo.setPosition(RobotConstants.rightIn))
+                                .addTemporalMarker(2.0, () -> {})//targetSlidePos = RobotConstants.slideAuto)
+                                .splineToConstantHeading(new Vector2d(54.6,34), Math.toRadians(0))
                                 .build());
 
         /*
