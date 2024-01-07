@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 @Autonomous(name = "blue Close 3 Cycle Auto")
 public class blueClose3Cycle extends LinearOpMode {
 
-    String TSE_Position = "Right";
+    String TSE_Position = "Center";
 
     boolean wait = true;
 
@@ -84,69 +84,67 @@ public class blueClose3Cycle extends LinearOpMode {
         robot.rightLiftServo.setPosition(intakePos);
 
         TrajectorySequence right = driveTrain.trajectorySequenceBuilder(startingPose)
-                .lineTo(new Vector2d(14, 35))
-                .splineToConstantHeading(new Vector2d(-3, 34), Math.toRadians(180))
-                .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(14, 40))
+                .splineToConstantHeading(new Vector2d(-3, 35), Math.toRadians(180))
+                .addTemporalMarker(1.75, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
                 .addTemporalMarker(2.2, () -> targetSlidePos = RobotConstants.slideAuto)
-                .splineToConstantHeading(new Vector2d(0, 35.2), Math.toRadians(180))
-                .lineTo(new Vector2d(8, 34))
+                .lineTo(new Vector2d(8, 35))
                 .splineToConstantHeading(new Vector2d(54.2,29), Math.toRadians(0))
                 .build();
 
         TrajectorySequence rightToStack = driveTrain.trajectorySequenceBuilder(right.end())
                 //Driving Back
-                .lineTo(new Vector2d(52, 27))
-                .splineToConstantHeading(new Vector2d(15, 5), Math.toRadians(180))
+                .lineTo(new Vector2d(54, 29))
+                .splineToConstantHeading(new Vector2d(30, 3), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
                 .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
-                .lineTo(new Vector2d(-30, 5))
-                .splineToConstantHeading(new Vector2d(-54, 14), Math.toRadians(180))
+                .lineTo(new Vector2d(-30, 3))
+                .splineToConstantHeading(new Vector2d(-56.4, 13), Math.toRadians(180))
                 .build();
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(startingPose)
                 .lineTo(new Vector2d(12, 43))
-                .splineToConstantHeading(new Vector2d(13, 25), Math.toRadians(270))
-                .lineTo(new Vector2d(13, 32))
+                .splineToConstantHeading(new Vector2d(13, 27), Math.toRadians(270))
+                .lineTo(new Vector2d(13, 30))
                 .addTemporalMarker(1.8, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                .addTemporalMarker(2, () -> targetSlidePos = RobotConstants.slideAuto)
-                .lineTo(new Vector2d(15, 32.5))
-                .splineToConstantHeading(new Vector2d(54.6,36), Math.toRadians(0))
+                .addTemporalMarker(2.0, () -> targetSlidePos = RobotConstants.slideAuto)
+                .splineToConstantHeading(new Vector2d(54.6,33.5), Math.toRadians(0))
                 .build();
 
         TrajectorySequence centerToStack = driveTrain.trajectorySequenceBuilder(center.end())
-                .lineTo(new Vector2d(54, 36))
-                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
-                .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideAuto)
+                .lineTo(new Vector2d(54, 35))
+                .splineToConstantHeading(new Vector2d(25, 3), Math.toRadians(180))
+                .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
                 .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
-                .lineTo(new Vector2d(-30, 12))
-                .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
+                .lineTo(new Vector2d(-30, 3))
+                .splineToConstantHeading(new Vector2d(-56.4, 12), Math.toRadians(180))
                 .build();
 
         TrajectorySequence left = driveTrain.trajectorySequenceBuilder(startingPose)
                 .lineTo(new Vector2d(12, 48))
-                .splineToConstantHeading(new Vector2d(22, 30), Math.toRadians(270))
-                .lineTo(new Vector2d(22, 35))
+                .splineToConstantHeading(new Vector2d(21.5, 30), Math.toRadians(270))
+                .lineTo(new Vector2d(21.5, 35))
                 .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                .addTemporalMarker(2.1, () -> targetSlidePos = RobotConstants.slideAuto)
-                .lineTo(new Vector2d(24, 35.5))
-                .splineToConstantHeading(new Vector2d(54.6,41), Math.toRadians(0))
+                .addTemporalMarker(2.0, () -> targetSlidePos = RobotConstants.slideAuto)
+//                .lineTo(new Vector2d(24, 35.5))
+                .splineToConstantHeading(new Vector2d(54.6,37), Math.toRadians(0))
                 .build();
 
         TrajectorySequence leftToStack = driveTrain.trajectorySequenceBuilder(left.end())
-                .lineTo(new Vector2d(54, 40.5))
-                .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
+                .lineTo(new Vector2d(54, 37))
+                .splineToConstantHeading(new Vector2d(32, 3), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
                 .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
-                .lineTo(new Vector2d(-30, 12))
-                .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
+                .lineTo(new Vector2d(-30, 3))
+                .splineToConstantHeading(new Vector2d(-56.4, 12), Math.toRadians(180))
                 .build();
 
         TrajectorySequence leftStackReturn = driveTrain.trajectorySequenceBuilder(rightToStack.end())
                 .lineTo(new Vector2d(-50, 14))
-                .splineToConstantHeading(new Vector2d(-30, 5), Math.toRadians(0))
-                .lineTo(new Vector2d(15, 5))
+                .splineToConstantHeading(new Vector2d(-30, 3), Math.toRadians(0))
+                .lineTo(new Vector2d(20, 3))
                 .addTemporalMarker(1.7, () -> targetSlidePos = RobotConstants.slideLow)
-                .splineToConstantHeading(new Vector2d(54.6, 32), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(54.6, 35.5), Math.toRadians(0))
                 .build();
 
         TrajectorySequence leftStackPickup = driveTrain.trajectorySequenceBuilder(leftStackReturn.end())
