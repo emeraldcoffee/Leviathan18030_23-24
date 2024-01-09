@@ -216,7 +216,7 @@ public class testTele extends LinearOpMode {
 
         Telemetry.Item driveState = telemetry.addData("Drive Mode",driveModeName + " Drive State: Drive");
 
-        Telemetry.Item turnValues = telemetry.addData("Turn vals", (double)currentHeading + "" + (double) targetHeading);
+//        Telemetry.Item turnValues = telemetry.addData("Turn vals", (double)currentHeading + "" + (double) targetHeading);
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
 
@@ -299,29 +299,30 @@ public class testTele extends LinearOpMode {
 //                    break;
 //            }
 
-            double turnVelocity = (myPose.getHeading()-lastTurn)/driveTrainTimer.seconds();
-            lastTurn = myPose.getHeading();
+//            double turnVelocity = (myPose.getHeading()-lastTurn)/driveTrainTimer.seconds();
+//            lastTurn = myPose.getHeading();
+//
+//            if (abs(gamepad1.right_stick_x)>.1) {
+//                targetHeading -= Range.clip((gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
+//                //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
+//                //Keeping range inside of 2pi
+//                if (targetHeading>2*Math.PI) {
+//                    targetHeading -= 2*Math.PI;
+//                } else if (targetHeading<0) {
+//                    targetHeading += 2*Math.PI;
+//                }
+//            }
+//
+//            turnPower = (targetHeading-myPose.getHeading());
+//            if (turnPower>Math.PI) {
+//                turnPower -= 2*Math.PI;
+//            } else if (turnPower < -Math.PI) {
+//                turnPower += 2*Math.PI;
+//            }
+//            driveTrainTimer.reset();
+//
+//            turnValues.setValue("Power: " + (double)Math.round(turnPower*4-turnVelocity*.2*100)/100 + " Turn Vel: " + (double)Math.round(turnVelocity*100)/100);
 
-            if (abs(gamepad1.right_stick_x)>.1) {
-                targetHeading -= Range.clip((gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
-                //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
-                //Keeping range inside of 2pi
-                if (targetHeading>2*Math.PI) {
-                    targetHeading -= 2*Math.PI;
-                } else if (targetHeading<0) {
-                    targetHeading += 2*Math.PI;
-                }
-            }
-
-            turnPower = (targetHeading-myPose.getHeading());
-            if (turnPower>Math.PI) {
-                turnPower -= 2*Math.PI;
-            } else if (turnPower < -Math.PI) {
-                turnPower += 2*Math.PI;
-            }
-            driveTrainTimer.reset();
-
-            turnValues.setValue("Power: " + (double)Math.round(turnPower*4-turnVelocity*.2*100)/100 + " Turn Vel: " + (double)Math.round(turnVelocity*100)/100);
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
             switch (driveStates) {
@@ -331,8 +332,9 @@ public class testTele extends LinearOpMode {
                     //Setting drive speeds for the robot
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , Range.clip(turnPower*2-turnVelocity*.16, -4, 4),
+                            , -gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
                             maxSpeed, driveTrain);
+//Range.clip(turnPower*2-turnVelocity*.16, -4, 4)
 
                     //Aligns robot to backboard if april tags have a detection
 //                    if (gamepad1.left_bumper && tagDetection) {
