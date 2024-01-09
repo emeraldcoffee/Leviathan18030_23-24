@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -232,8 +233,8 @@ public class testTele extends LinearOpMode {
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
-        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+.02);
-        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
 
 
 
@@ -302,7 +303,7 @@ public class testTele extends LinearOpMode {
             lastTurn = myPose.getHeading();
 
             if (abs(gamepad1.right_stick_x)>.1) {
-                targetHeading -= Range.clip(gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
+                targetHeading -= Range.clip((gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
                 //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
                 //Keeping range inside of 2pi
                 if (targetHeading>2*Math.PI) {
@@ -674,11 +675,11 @@ public class testTele extends LinearOpMode {
             if (drawbridgeTargetPos<drawbridgeCurrentPos) {
                 drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
                 robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
             } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
                 drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
                 robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
             }
 
             //Limits max speed intake lift servos move
