@@ -332,7 +332,7 @@ public class testTele extends LinearOpMode {
                     //Setting drive speeds for the robot
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , -gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
+                            , -gamepad1.right_stick_x*gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
                             maxSpeed, driveTrain);
 //Range.clip(turnPower*2-turnVelocity*.16, -4, 4)
 
