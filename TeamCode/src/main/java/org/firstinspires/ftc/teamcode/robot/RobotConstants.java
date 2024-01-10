@@ -59,12 +59,12 @@ public class RobotConstants {
         drawbridgeRightOffset = .02,
         drawbridgeLeftOffset = 0,
         stackMax = .38,
-        stack5 = .234,
-        stack4 = .202,
-        stack3 = .181,
+        stack5 = .235,
+        stack4 = .203,
+        stack3 = .178,
         stack2 = .153,
-        stack1 = .115,
-        stackLeftOffset = .023,
+        stack1 = .128,
+        stackLeftOffset = .053,
 
         climbReleaseDelay = 100,
 
