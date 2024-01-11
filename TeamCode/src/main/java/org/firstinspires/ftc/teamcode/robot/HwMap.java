@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorHuskyLens;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pipelines.Camera3BoxDetection;
 import org.firstinspires.ftc.teamcode.util.Encoder;
@@ -49,13 +51,15 @@ public class HwMap {
 
      */
 
-    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor, liftEncoderMotor;
+    public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
-    public Servo dropServo, leftServo, rightServo, droneServo;
+    public Servo dropServo, leftServo, rightServo, droneServo, leftLiftServo, rightLiftServo, leftDrawbridgeServo, rightDrawbridgeServo;
 
     //Camera name
     public OpenCvCamera webcam, webcamR;
     public WebcamName frontCamera;
+
+    public HuskyLens rightHusky, leftHusky;
 
     private List<DcMotorEx> motors;
 
@@ -75,8 +79,6 @@ public class HwMap {
         //Mapping encoder
         liftEncoder = new Encoder(hwMap.get(DcMotorEx.class, "slideMotor"));
 
-        //lift encoder was set to go to the climbMotor config/motor, i'm not sure which one is the correct wire and
-        // i'm lowkey scared of screwing it up, hope judging went well tho! have fun for the rest of today <3 -selena
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
         outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
@@ -89,10 +91,17 @@ public class HwMap {
         transferMotor = hwMap.get(DcMotorEx.class, "transferMotor");
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
+
+        rightHusky = hwMap.get(HuskyLens.class, "rightHuskyLens");
+        //leftHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
+
         //liftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         //Creating list of motors to setup
         motors = Arrays.asList(climbMotor, intakeMotor, slideMotor, transferMotor);
+
+
 
         //Configuring motors
         for (DcMotorEx motor : motors) {
@@ -120,6 +129,14 @@ public class HwMap {
         leftServo = hwMap.servo.get("leftServo");
         rightServo = hwMap.servo.get("rightServo");
         droneServo = hwMap.servo.get("droneServo");
+        leftDrawbridgeServo = hwMap.servo.get("leftDrawbridgeServo");
+        rightDrawbridgeServo = hwMap.servo.get("rightDrawbridgeServo");
+        leftLiftServo = hwMap.servo.get("leftLiftServo");
+        rightLiftServo = hwMap.servo.get("rightLiftServo");
+
+
+        rightLiftServo.setDirection(Servo.Direction.REVERSE);
+        rightDrawbridgeServo.setDirection(Servo.Direction.REVERSE);
 
 
 
