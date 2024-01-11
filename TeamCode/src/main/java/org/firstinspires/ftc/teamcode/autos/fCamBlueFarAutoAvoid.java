@@ -37,6 +37,8 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
 
     int targetSlidePos = RobotConstants.slideAuto;
 
+    double intakePos = RobotConstants.stackMax;
+
     double slideI = 0;
 
     String pos = "";
@@ -48,6 +50,9 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
         ColorMask pipeline = new ColorMask();
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
+
+        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
+        robot.rightLiftServo.setPosition(intakePos);
 
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
@@ -76,17 +81,17 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
                 .waitSeconds(.2)
                 .lineTo(new Vector2d(-36, 32))
                 .splineToSplineHeading(new Pose2d(-40, 20, Math.toRadians(0)), Math.toRadians(270))
-                .splineToConstantHeading(new Vector2d(-32, 14), Math.toRadians(0))
-                .lineTo(new Vector2d(-12, 14))
-                .waitSeconds(1)
+                .splineToConstantHeading(new Vector2d(-32, 12), Math.toRadians(0))
+                .lineTo(new Vector2d(-12, 12))
+                .waitSeconds(13)
                 .lineTo(new Vector2d(10, 14))
-                .splineToConstantHeading(new Vector2d(45, 42), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 44), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(25, 22), () -> targetSlidePos = RobotConstants.slideAuto)
-                .lineTo(new Vector2d(54.5, 42))
-                .lineTo(new Vector2d(54.6, 42))
-                .addSpatialMarker(new Vector2d(54.6, 42), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.3)
-                .lineTo(new Vector2d(40, 42))
+                .lineTo(new Vector2d(54.5, 44))
+                .lineTo(new Vector2d(54.6, 44))
+                .addTemporalMarker(6.8 +13, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.6)
+                .lineTo(new Vector2d(40, 44))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
                 .lineTo(new Vector2d(40, 10))
                 .lineTo(new Vector2d(45, 10))
@@ -99,16 +104,16 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
                 .addSpatialMarker(new Vector2d(-34, 17), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
                 .waitSeconds(.2)
                 .lineTo(new Vector2d(-34, 16.5))
-                .splineToConstantHeading(new Vector2d(-12, 13), Math.toRadians(0))
-                .waitSeconds(1)
+                .splineToConstantHeading(new Vector2d(-12, 12), Math.toRadians(0))
+                .waitSeconds(13)
                 .lineTo(new Vector2d(10, 13))
-                .splineToConstantHeading(new Vector2d(45, 32), Math.toRadians(0))
-                .addSpatialMarker(new Vector2d(26, 22), () -> targetSlidePos = RobotConstants.slideAuto)
-                .lineTo(new Vector2d(55.5, 32))
-                .lineTo(new Vector2d(55.6, 32))
-                .addSpatialMarker(new Vector2d(55.6, 32), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.3)
-                .lineTo(new Vector2d(40, 32))
+                .splineToConstantHeading(new Vector2d(45, 34), Math.toRadians(0))
+                .addSpatialMarker(new Vector2d(26, 23), () -> targetSlidePos = RobotConstants.slideAuto)
+                .lineTo(new Vector2d(55.5, 34))
+                .lineTo(new Vector2d(55.6, 34))
+                .addTemporalMarker(6.3+13, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.6)
+                .lineTo(new Vector2d(40, 34))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
                 .lineTo(new Vector2d(40, 10))
                 .lineTo(new Vector2d(45, 10))
@@ -122,15 +127,15 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
                 .waitSeconds(.2)
                 .lineTo(new Vector2d(-42, 19))
                 .splineToConstantHeading(new Vector2d(-30, 14), Math.toRadians(0))
-                .lineTo(new Vector2d(-12, 14))
-                .waitSeconds(1)
+                .lineTo(new Vector2d(-12, 12))
+                .waitSeconds(13)
                 .lineTo(new Vector2d(10, 14))
                 .splineToConstantHeading(new Vector2d(45, 23), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(38, 36), () -> targetSlidePos = RobotConstants.slideAuto)
                 .lineTo(new Vector2d(54.5, 23))
                 .lineTo(new Vector2d(54.6, 23))
-                .addSpatialMarker(new Vector2d(54.6, 23), () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.3)
+                .addTemporalMarker(6.3+13, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.6)
                 .lineTo(new Vector2d(40, 23))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
                 .lineTo(new Vector2d(40, 10))
@@ -163,7 +168,7 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
             driveTrain.update();
 
             switch (camera) {
-                 case WAIT:
+                case WAIT:
                     if (cameraDelayTimer.seconds() > 1.5) {
                         camera = Camera.SAVE;
                     }
