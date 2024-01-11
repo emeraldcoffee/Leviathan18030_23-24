@@ -81,9 +81,9 @@ public class HwMap {
 
         //liftEncoder.setDirection(Encoder.Direction.REVERSE);
 
-        outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
+//        outtakeColorSensor = hwMap.get(ColorSensor.class, "outtakeColor");
 
-        intakeDistanceSensor = hwMap.get(DistanceSensor.class, "intakeDistance");
+//        intakeDistanceSensor = hwMap.get(DistanceSensor.class, "intakeDistance");
 
         //Mapping motors
         climbMotor = hwMap.get(DcMotorEx.class, "climbMotor");
@@ -92,7 +92,7 @@ public class HwMap {
         slideMotor = hwMap.get(DcMotorEx.class, "slideMotor");
 
 
-        rightHusky = hwMap.get(HuskyLens.class, "rightHuskyLens");
+//        rightHusky = hwMap.get(HuskyLens.class, "rightHuskyLens");
         //leftHusky = hwMap.get(HuskyLens.class, "leftHuskyLens");
 
         //liftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,14 +125,14 @@ public class HwMap {
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Mapping Servos
-        dropServo = hwMap.servo.get("dropServo");
-        leftServo = hwMap.servo.get("leftServo");
-        rightServo = hwMap.servo.get("rightServo");
-        droneServo = hwMap.servo.get("droneServo");
-        leftDrawbridgeServo = hwMap.servo.get("leftDrawbridgeServo");
-        rightDrawbridgeServo = hwMap.servo.get("rightDrawbridgeServo");
-        leftLiftServo = hwMap.servo.get("leftLiftServo");
-        rightLiftServo = hwMap.servo.get("rightLiftServo");
+        dropServo = hwMap.servo.get("dropServo"); // ex hub 2
+        leftServo = hwMap.servo.get("leftServo"); // control hub 0
+        rightServo = hwMap.servo.get("rightServo"); // ex hub 0
+        droneServo = hwMap.servo.get("droneServo"); // ex hub 1
+        leftDrawbridgeServo = hwMap.servo.get("leftDrawbridgeServo"); // control hub 2
+        rightDrawbridgeServo = hwMap.servo.get("rightDrawbridgeServo"); // ex hub 4
+        leftLiftServo = hwMap.servo.get("leftLiftServo");// control hub 1
+        rightLiftServo = hwMap.servo.get("rightLiftServo"); // ex hub 5
 
 
         rightLiftServo.setDirection(Servo.Direction.REVERSE);
