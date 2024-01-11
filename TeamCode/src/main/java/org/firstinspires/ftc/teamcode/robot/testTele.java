@@ -9,20 +9,17 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 
 @TeleOp()
@@ -41,6 +38,8 @@ public class testTele extends LinearOpMode {
 
     //target positions
     double targetX, targetY;
+    double turnPower = 0;
+    double lastTurn = 0;
 
     //decides if robot uses field centric or robot centric driving
     DriveStates driveMode = DriveStates.GAMEPAD;
@@ -51,6 +50,7 @@ public class testTele extends LinearOpMode {
 
     enum Drop {
         OPEN,
+        DOUBLE_OPEN,
         CLOSED,
         RESET
     }
@@ -118,6 +118,22 @@ public class testTele extends LinearOpMode {
 //    SmartIntake smartIntake = SmartIntake.STOPPED;
 //    boolean useSmartIntake = false;
 
+    enum IntakeStackControl {
+        HEIGHT_5,
+        HEIGHT_4,
+        HEIGHT_3,
+        HEIGHT_2,
+        HEIGHT_1,
+        SHIFT_DELAY
+    }
+    double drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
+    double liftServoTargetPos = RobotConstants.stack1;
+
+    double liftServoCurrentPos = RobotConstants.stack1;
+    double drawbridgeCurrentPos = RobotConstants.stackDrawbridgeUp;
+
+    IntakeStackControl intakeStackControl = IntakeStackControl.HEIGHT_1;
+    IntakeStackControl nextInakeStackControl = IntakeStackControl.HEIGHT_1;
 
     enum Slide {
         BOTTOM,
@@ -152,6 +168,7 @@ public class testTele extends LinearOpMode {
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
+
         AprilTagProcessor frontAprilTagProcessor;
         VisionPortal frontVisionPortal;
         frontAprilTagProcessor = new AprilTagProcessor.Builder()
@@ -180,6 +197,10 @@ public class testTele extends LinearOpMode {
 
         ElapsedTime loopTimer = new ElapsedTime();
 
+        ElapsedTime driveTrainTimer = new ElapsedTime();
+
+        ElapsedTime intakeHeightDelayTimer = new ElapsedTime();
+
 
 //        ElapsedTime slideTimer = new ElapsedTime();
 
@@ -190,8 +211,12 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
-        Telemetry.Item driveState = telemetry.addData("Drive Mode", toString(),driveModeName + " Drive State: Drive");
+        double currentHeading = driveTrain.getPoseEstimate().getHeading();
+        double targetHeading = currentHeading;
 
+        Telemetry.Item driveState = telemetry.addData("Drive Mode",driveModeName + " Drive State: Drive");
+
+//        Telemetry.Item turnValues = telemetry.addData("Turn vals", (double)currentHeading + "" + (double) targetHeading);
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
 
@@ -202,9 +227,14 @@ public class testTele extends LinearOpMode {
 
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetPos);
 
+        Telemetry.Item intakeHeight = telemetry.addData("Intake Height", "1");
+
         Telemetry.Item loopTime = telemetry.addData("Loop Time", "0ms");
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
+
+        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
 
 
 
@@ -269,15 +299,42 @@ public class testTele extends LinearOpMode {
 //                    break;
 //            }
 
+//            double turnVelocity = (myPose.getHeading()-lastTurn)/driveTrainTimer.seconds();
+//            lastTurn = myPose.getHeading();
+//
+//            if (abs(gamepad1.right_stick_x)>.1) {
+//                targetHeading -= Range.clip((gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
+//                //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
+//                //Keeping range inside of 2pi
+//                if (targetHeading>2*Math.PI) {
+//                    targetHeading -= 2*Math.PI;
+//                } else if (targetHeading<0) {
+//                    targetHeading += 2*Math.PI;
+//                }
+//            }
+//
+//            turnPower = (targetHeading-myPose.getHeading());
+//            if (turnPower>Math.PI) {
+//                turnPower -= 2*Math.PI;
+//            } else if (turnPower < -Math.PI) {
+//                turnPower += 2*Math.PI;
+//            }
+//            driveTrainTimer.reset();
+//
+//            turnValues.setValue("Power: " + (double)Math.round(turnPower*4-turnVelocity*.2*100)/100 + " Turn Vel: " + (double)Math.round(turnVelocity*100)/100);
+
             //Calculating and applying the powers for mecanum wheels
             //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
             switch (driveStates) {
                 case GAMEPAD:
+                    //Calculating velocity
+
                     //Setting drive speeds for the robot
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
-                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed,
-                            -gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
+                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
+                            , -gamepad1.right_stick_x*abs(gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed,
                             maxSpeed, driveTrain);
+//Range.clip(turnPower*2-turnVelocity*.16, -4, 4)
 
                     //Aligns robot to backboard if april tags have a detection
 //                    if (gamepad1.left_bumper && tagDetection) {
@@ -351,11 +408,23 @@ public class testTele extends LinearOpMode {
 //                        robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
+                    } else if (gamepad2.right_bumper) {
+                        robot.dropServo.setPosition(RobotConstants.dropPartial);
+                        dropTimer.reset();
+                        drop = Drop.DOUBLE_OPEN;
                     }
                     break;
                 case OPEN:
                     if (dropTimer.seconds() > RobotConstants.dropTime) {
                         robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        dropTimer.reset();
+                        drop = Drop.RESET;
+                    }
+                    break;
+                case DOUBLE_OPEN:
+                    if (dropTimer.seconds() > RobotConstants.doubleDropTime) {
+                        robot.dropServo.setPosition(RobotConstants.dropClosed);
+                        dropTimer.reset();
                         drop = Drop.RESET;
                     }
                     break;
@@ -455,7 +524,7 @@ public class testTele extends LinearOpMode {
 
             switch (climb) {
                 case HOLD:
-                    if (gamepad1.dpad_down) {
+                    if (gamepad1.dpad_down && gamepad1.right_bumper) {
                         targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
                         robot.climbMotor.setTargetPosition(targetClimbPos);
                         climbTimer.reset();
@@ -476,11 +545,11 @@ public class testTele extends LinearOpMode {
                     break;
                 case STOPPED:
                     if (gamepad1.dpad_down) {
-                        targetClimbPos +=  3*climbTimer.milliseconds();
+                        targetClimbPos +=  2.5*climbTimer.milliseconds();
                         robot.climbMotor.setTargetPosition(targetClimbPos);
 //                        climb = Climb.SPIN_IN;
                     } else if (gamepad1.dpad_up) {
-                        targetClimbPos -=  3*climbTimer.milliseconds();
+                        targetClimbPos -=  2.5*climbTimer.milliseconds();
                         robot.climbMotor.setTargetPosition(targetClimbPos);
 //                        climb = Climb.SPIN_OUT;
                     }
@@ -524,6 +593,111 @@ public class testTele extends LinearOpMode {
                     break;
             }
 
+            //Switches btw intake heights and toggles drawbridge when necessary
+            switch (intakeStackControl) {
+                case HEIGHT_5:
+                    if (gamepad2.right_trigger > .8) {
+                        intakeHeight.setValue("4");
+                        liftServoTargetPos = RobotConstants.stack4;
+                        intakeHeightDelayTimer.reset();
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    }
+                    break;
+                case HEIGHT_4:
+                    if (gamepad2.left_trigger > .8) {
+                        intakeHeight.setValue("5");
+                        liftServoTargetPos = RobotConstants.stack5;
+                        intakeHeightDelayTimer.reset();
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_5;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    } else if (gamepad2.right_trigger > .8) {
+                        intakeHeight.setValue("3");
+                        liftServoTargetPos = RobotConstants.stack3;
+                        intakeHeightDelayTimer.reset();
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    }
+                    break;
+                case HEIGHT_3:
+                    if (gamepad2.left_trigger > .8) {
+                        intakeHeight.setValue("4");
+                        liftServoTargetPos = RobotConstants.stack4;
+                        intakeHeightDelayTimer.reset();
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    } else if (gamepad2.right_trigger > .8) {
+                        intakeHeight.setValue("2");
+                        liftServoTargetPos = RobotConstants.stack2;
+                        intakeHeightDelayTimer.reset();
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    }
+                    break;
+                case HEIGHT_2:
+                    if (gamepad2.left_trigger > .8) {
+                        intakeHeight.setValue("3");
+                        liftServoTargetPos = RobotConstants.stack3;
+                        intakeHeightDelayTimer.reset();
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    } else if (gamepad2.right_trigger > .8) {
+                        intakeHeight.setValue("1");
+                        liftServoTargetPos = RobotConstants.stack1;
+
+                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
+
+                        intakeHeightDelayTimer.reset();
+
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_1;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    }
+                    break;
+                case HEIGHT_1:
+                    if (gamepad2.left_trigger > .8) {
+                        intakeHeight.setValue("2");
+                        liftServoTargetPos = RobotConstants.stack2;
+
+                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
+
+                        intakeHeightDelayTimer.reset();
+
+                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
+                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                    }
+                    break;
+                case SHIFT_DELAY:
+                    if (intakeHeightDelayTimer.seconds() > RobotConstants.intakeAdjustDelayTime) {
+                        intakeStackControl = nextInakeStackControl;
+                    }
+                    break;
+            }
+
+            //Limits max speed servos move
+            if (drawbridgeTargetPos<drawbridgeCurrentPos) {
+                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
+                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
+            } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
+                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
+                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
+            }
+
+            //Limits max speed intake lift servos move
+//            if (liftServoTargetPos<liftServoCurrentPos) {
+//                liftServoCurrentPos+= Range.clip((liftServoTargetPos-liftServoCurrentPos), -.03, -.0);
+//                robot.rightLiftServo.setPosition(liftServoCurrentPos+.02);
+//                robot.leftLiftServo.setPosition(liftServoCurrentPos);
+//            } else if (liftServoTargetPos>liftServoCurrentPos) {
+//                liftServoCurrentPos+=Range.clip((liftServoTargetPos-liftServoCurrentPos), 0, .03);
+//                robot.rightLiftServo.setPosition(liftServoCurrentPos+.02);
+//                robot.leftLiftServo.setPosition(liftServoCurrentPos);
+//            }
+
+            robot.rightLiftServo.setPosition(liftServoTargetPos);
+            robot.leftLiftServo.setPosition(liftServoTargetPos+RobotConstants.stackLeftOffset);
+
             switch (transfer) {
                 case STOPPED:
                     if (gamepad2.dpad_right) {
@@ -546,10 +720,9 @@ public class testTele extends LinearOpMode {
                         transfer = Spin.STOPPED;
                     }
                     break;
-
             }
 
-            if (gamepad1.left_bumper) {
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
                 robot.droneServo.setPosition(RobotConstants.droneRelease);
             }
 
