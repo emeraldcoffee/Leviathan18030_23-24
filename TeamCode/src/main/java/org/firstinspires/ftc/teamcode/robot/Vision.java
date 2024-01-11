@@ -28,7 +28,7 @@ public class Vision extends LinearOpMode {
 
             public void onOpened()
             {
-                colorMaskPipeline.setAlliance("Red");
+                colorMaskPipeline.setAlliance("Blue");
                 webcam.setPipeline(colorMaskPipeline);
                 pos = colorMaskPipeline.getPos();
                 System.out.println("Position: " + pos);
