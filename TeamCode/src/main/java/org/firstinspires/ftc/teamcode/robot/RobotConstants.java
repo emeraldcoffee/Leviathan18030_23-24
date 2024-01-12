@@ -58,22 +58,24 @@ public class RobotConstants {
             stackDrawbridgeUp = .11,
             drawbridgeRightOffset = .02,
             drawbridgeLeftOffset = 0,
-            stackMax = .38,
-            stack5 = .235,
-            stack4 = .203,
-            stack3 = .178,
-            stack2 = .153,
-            stack1 = .128,
+
+            stackOffset = .00,
+            stackMax = .38 + stackOffset,
+            stack5 = .235 + stackOffset,
+            stack4 = .203 + stackOffset,
+            stack3 = .178 + stackOffset,
+            stack2 = .153 + stackOffset,
+            stack1 = .128 + stackOffset,
             stackLeftOffset = .053,
 
     climbReleaseDelay = 100,
 
 
     //Auto variables
-    intakeInitalizeDelay = .6,
-            autoDropTime = 20,
-            intakeMaxSpinTime = 800,
-            autoTransferTime = 4;
+        intakeInitalizeDelay = .6;
+//        autoDropTime = 20,
+//        intakeMaxSpinTime = 800,
+//        autoTransferTime = 4;
 
     public static final PIDCoefficients slidePIDVals = new PIDCoefficients(1.575 / 8192, .005 / 8192, .038 / 8192);
 
