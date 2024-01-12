@@ -443,71 +443,18 @@ public class testTele extends LinearOpMode {
             if (abs(gamepad2.left_stick_y)>.1) {
                 targetPos -= 8 * gamepad2.left_stick_y*slideTimer.milliseconds();
                 targetPos = Range.clip(targetPos, RobotConstants.slideBottom, RobotConstants.slideTop);
-            } else {
-                switch (slidePos) {
-                    case BOTTOM:
-                        if (gamepad2.x) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
-                            slidePos = Slide.LOW;
-                            targetPos = RobotConstants.slideLow;
-                        } else if (gamepad2.b) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
-                            slidePos = Slide.MIDDLE;
-                            targetPos = RobotConstants.slideMiddle;
-                        } else if (gamepad2.y) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
-                            slidePos = Slide.TOP;
-                            targetPos = RobotConstants.slideTop;
-                        }
-                        break;
-                    case LOW:
-                        if (gamepad2.a) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
-                            slidePos = Slide.BOTTOM;
-                            targetPos = RobotConstants.slideBottom;
-                        } else if (gamepad2.b) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
-                            slidePos = Slide.MIDDLE;
-                            targetPos = RobotConstants.slideMiddle;
-                        } else if (gamepad2.y) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
-                            slidePos = Slide.TOP;
-                            targetPos = RobotConstants.slideTop;
-
-                        }
-                        break;
-                    case MIDDLE:
-                        if (gamepad2.a) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
-                            slidePos = Slide.BOTTOM;
-                            targetPos = RobotConstants.slideBottom;
-                        } else if (gamepad2.x) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
-                            slidePos = Slide.LOW;
-                            targetPos = RobotConstants.slideLow;
-                        } else if (gamepad2.y) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
-                            slidePos = Slide.TOP;
-                            targetPos = RobotConstants.slideTop;
-                        }
-                        break;
-                    case TOP:
-                        if (gamepad2.a) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
-                            slidePos = Slide.BOTTOM;
-                            targetPos = RobotConstants.slideBottom;
-                        } else if (gamepad2.b) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
-                            slidePos = Slide.MIDDLE;
-                            targetPos = RobotConstants.slideMiddle;
-                        } else if (gamepad2.x) {
-                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
-                            slidePos = Slide.LOW;
-                            targetPos = RobotConstants.slideLow;
-                        }
-                        break;
-                }
+            } if (gamepad2.a) {
+                targetPos = RobotConstants.slideBottom;
+            } else if (gamepad2.x) {
+                targetPos = RobotConstants.slideLow;
+            } else if (gamepad2.b) {
+                targetPos = RobotConstants.slideMiddle;
+            } else if (gamepad2.y) {
+                targetPos = RobotConstants.slideTop;
             }
+
+
+
             slideTimer.reset();
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
@@ -859,4 +806,69 @@ public class testTele extends LinearOpMode {
 //                        robot.intakeMotor.setPower(0);
 //                        smartIntake = SmartIntake.STOPPED;
 //                    }
+//            }
+
+//switch (slidePos) {
+//                    case BOTTOM:
+//                        if (gamepad2.x) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideLow);
+//                            slidePos = Slide.LOW;
+//                            targetPos = RobotConstants.slideLow;
+//                        } else if (gamepad2.b) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideMiddle);
+//                            slidePos = Slide.MIDDLE;
+//                            targetPos = RobotConstants.slideMiddle;
+//                        } else if (gamepad2.y) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideBottom, RobotConstants.slideTop);
+//                            slidePos = Slide.TOP;
+//                            targetPos = RobotConstants.slideTop;
+//                        }
+//                        break;
+//                    case LOW:
+//                        if (gamepad2.a) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideBottom);
+//                            slidePos = Slide.BOTTOM;
+//                            targetPos = RobotConstants.slideBottom;
+//                        } else if (gamepad2.b) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideMiddle);
+//                            slidePos = Slide.MIDDLE;
+//                            targetPos = RobotConstants.slideMiddle;
+//                        } else if (gamepad2.y) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideLow, RobotConstants.slideTop);
+//                            slidePos = Slide.TOP;
+//                            targetPos = RobotConstants.slideTop;
+//
+//                        }
+//                        break;
+//                    case MIDDLE:
+//                        if (gamepad2.a) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideBottom);
+//                            slidePos = Slide.BOTTOM;
+//                            targetPos = RobotConstants.slideBottom;
+//                        } else if (gamepad2.x) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideLow);
+//                            slidePos = Slide.LOW;
+//                            targetPos = RobotConstants.slideLow;
+//                        } else if (gamepad2.y) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideMiddle, RobotConstants.slideTop);
+//                            slidePos = Slide.TOP;
+//                            targetPos = RobotConstants.slideTop;
+//                        }
+//                        break;
+//                    case TOP:
+//                        if (gamepad2.a) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideBottom);
+//                            slidePos = Slide.BOTTOM;
+//                            targetPos = RobotConstants.slideBottom;
+//                        } else if (gamepad2.b) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideMiddle);
+//                            slidePos = Slide.MIDDLE;
+//                            targetPos = RobotConstants.slideMiddle;
+//                        } else if (gamepad2.x) {
+//                            //                        roboMethods.setTargetPos(RobotConstants.slideTop, RobotConstants.slideLow);
+//                            slidePos = Slide.LOW;
+//                            targetPos = RobotConstants.slideLow;
+//                        }
+//                        break;
+//                }
 //            }
