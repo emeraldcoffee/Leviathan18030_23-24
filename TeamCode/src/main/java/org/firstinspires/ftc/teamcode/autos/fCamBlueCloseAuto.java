@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.robot.HwMap;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -130,7 +131,7 @@ public class fCamBlueCloseAuto extends LinearOpMode {
 
         telemetry.setAutoClear(false);
         Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
-
+        Telemetry.Item wasPos = telemetry.addData("Was pos", "");
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
         robot.rightServo.setPosition(RobotConstants.rightOut);
@@ -173,7 +174,11 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                             driveTrain.followTrajectorySequenceAsync(center);
                             detectedPos.setValue("Default center (No detection)");
                             break;
+
                     }
+                    wasPos.setValue(RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
+
+                    driveTrain.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
                     camera = Camera.FINISHED;
                     break;
                 case FINISHED:

@@ -32,7 +32,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 10.11798; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 2.538776; // in; offset of the lateral wheel 2.538776 1.0625
+    public static double FORWARD_OFFSET = 2.5387; // in; offset of the lateral wheel 2.538776 1.0625
 
     /*RunLocalizationTest
     *Drag robot along stretch
@@ -117,8 +117,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncVels.add(frontVel);
 
         return Arrays.asList(
-                encoderTicksToInches(leftVel) * X_MULTIPLIER,
-                encoderTicksToInches(rightVel) * X_MULTIPLIER,
+                encoderTicksToInches(leftVel) * X_MULTIPLIER*LEFT_MULTIPLIER,
+                encoderTicksToInches(rightVel) * X_MULTIPLIER*RIGHT_MULTIPLIER,
                 encoderTicksToInches(frontVel) * Y_MULTIPLIER
         );
     }

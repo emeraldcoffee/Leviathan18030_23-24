@@ -443,7 +443,7 @@ public class testTele extends LinearOpMode {
             if (abs(gamepad2.left_stick_y)>.1) {
                 targetPos -= 8 * gamepad2.left_stick_y*slideTimer.milliseconds();
                 targetPos = Range.clip(targetPos, RobotConstants.slideBottom, RobotConstants.slideTop);
-            } if (gamepad2.a) {
+            } else if (gamepad2.a) {
                 targetPos = RobotConstants.slideBottom;
             } else if (gamepad2.x) {
                 targetPos = RobotConstants.slideLow;
@@ -452,8 +452,6 @@ public class testTele extends LinearOpMode {
             } else if (gamepad2.y) {
                 targetPos = RobotConstants.slideTop;
             }
-
-
 
             slideTimer.reset();
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
