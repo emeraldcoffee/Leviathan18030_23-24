@@ -49,7 +49,7 @@ public class blueFarCycle extends LinearOpMode {
         PIXEL_B,
         TRANSFER_DELAY
     }
-    blueClose3Cycle.Intake intake = blueClose3Cycle.Intake.WAIT;
+    Intake intake = Intake.WAIT;
 
     double intakePos = RobotConstants.stackMax;
 
@@ -58,9 +58,9 @@ public class blueFarCycle extends LinearOpMode {
         DROP,
         RESET
     }
-    blueClose3Cycle.Drop drop = blueClose3Cycle.Drop.WAIT;
+    Drop drop = Drop.WAIT;
 
-    blueClose3Cycle.FollowPath followPath  = blueClose3Cycle.FollowPath.SAVE;
+    FollowPath followPath  = FollowPath.SAVE;
     boolean pickup = false;
 
     boolean loop = true;
@@ -95,7 +95,7 @@ public class blueFarCycle extends LinearOpMode {
                 .lineTo(new Vector2d(54, 30))
                 .splineToConstantHeading(new Vector2d(15, 9), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
-                .addTemporalMarker(1.2, () -> intake = blueClose3Cycle.Intake.INTAKE_DEPLOY)
+                .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
                 .lineTo(new Vector2d(-30, 9))
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
@@ -117,7 +117,7 @@ public class blueFarCycle extends LinearOpMode {
                 .lineTo(new Vector2d(-35, 45))
                 .splineToConstantHeading(new Vector2d(-15, 60), Math.toRadians(0))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideAuto)
-                .addTemporalMarker(1.2, () -> intake = blueClose3Cycle.Intake.INTAKE_DEPLOY)
+                .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
                 .lineTo(new Vector2d(13, 60))
                 .splineToConstantHeading(new Vector2d(54.6, 42), Math.toRadians(0))
                 .addSpatialMarker(new Vector2d(54.6, 42), () -> {})
@@ -138,7 +138,7 @@ public class blueFarCycle extends LinearOpMode {
                 .lineTo(new Vector2d(54, 40.5))
                 .splineToConstantHeading(new Vector2d(15, 12), Math.toRadians(180))
                 .addTemporalMarker(1, () -> targetSlidePos = RobotConstants.slideBottom)
-                .addTemporalMarker(1.2, () -> intake = blueClose3Cycle.Intake.INTAKE_DEPLOY)
+                .addTemporalMarker(1.2, () -> intake = Intake.INTAKE_DEPLOY)
                 .lineTo(new Vector2d(-30, 12))
                 .splineToConstantHeading(new Vector2d(-55, 11), Math.toRadians(180))
                 .build();
@@ -204,83 +204,83 @@ public class blueFarCycle extends LinearOpMode {
                     switch (TSE_Position) {
                         case "Left":
                             driveTrain.followTrajectorySequenceAsync(left);
-                            followPath = blueClose3Cycle.FollowPath.LEFT;
+                            followPath = FollowPath.LEFT;
                             break;
                         case "Center":
                             driveTrain.followTrajectorySequenceAsync(center);
-                            followPath = blueClose3Cycle.FollowPath.CENTER;
+                            followPath = FollowPath.CENTER;
                             break;
                         case "Right":
                             driveTrain.followTrajectorySequenceAsync(right);
-                            followPath = blueClose3Cycle.FollowPath.RIGHT;
+                            followPath = FollowPath.RIGHT;
                             break;
 
                     }
                     break;
                 case LEFT:
                     if (!driveTrain.isBusy()) {
-                        drop = blueClose3Cycle.Drop.DROP;
+                        drop = Drop.DROP;
                         wait = true;
-                        followPath = blueClose3Cycle.FollowPath.WAIT_DROP_LEFT;
+                        followPath = FollowPath.WAIT_DROP_LEFT;
                     }
                     break;
                 case WAIT_DROP_LEFT:
                     if (!wait) {
                         driveTrain.followTrajectorySequenceAsync(leftToStack);
-                        followPath = blueClose3Cycle.FollowPath.INIT_PATH;
+                        followPath = FollowPath.INIT_PATH;
                     }
                     break;
                 case CENTER:
                     if (!driveTrain.isBusy()) {
-                        drop = blueClose3Cycle.Drop.DROP;
+                        drop = Drop.DROP;
                         wait = true;
-                        followPath = blueClose3Cycle.FollowPath.WAIT_DROP_CENTER;
+                        followPath = FollowPath.WAIT_DROP_CENTER;
                     }
                     break;
                 case WAIT_DROP_CENTER:
                     if (!wait) {
                         driveTrain.followTrajectorySequenceAsync(centerToStack);
-                        followPath = blueClose3Cycle.FollowPath.INIT_PATH;
+                        followPath = FollowPath.INIT_PATH;
                     }
                     break;
                 case RIGHT:
                     if (!driveTrain.isBusy()) {
-                        drop = blueClose3Cycle.Drop.DROP;
+                        drop = Drop.DROP;
                         wait = true;
-                        followPath = blueClose3Cycle.FollowPath.WAIT_DROP_RIGHT;
+                        followPath = FollowPath.WAIT_DROP_RIGHT;
                     }
                     break;
                 case WAIT_DROP_RIGHT:
                     if (!wait) {
                         driveTrain.followTrajectorySequenceAsync(rightToStack);
-                        followPath = blueClose3Cycle.FollowPath.INIT_PATH;
+                        followPath = FollowPath.INIT_PATH;
                     }
                     break;
                 case INIT_PATH:
                     if (!driveTrain.isBusy()) {
                         intakePos = RobotConstants.stack5;
-                        intake = blueClose3Cycle.Intake.START_SPIN;
+                        intake = Intake.START_SPIN;
                         wait = true;
-                        followPath = blueClose3Cycle.FollowPath.WAIT_STACK1;
+                        followPath = FollowPath.WAIT_STACK1;
                     }
                     break;
                 case WAIT_STACK1:
                     if (!wait) {
                         driveTrain.followTrajectorySequenceAsync(leftStackReturn);
-                        followPath = blueClose3Cycle.FollowPath.C1_TO_BACKDROP;
+                        followPath = FollowPath.C1_TO_BACKDROP;
                     }
                     break;
                 case C1_TO_BACKDROP:
                     if (!driveTrain.isBusy()) {
-                        drop = blueClose3Cycle.Drop.DROP;
+                        drop = Drop.DROP;
                         wait = true;
-                        followPath = blueClose3Cycle.FollowPath.WAIT_DROP2;
+                        followPath = FollowPath.WAIT_DROP2;
                     }
                     break;
                 case WAIT_DROP2:
                     if (!wait) {
                         driveTrain.followTrajectorySequenceAsync(park);
-                        followPath = blueClose3Cycle.FollowPath.PARK;
+                        followPath = FollowPath.PARK;
                     }
                     break;
                 case PARK:
@@ -297,17 +297,17 @@ public class blueFarCycle extends LinearOpMode {
                     robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
                     robot.rightLiftServo.setPosition(intakePos);
                     intakeTimer.reset();
-                    intake = blueClose3Cycle.Intake.INTAKE_DEPLOY_ENDING_SEQUENCE;
+                    intake = Intake.INTAKE_DEPLOY_ENDING_SEQUENCE;
                     break;
                 case INTAKE_DEPLOY_ENDING_SEQUENCE:
                     if (intakeTimer.seconds() > RobotConstants.intakeInitalizeDelay) {
                         robot.transferMotor.setPower(0);
-                        intake = blueClose3Cycle.Intake.WAIT;
+                        intake = Intake.WAIT;
                     }
                     break;
                 case START_SPIN:
                     robot.intakeMotor.setPower(-1);
-                    intake = blueClose3Cycle.Intake.PIXEL_A;
+                    intake = Intake.PIXEL_A;
                     intakeTimer.reset();
                     break;
                 case PIXEL_A:
@@ -323,7 +323,7 @@ public class blueFarCycle extends LinearOpMode {
                         robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
                         robot.rightLiftServo.setPosition(intakePos);
                         intakeTimer.reset();
-                        intake = blueClose3Cycle.Intake.PIXEL_B;
+                        intake = Intake.PIXEL_B;
                     }
                     break;
                 case PIXEL_B:
@@ -331,13 +331,13 @@ public class blueFarCycle extends LinearOpMode {
                         intakeTimer.reset();
                         //Makes robot resume driving
                         wait = false;
-                        intake = blueClose3Cycle.Intake.TRANSFER_DELAY;
+                        intake = Intake.TRANSFER_DELAY;
                     }
                     break;
                 case TRANSFER_DELAY:
                     if (intakeTimer.seconds() > RobotConstants.autoTransferTime) {
                         robot.transferMotor.setPower(0);
-                        intake = blueClose3Cycle.Intake.WAIT;
+                        intake = Intake.WAIT;
                     }
                     break;
             }
@@ -346,13 +346,13 @@ public class blueFarCycle extends LinearOpMode {
                 case DROP:
                     robot.dropServo.setPosition(RobotConstants.dropPartial);
                     dropTimer.reset();
-                    drop = blueClose3Cycle.Drop.RESET;
+                    drop = Drop.RESET;
                     break;
                 case RESET:
                     if (dropTimer.seconds() > RobotConstants.doubleDropTime) {
                         robot.dropServo.setPosition(RobotConstants.dropClosed);
                         wait = false;
-                        drop = blueClose3Cycle.Drop.WAIT;
+                        drop = Drop.WAIT;
                     }
                     break;
             }
