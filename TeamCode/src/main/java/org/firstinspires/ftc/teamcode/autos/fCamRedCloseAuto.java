@@ -79,15 +79,15 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -45))
-                .splineToConstantHeading(new Vector2d(8.5, -39), Math.toRadians(180))
-                .lineTo(new Vector2d(6, -39))
-                .addTemporalMarker(1.5, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(20, -39))
-                .splineToSplineHeading(new Pose2d(45, -28.5, Math.toRadians(0)), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -28.5))
-                .addTemporalMarker(3.8, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .splineToConstantHeading(new Vector2d(8.5, -36), Math.toRadians(180))
+                .lineTo(new Vector2d(7, -36))
+                .addTemporalMarker(1.6, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+                .lineTo(new Vector2d(20, -36))
+                .splineToSplineHeading(new Pose2d(45, -31, Math.toRadians(0)), Math.toRadians(0))
+                .lineTo(new Vector2d(53, -31))
+                .addTemporalMarker(3.7, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
                 .waitSeconds(.3)
-                .lineTo(new Vector2d(40, -28.5))
+                .lineTo(new Vector2d(40, -31))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
                 .lineTo(new Vector2d(40, -60))
                 .lineTo(new Vector2d(45, -60))
@@ -95,9 +95,9 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -60))
-                .splineToSplineHeading(new Pose2d(17, -30), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(17, -31), Math.toRadians(90))
                 .lineTo(new Vector2d(17,-36))
-                .addTemporalMarker(2.0, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+                .addTemporalMarker(1.9, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
                 .lineTo(new Vector2d(18, -36))
                 .splineToConstantHeading(new Vector2d(45, -37.5), Math.toRadians(0))
                 .lineTo(new Vector2d(53, -37.5))
@@ -111,14 +111,14 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         TrajectorySequence right = driveTrain.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -61))
-                .splineToLinearHeading(new Pose2d(23, 40), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(23, -40), Math.toRadians(90))
                 .lineTo(new Vector2d(23, -48))
                 .addTemporalMarker(2.15, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(26, -45))
+                .lineTo(new Vector2d(26, -48))
                 .splineToConstantHeading(new Vector2d(47, -44), Math.toRadians(0))
                 .lineTo(new Vector2d(53, -44))
                 .addTemporalMarker(3.8, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.2)
+                .waitSeconds(.4)
                 .lineTo(new Vector2d(40, -44))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
                 .lineTo(new Vector2d(40, -60))
@@ -178,7 +178,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
                     }
                     wasPos.setValue(RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
 
-                    driveTrain.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
+                    driveTrain.setPoseEstimate(new Pose2d(12, -63, Math.toRadians(90)));
                     camera = Camera.FINISHED;
                     break;
                 case FINISHED:

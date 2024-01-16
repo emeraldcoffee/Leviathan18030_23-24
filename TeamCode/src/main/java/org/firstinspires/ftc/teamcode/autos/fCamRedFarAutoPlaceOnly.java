@@ -197,7 +197,7 @@ public class fCamRedFarAutoPlaceOnly extends LinearOpMode {
                     }
                     wasPos.setValue(RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
 
-                    driveTrain.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
+                    driveTrain.setPoseEstimate(new Pose2d(-35, -63, Math.toRadians(90)));
                     camera = Camera.FINISHED;
                     break;
                 case FINISHED:

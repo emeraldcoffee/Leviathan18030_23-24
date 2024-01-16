@@ -115,7 +115,8 @@ public class RobotMethods {
     //Adds telemetry data for robot position
     public static String updateRobotPosition(Pose2d pose) {
         //Adds roadrunner pose data to string, rounded to nearest 2 decimal places
-        return "x: " + (double)Math.round(pose.getX()*100)/100 + " y: " + (double)Math.round(pose.getY()*100)/100 + " heading: " + (double)Math.round(pose.getHeading()*180/Math.PI*100)/100; //Heading is converted from radians to degrees
+        return "x: " + (double)Math.round(pose.getX()*100)/100 + " y: " + (double)Math.round(pose.getY()*100)/100 +
+                " heading: " + (double)Math.round(pose.getHeading()*180/Math.PI*100)/100; //Heading is converted from radians to degrees
     }
 
     public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {

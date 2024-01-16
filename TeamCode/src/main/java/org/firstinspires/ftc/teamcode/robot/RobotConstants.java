@@ -59,7 +59,7 @@ public class RobotConstants {
             drawbridgeRightOffset = .02,
             drawbridgeLeftOffset = 0,
 
-            stackOffset = .00,
+            stackOffset = .034,
             stackMax = .38 + stackOffset,
             stack5 = .235 + stackOffset,
             stack4 = .203 + stackOffset,
