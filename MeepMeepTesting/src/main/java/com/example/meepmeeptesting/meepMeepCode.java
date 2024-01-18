@@ -16,20 +16,8 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90))))
-                                .lineTo(new Vector2d(12, -60))
-                                .splineToSplineHeading(new Pose2d(17, -31), Math.toRadians(90))
-                                .lineTo(new Vector2d(17,-36))
-                                .addTemporalMarker(1.9, () -> {})//robot.leftServo.setPosition(RobotConstants.leftIn))
-                                .lineTo(new Vector2d(18, -36))
-                                .splineToConstantHeading(new Vector2d(45, -37.5), Math.toRadians(0))
-                                .lineTo(new Vector2d(53, -37.5))
-                                .addTemporalMarker(3.9, () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
-                                .waitSeconds(.3)
-                                .lineTo(new Vector2d(40, -37.5))
-                                .addDisplacementMarker(() -> {})//{targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                                .lineTo(new Vector2d(40, -60))
-                                .lineTo(new Vector2d(45, -60))
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(4, 4, Math.toRadians(30))))
+                                .lineToSplineHeading(new Pose2d(53, 37.5, Math.toRadians(0)))
                                 .build());
 
                 // in front of trusses on blue alliance

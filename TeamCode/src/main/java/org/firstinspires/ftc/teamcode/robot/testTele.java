@@ -211,8 +211,8 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
-        double currentHeading = driveTrain.getPoseEstimate().getHeading();
-        double targetHeading = currentHeading;
+//        double currentHeading = driveTrain.getPoseEstimate().getHeading();
+//        double targetHeading = currentHeading;
 
         Telemetry.Item driveState = telemetry.addData("Drive Mode",driveModeName + " Drive State: Drive");
 
@@ -261,15 +261,17 @@ public class testTele extends LinearOpMode {
             odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
             //Getting aprilTag detections
-//            if (frontAprilTagProcessor.getDetections().size() > 0) {
-//                //Gets all the april tag data for the 1st detection
-//                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
-//                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
-//                tagDetection = true;
-//            } else {
-//                aprilTagPosEstimate.setValue("No tags detected");
-//                tagDetection = false;
-//            }
+            if (frontAprilTagProcessor.getDetections().size() > 0) {
+                //Gets all the april tag data for the 1st detection
+                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
+                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
+                driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, 70-frontCamAprilTags.ftcPose.z, frontCamAprilTags.ftcPose.yaw*Math.PI/180));
+
+                tagDetection = true;
+            } else {
+                aprilTagPosEstimate.setValue("No tags detected");
+                tagDetection = false;
+            }
 
 
             //Driver 1 code

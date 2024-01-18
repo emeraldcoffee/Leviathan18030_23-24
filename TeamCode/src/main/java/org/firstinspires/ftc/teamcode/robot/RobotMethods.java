@@ -11,6 +11,7 @@ import android.util.Size;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -106,9 +107,15 @@ public class RobotMethods {
 
     public static void goToLineY(double targetX, double powerY, double targetHeading, SampleMecanumDrive driveTrain) {
         double forward = targetX-driveTrain.getPoseEstimate().getX()/4;
-        double turn = targetHeading-driveTrain.getPoseEstimate().getHeading()/10;
+        double turnPower = targetHeading-driveTrain.getPoseEstimate().getHeading()/10;
 
-        setMecanumDriveFieldCentric(forward, powerY, turn, 1, driveTrain.getPoseEstimate().getHeading(), driveTrain);
+        if (turnPower>Math.PI) {
+            turnPower -= 2*Math.PI;
+        } else if (turnPower < -Math.PI) {
+            turnPower += 2*Math.PI;
+        }
+
+        setMecanumDriveFieldCentric(forward, powerY, Range.clip(turnPower*2/*-turnVelocity*.16*/, -4, 4), 1, driveTrain.getPoseEstimate().getHeading(), driveTrain);
 
     }
 
@@ -121,7 +128,7 @@ public class RobotMethods {
 
     public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {
         //Adding all april tag pose data to a string, numbers are rounded to nearest 2 decimal places
-        return "x: " + (double)Math.round(aprilTag.ftcPose.x*100)/100 + " y: " + (double)Math.round(aprilTag.ftcPose.y*100)/100 + " heading: " + (double)Math.round(aprilTag.ftcPose.yaw*100)/100 + " confidence: " + round(aprilTag.decisionMargin*100)/100;
+        return "x: " + (double)Math.round(aprilTag.ftcPose.x*100)/100 + " y: " + (double)Math.round(aprilTag.ftcPose.y*100)/100 + " heading: " + (double)Math.round(aprilTag.ftcPose.yaw*100)/100 + "pitch: " + (double)Math.round(aprilTag.ftcPose.pitch*100)/100 + "z: " + (double)Math.round(aprilTag.ftcPose.z*100)/100 + " confidence: " + round(aprilTag.decisionMargin*100)/100;
     }
 
     public static void outtakePlace (HwMap hwMap) {
