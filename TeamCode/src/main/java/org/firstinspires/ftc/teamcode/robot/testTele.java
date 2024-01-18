@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 
@@ -176,6 +177,7 @@ public class testTele extends LinearOpMode {
                 .setDrawCubeProjection(true)
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
                 .build();
 
 
@@ -184,9 +186,10 @@ public class testTele extends LinearOpMode {
                 .addProcessor(frontAprilTagProcessor)
                 .setCamera(robot.frontCamera)
                 //sets camera resolution to 640 by 480 so that we can use a default calibration
-                .setCameraResolution(new Size(640,480))
+                .setCameraResolution(new Size(1920,1080))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
+        frontAprilTagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
 
 
         ElapsedTime dropTimer = new ElapsedTime();
@@ -225,6 +228,8 @@ public class testTele extends LinearOpMode {
 
         Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
 
+        Telemetry.Item aprilTagSolveTime = telemetry.addData("Solve Time:", "");
+
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetPos);
 
         Telemetry.Item intakeHeight = telemetry.addData("Intake Height", "1");
@@ -261,9 +266,9 @@ public class testTele extends LinearOpMode {
             odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
             //Getting aprilTag detections
-            if (frontAprilTagProcessor.getDetections().size() > 0) {
+            if (frontAprilTagProcessor.getFreshDetections().size() > 0) {
                 //Gets all the april tag data for the 1st detection
-                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
+                frontCamAprilTags = frontAprilTagProcessor.getFreshDetections().get(0);
                 aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
                 driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, 70-frontCamAprilTags.ftcPose.z, frontCamAprilTags.ftcPose.yaw*Math.PI/180));
 
@@ -272,6 +277,8 @@ public class testTele extends LinearOpMode {
                 aprilTagPosEstimate.setValue("No tags detected");
                 tagDetection = false;
             }
+
+            aprilTagSolveTime.setValue(frontAprilTagProcessor.getPerTagAvgPoseSolveTime());
 
 
             //Driver 1 code
