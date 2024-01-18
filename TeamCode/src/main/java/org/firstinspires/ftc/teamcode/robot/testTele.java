@@ -15,12 +15,16 @@ import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.concurrent.TimeUnit;
 
 
 @TeleOp()
@@ -185,12 +189,25 @@ public class testTele extends LinearOpMode {
         frontVisionPortal = new VisionPortal.Builder()
                 .addProcessor(frontAprilTagProcessor)
                 .setCamera(robot.frontCamera)
-                //sets camera resolution to 640 by 480 so that we can use a default calibration
+                //default calibrations 640x480, 800x600, 640x360, 1920x1080, 800x448, 864x480
                 .setCameraResolution(new Size(1920,1080))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
-        frontAprilTagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
 
+//        while (frontVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+//
+//        }
+//
+//        frontAprilTagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
+//
+//        ExposureControl exposure = frontVisionPortal.getCameraControl(ExposureControl.class);
+//        exposure.setMode(ExposureControl.Mode.Manual);
+//        exposure.setExposure(15, TimeUnit.MILLISECONDS);
+//
+//        GainControl gain = frontVisionPortal.getCameraControl(GainControl.class);
+
+        //Max is 255
+//        gain.setGain(100);
 
         ElapsedTime dropTimer = new ElapsedTime();
 
@@ -266,11 +283,11 @@ public class testTele extends LinearOpMode {
             odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
             //Getting aprilTag detections
-            if (frontAprilTagProcessor.getFreshDetections().size() > 0) {
+            if (frontAprilTagProcessor.getDetections().size() > 0) {
                 //Gets all the april tag data for the 1st detection
-                frontCamAprilTags = frontAprilTagProcessor.getFreshDetections().get(0);
+                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
                 aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
-                driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, 70-frontCamAprilTags.ftcPose.z, frontCamAprilTags.ftcPose.yaw*Math.PI/180));
+                driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, myPose.getY(), frontCamAprilTags.ftcPose.yaw*Math.PI/180));
 
                 tagDetection = true;
             } else {

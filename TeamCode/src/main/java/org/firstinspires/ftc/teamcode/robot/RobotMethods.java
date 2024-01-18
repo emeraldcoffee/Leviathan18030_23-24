@@ -6,6 +6,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.round;
 
+import android.annotation.SuppressLint;
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.Locale;
 
 public class RobotMethods {
 
@@ -126,9 +129,10 @@ public class RobotMethods {
                 " heading: " + (double)Math.round(pose.getHeading()*180/Math.PI*100)/100; //Heading is converted from radians to degrees
     }
 
+    @SuppressLint("DefaultLocale")
     public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {
         //Adding all april tag pose data to a string, numbers are rounded to nearest 2 decimal places
-        return "x: " + (double)Math.round(aprilTag.ftcPose.x*100)/100 + " y: " + (double)Math.round(aprilTag.ftcPose.y*100)/100 + " heading: " + (double)Math.round(aprilTag.ftcPose.yaw*100)/100 + "pitch: " + (double)Math.round(aprilTag.ftcPose.pitch*100)/100 + "z: " + (double)Math.round(aprilTag.ftcPose.z*100)/100 + " confidence: " + round(aprilTag.decisionMargin*100)/100;
+        return String.format(" x: %,3.2f", aprilTag.ftcPose.x) + String.format(" y: %,3.2f", aprilTag.ftcPose.y) + String.format(" z: %,3.2f", aprilTag.ftcPose.z) + String.format(" heading: %,3.2f", aprilTag.ftcPose.yaw) + String.format(" confidence: %,3.2f", aprilTag.decisionMargin);
     }
 
     public static void outtakePlace (HwMap hwMap) {
