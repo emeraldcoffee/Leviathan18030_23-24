@@ -16,9 +16,64 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(4, 4, Math.toRadians(30))))
-                                .lineToSplineHeading(new Pose2d(53, 37.5, Math.toRadians(0)))
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270))))
+                                .lineTo(new Vector2d(12, 60))
+                                .splineToSplineHeading(new Pose2d(17, 33), Math.toRadians(270))
+                                .lineTo(new Vector2d(17,36))
+//                                .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                                .lineTo(new Vector2d(18, 36))
+                                .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
+                                .lineTo(new Vector2d(53, 37.5))
+//                                .addTemporalMarker(3.9, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                                .waitSeconds(.3)
+                                .lineTo(new Vector2d(51, 37.5))
+                                .addTemporalMarker(4, () -> {
+//                                    robot.leftLiftServo.setPosition(RobotConstants.stack5+RobotConstants.stackLeftOffset);
+//                                    robot.rightLiftServo.setPosition(RobotConstants.stack5);
+//                                    robot.transferMotor.setPower(.3);
+//                                    drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
+                                })
+                                .addTemporalMarker(5, () -> {})//targetSlidePos = RobotConstants.slideBottom)
+                                .addTemporalMarker(6.4, () -> {
+//                                    robot.intakeMotor.setPower(1);
+//                                    robot.transferMotor.setPower(1);
+                                })
+                                .splineToConstantHeading(new Vector2d(9, 8), Math.toRadians(180))
+                                .lineTo(new Vector2d(-20, 8))
+                                .splineToConstantHeading(new Vector2d(-56.2, 15), Math.toRadians(180))
+                                .waitSeconds(.3)
+                                .lineTo(new Vector2d(-50, 15))
+                                .waitSeconds(.3)
+                                .addTemporalMarker(8.2, () -> {
+//                                    robot.leftLiftServo.setPosition(RobotConstants.stack4+RobotConstants.stackLeftOffset);
+//                                    robot.rightLiftServo.setPosition(RobotConstants.stack4);
+                                })
+                                .lineTo(new Vector2d(-56.2, 15))
+                                .waitSeconds(.3)
+                                .lineTo(new Vector2d(-55, 15))
+                                .splineToConstantHeading(new Vector2d(-20, 8), Math.toRadians(0))
+                                .lineTo(new Vector2d(9, 8))
+                                .addTemporalMarker(11.7, () -> {})
+                                .splineToConstantHeading(new Vector2d(53, 31), Math.toRadians(0))
+                                .addTemporalMarker(12.5, () -> {})
+                                .waitSeconds(.3)
                                 .build());
+
+
+//        .lineTo(new Vector2d(12, 60))
+//                .splineToSplineHeading(new Pose2d(17, 30), Math.toRadians(270))
+//                .lineTo(new Vector2d(17,36))
+//                .addTemporalMarker(2.0, () -> {})//robot.rightServo.setPosition(RobotConstants.rightIn))
+//                .lineTo(new Vector2d(18, 36))
+//                .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
+//                .lineTo(new Vector2d(53, 37.5))
+//                .addTemporalMarker(3.9, () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
+//                .waitSeconds(.3)
+//                .lineTo(new Vector2d(51, 37.5))
+//                .addTemporalMarker(4, () -> {})
+//                .splineToConstantHeading(new Vector2d(9, 12), Math.toRadians(180))
+//                .lineTo(new Vector2d(-50, 12))
+
 
                 // in front of trusses on blue alliance
 //                .followTrajectorySequence(drive ->

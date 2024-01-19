@@ -174,25 +174,25 @@ public class testTele extends LinearOpMode {
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
 
-        AprilTagProcessor frontAprilTagProcessor;
-        VisionPortal frontVisionPortal;
-        frontAprilTagProcessor = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
-                .setDrawTagID(true)
-                .setDrawTagOutline(true)
-                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .build();
-
-
-        //Creates visionPortal with configured setting, passes the webcam and the aprilTag Processor
-        frontVisionPortal = new VisionPortal.Builder()
-                .addProcessor(frontAprilTagProcessor)
-                .setCamera(robot.frontCamera)
-                //default calibrations 640x480, 800x600, 640x360, 1920x1080, 800x448, 864x480
-                .setCameraResolution(new Size(1920,1080))
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .build();
+//        AprilTagProcessor frontAprilTagProcessor;
+//        VisionPortal frontVisionPortal;
+//        frontAprilTagProcessor = new AprilTagProcessor.Builder()
+//                .setDrawAxes(true)
+//                .setDrawCubeProjection(true)
+//                .setDrawTagID(true)
+//                .setDrawTagOutline(true)
+//                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+//                .build();
+//
+//
+//        //Creates visionPortal with configured setting, passes the webcam and the aprilTag Processor
+//        frontVisionPortal = new VisionPortal.Builder()
+//                .addProcessor(frontAprilTagProcessor)
+//                .setCamera(robot.frontCamera)
+//                //default calibrations 640x480, 800x600, 640x360, 1920x1080, 800x448, 864x480
+//                .setCameraResolution(new Size(1920,1080))
+//                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+//                .build();
 
 //        while (frontVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
 //
@@ -282,20 +282,20 @@ public class testTele extends LinearOpMode {
             robotPose.setValue(RobotMethods.updateRobotPosition(myPose));
             odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
-            //Getting aprilTag detections
-            if (frontAprilTagProcessor.getDetections().size() > 0) {
-                //Gets all the april tag data for the 1st detection
-                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
-                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
-                driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, myPose.getY(), frontCamAprilTags.ftcPose.yaw*Math.PI/180));
-
-                tagDetection = true;
-            } else {
-                aprilTagPosEstimate.setValue("No tags detected");
-                tagDetection = false;
-            }
-
-            aprilTagSolveTime.setValue(frontAprilTagProcessor.getPerTagAvgPoseSolveTime());
+//            //Getting aprilTag detections
+//            if (frontAprilTagProcessor.getDetections().size() > 0) {
+//                //Gets all the april tag data for the 1st detection
+//                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
+//                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
+//                driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, myPose.getY(), frontCamAprilTags.ftcPose.yaw*Math.PI/180));
+//
+//                tagDetection = true;
+//            } else {
+//                aprilTagPosEstimate.setValue("No tags detected");
+//                tagDetection = false;
+//            }
+//
+//            aprilTagSolveTime.setValue(frontAprilTagProcessor.getPerTagAvgPoseSolveTime());
 
 
             //Driver 1 code
@@ -648,11 +648,11 @@ public class testTele extends LinearOpMode {
             if (drawbridgeTargetPos<drawbridgeCurrentPos) {
                 drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
                 robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
+                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
             } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
                 drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
                 robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
+                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
             }
 
             //Limits max speed intake lift servos move
