@@ -233,16 +233,15 @@ public class fCamBlue3C extends LinearOpMode {
             slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetSlidePos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
 
             //Limits max speed servos move
-            if (drawbridgeTargetPos<drawbridgeCurrentPos) {
-                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
-                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-            } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
-                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
-                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+//            if (drawbridgeTargetPos<drawbridgeCurrentPos) {
+//                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
+//                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+//                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+//            } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
+//                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
+//                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+//                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
             }
         }
 
     }
-}

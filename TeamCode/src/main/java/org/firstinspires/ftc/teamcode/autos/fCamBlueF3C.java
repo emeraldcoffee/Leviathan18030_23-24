@@ -88,20 +88,53 @@ public class fCamBlueF3C extends LinearOpMode {
                 .addDisplacementMarker(() -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(-35, 60))
                 .splineToConstantHeading(new Vector2d(-31, 34), Math.toRadians(280))
-                .addSpatialMarker(new Vector2d(-31, 34), () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+                .addTemporalMarker(1.3, () -> robot.leftServo.setPosition(RobotConstants.leftIn))
+//                                .addSpatialMarker(new Vector2d(-31, 34), () -> {}) //robot.leftServo.setPosition(RobotConstants.leftIn))
                 .waitSeconds(.2)
                 .lineTo(new Vector2d(-36, 32))
-                .splineToSplineHeading(new Pose2d(-40, 20, Math.toRadians(0)), Math.toRadians(270))
-                .addTemporalMarker(3, () -> {
-                    robot.leftLiftServo.setPosition(RobotConstants.stack5+RobotConstants.stackLeftOffset);
-                    robot.rightLiftServo.setPosition(RobotConstants.stack5);
-                    robot.transferMotor.setPower(.3);
-                    drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
+                .splineToSplineHeading(new Pose2d(-40, 23, Math.toRadians(0)), Math.toRadians(270))
+                .lineTo(new Vector2d(-56.2, 23))
+                .waitSeconds(.7)
+                .addTemporalMarker(3.1, () -> {
+                                    robot.leftLiftServo.setPosition(RobotConstants.stack5+RobotConstants.stackLeftOffset);
+                                    robot.rightLiftServo.setPosition(RobotConstants.stack5);
+                                    robot.transferMotor.setPower(.3);
+                                    drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
                 })
+                .addTemporalMarker(2, () ->
+                                        targetSlidePos = RobotConstants.slideBottom)
+
+                .addTemporalMarker(3.5, () -> {
+                                    robot.intakeMotor.setPower(1);
+                                    robot.transferMotor.setPower(1);
+                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
+                })
+//
+                .lineTo(new Vector2d(-50, 23))
+                .waitSeconds(.8)
+                .addTemporalMarker(5.4, () -> {
+                                    robot.leftLiftServo.setPosition(RobotConstants.stack4+RobotConstants.stackLeftOffset);
+                                    robot.rightLiftServo.setPosition(RobotConstants.stack4);
+                })
+                .lineTo(new Vector2d(-56.2, 23))
+                .waitSeconds(.3)
+                .lineTo(new Vector2d(-55, 23))
+                .addTemporalMarker(7.5, () -> {
+                                    robot.intakeMotor.setPower(0);
+                                    robot.transferMotor.setPower(0);
+                })
+                .splineToConstantHeading(new Vector2d(-34, 58), Math.toRadians(0))
+                .lineTo(new Vector2d(30, 58))
+                .splineToConstantHeading(new Vector2d(50, 40), Math.toRadians(0))
+                .addTemporalMarker(9.5, () -> targetSlidePos = RobotConstants.slideLow)
+                .addTemporalMarker(10.4, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(5)
                 .build();
+
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 60))
+
                 .splineToSplineHeading(new Pose2d(17, 33), Math.toRadians(270))
                 .lineTo(new Vector2d(17,36))
                 .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
@@ -234,15 +267,15 @@ public class fCamBlueF3C extends LinearOpMode {
             slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetSlidePos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
 
             //Limits max speed servos move
-            if (drawbridgeTargetPos<drawbridgeCurrentPos) {
-                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
-                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-            } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
-                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
-                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-            }
+//            if (drawbridgeTargetPos<drawbridgeCurrentPos) {
+//                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
+//                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+//                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+//            } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
+//                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
+//                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+//                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+//            }
         }
 
     }

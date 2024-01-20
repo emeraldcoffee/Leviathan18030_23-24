@@ -134,11 +134,21 @@ public class testTele extends LinearOpMode {
     double drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
     double liftServoTargetPos = RobotConstants.stack1;
 
+    double spikeMarkTargetPos = RobotConstants.spikeMarkBack;
+
     double liftServoCurrentPos = RobotConstants.stack1;
     double drawbridgeCurrentPos = RobotConstants.stackDrawbridgeUp;
+    double spikeMarkCurrentPos = RobotConstants.spikeMarkBack;
 
     IntakeStackControl intakeStackControl = IntakeStackControl.HEIGHT_1;
     IntakeStackControl nextInakeStackControl = IntakeStackControl.HEIGHT_1;
+
+    enum SpikeMark {
+        BACK,
+        OUT,
+        IN,
+    }
+    SpikeMark spikemark = SpikeMark.BACK;
 
     enum Slide {
         BOTTOM,
@@ -221,6 +231,8 @@ public class testTele extends LinearOpMode {
 
         ElapsedTime intakeHeightDelayTimer = new ElapsedTime();
 
+        ElapsedTime spikeTimer = new ElapsedTime();
+
 
 //        ElapsedTime slideTimer = new ElapsedTime();
 
@@ -255,8 +267,11 @@ public class testTele extends LinearOpMode {
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
-        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
+//        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+//        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
+
+        robot.rightSpikeMarkServo.setPosition(spikeMarkTargetPos);
+        robot.leftSpikeMarkServo.setPosition(spikeMarkTargetPos);
 
 
 
@@ -564,96 +579,130 @@ public class testTele extends LinearOpMode {
                     break;
             }
 
-            //Switches btw intake heights and toggles drawbridge when necessary
-            switch (intakeStackControl) {
-                case HEIGHT_5:
+            switch (spikemark) {
+                case BACK:
+                    if (gamepad2.left_trigger > .8) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
+                        spikemark = SpikeMark.OUT;
+                    }
+
+                    break;
+                case OUT:
+
                     if (gamepad2.right_trigger > .8) {
-                        intakeHeight.setValue("4");
-                        liftServoTargetPos = RobotConstants.stack4;
-                        intakeHeightDelayTimer.reset();
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                        spikemark = SpikeMark.IN;
+                    }
+                    else if (gamepad2.left_trigger < .8) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                     }
                     break;
-                case HEIGHT_4:
-                    if (gamepad2.left_trigger > .8) {
-                        intakeHeight.setValue("5");
-                        liftServoTargetPos = RobotConstants.stack5;
-                        intakeHeightDelayTimer.reset();
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_5;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    } else if (gamepad2.right_trigger > .8) {
-                        intakeHeight.setValue("3");
-                        liftServoTargetPos = RobotConstants.stack3;
-                        intakeHeightDelayTimer.reset();
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    }
-                    break;
-                case HEIGHT_3:
-                    if (gamepad2.left_trigger > .8) {
-                        intakeHeight.setValue("4");
-                        liftServoTargetPos = RobotConstants.stack4;
-                        intakeHeightDelayTimer.reset();
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    } else if (gamepad2.right_trigger > .8) {
-                        intakeHeight.setValue("2");
-                        liftServoTargetPos = RobotConstants.stack2;
-                        intakeHeightDelayTimer.reset();
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    }
-                    break;
-                case HEIGHT_2:
-                    if (gamepad2.left_trigger > .8) {
-                        intakeHeight.setValue("3");
-                        liftServoTargetPos = RobotConstants.stack3;
-                        intakeHeightDelayTimer.reset();
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    } else if (gamepad2.right_trigger > .8) {
-                        intakeHeight.setValue("1");
-                        liftServoTargetPos = RobotConstants.stack1;
-
-                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
-
-                        intakeHeightDelayTimer.reset();
-
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_1;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    }
-                    break;
-                case HEIGHT_1:
-                    if (gamepad2.left_trigger > .8) {
-                        intakeHeight.setValue("2");
-                        liftServoTargetPos = RobotConstants.stack2;
-
-                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
-
-                        intakeHeightDelayTimer.reset();
-
-                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
-                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-                    }
-                    break;
-                case SHIFT_DELAY:
-                    if (intakeHeightDelayTimer.seconds() > RobotConstants.intakeAdjustDelayTime) {
-                        intakeStackControl = nextInakeStackControl;
+                case IN:
+                    if (gamepad2.right_trigger < .8) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
+                        spikemark = SpikeMark.OUT;
                     }
                     break;
             }
+
+            //Switches btw intake heights and toggles drawbridge when necessary
+//            switch (f) {
+//                case HEIGHT_5:
+//                    if (gamepad2.right_trigger > .8) {
+//                        intakeHeight.setValue("4");
+//                        liftServoTargetPos = RobotConstants.stack4;
+//                        intakeHeightDelayTimer.reset();
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    }
+//                    break;
+//                case HEIGHT_4:
+//                    if (gamepad2.left_trigger > .8) {
+//                        intakeHeight.setValue("5");
+//                        liftServoTargetPos = RobotConstants.stack5;
+//                        intakeHeightDelayTimer.reset();
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_5;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    } else if (gamepad2.right_trigger > .8) {
+//                        intakeHeight.setValue("3");
+//                        liftServoTargetPos = RobotConstants.stack3;
+//                        intakeHeightDelayTimer.reset();
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    }
+//                    break;
+//                case HEIGHT_3:
+//                    if (gamepad2.left_trigger > .8) {
+//                        intakeHeight.setValue("4");
+//                        liftServoTargetPos = RobotConstants.stack4;
+//                        intakeHeightDelayTimer.reset();
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    } else if (gamepad2.right_trigger > .8) {
+//                        intakeHeight.setValue("2");
+//                        liftServoTargetPos = RobotConstants.stack2;
+//                        intakeHeightDelayTimer.reset();
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    }
+//                    break;
+//                case HEIGHT_2:
+//                    if (gamepad2.left_trigger > .8) {
+//                        intakeHeight.setValue("3");
+//                        liftServoTargetPos = RobotConstants.stack3;
+//                        intakeHeightDelayTimer.reset();
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    } else if (gamepad2.right_trigger > .8) {
+//                        intakeHeight.setValue("1");
+//                        liftServoTargetPos = RobotConstants.stack1;
+//
+//                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
+//
+//                        intakeHeightDelayTimer.reset();
+//
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_1;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    }
+//                    break;
+//                case HEIGHT_1:
+//                    if (gamepad2.left_trigger > .8) {
+//                        intakeHeight.setValue("2");
+////                        liftServoTargetPos = RobotConstants.stack2;
+//
+//                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
+//
+//                        intakeHeightDelayTimer.reset();
+//
+//                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
+//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
+//                    }
+//                    break;
+//                case SHIFT_DELAY:
+//                    if (intakeHeightDelayTimer.seconds() > RobotConstants.intakeAdjustDelayTime) {
+//                        intakeStackControl = nextInakeStackControl;
+//                    }
+//                    break;
+//            }
 
             //Limits max speed servos move
-            if (drawbridgeTargetPos<drawbridgeCurrentPos) {
-                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
-                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-            } else if (drawbridgeTargetPos>drawbridgeCurrentPos) {
-                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
-                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-            }
+//            if (spikeMarkTargetPos<spikeMarkCurrentPos) {
+//                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
+////                robot.rightDrawbridgeServe.setPosition(spikeMarkCurrentPos+RobotConstants.drawbridgeRightOffset);
+////                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+//                robot.rightSpikeMarkServo.setPosition(spikeMarkCurrentPos);
+//                robot.leftSpikeMarkServo.setPosition(spikeMarkCurrentPos);
+//            } else if (spikeMarkTargetPos>spikeMarkCurrentPos) {
+//                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
+////                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
+////                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
+//                robot.rightSpikeMarkServo.setPosition(spikeMarkCurrentPos);
+//                robot.leftSpikeMarkServo.setPosition(spikeMarkCurrentPos);
+//            }
 
             //Limits max speed intake lift servos move
 //            if (liftServoTargetPos<liftServoCurrentPos) {
@@ -666,8 +715,8 @@ public class testTele extends LinearOpMode {
 //                robot.leftLiftServo.setPosition(liftServoCurrentPos);
 //            }
 
-            robot.rightLiftServo.setPosition(liftServoTargetPos);
-            robot.leftLiftServo.setPosition(liftServoTargetPos+RobotConstants.stackLeftOffset);
+//            robot.rightLiftServo.setPosition(liftServoTargetPos);
+//            robot.leftLiftServo.setPosition(liftServoTargetPos+RobotConstants.stackLeftOffset);
 
             switch (transfer) {
                 case STOPPED:

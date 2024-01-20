@@ -20,50 +20,13 @@ public class meepMeepCode {
 
                         .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270))))
 
-                                .addDisplacementMarker(() -> {}) //targetSlidePos = RobotConstants.slideBottom)
-                                .lineTo(new Vector2d(-35, 60))
-                                .splineToConstantHeading(new Vector2d(-31, 34), Math.toRadians(280))
-                                .addTemporalMarker(1.3, () -> {}) //robot.leftServo.setPosition(RobotConstants.leftIn))
-//                                .addSpatialMarker(new Vector2d(-31, 34), () -> {}) //robot.leftServo.setPosition(RobotConstants.leftIn))
-                                .waitSeconds(.2)
-                                .lineTo(new Vector2d(-36, 32))
-                                .splineToSplineHeading(new Pose2d(-40, 23, Math.toRadians(0)), Math.toRadians(270))
-                                .lineTo(new Vector2d(-56.2, 23))
-                                .waitSeconds(.7)
-                                .addTemporalMarker(3.1, () -> {
-//                                    robot.leftLiftServo.setPosition(RobotConstants.stack5+RobotConstants.stackLeftOffset);
-//                                    robot.rightLiftServo.setPosition(RobotConstants.stack5);
-//                                    robot.transferMotor.setPower(.3);
-//                                    drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
-                                })
-//                                .addTemporalMarker(3, () -> {})
-                                        //targetSlidePos = RobotConstants.slideBottom)
-                                .addTemporalMarker(3.8, () -> {
-//                                    robot.intakeMotor.setPower(1);
-//                                    robot.transferMotor.setPower(1);
-//                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
-                                })
-//
-                                .lineTo(new Vector2d(-50, 23))
-                                .waitSeconds(.8)
-                                .addTemporalMarker(5.4, () -> {
-//                                    robot.leftLiftServo.setPosition(RobotConstants.stack4+RobotConstants.stackLeftOffset);
-//                                    robot.rightLiftServo.setPosition(RobotConstants.stack4);
-                                })
-                                .lineTo(new Vector2d(-56.2, 23))
-                                .waitSeconds(.3)
-                                .lineTo(new Vector2d(-55, 23))
-                                .addTemporalMarker(6.5, () -> {
-//                                    robot.intakeMotor.setPower(0);
-//                                    robot.transferMotor.setPower(0);
-                                })
-                                .splineToConstantHeading(new Vector2d(-34, 58), Math.toRadians(0))
-                                .lineTo(new Vector2d(30, 58))
-                                .splineToConstantHeading(new Vector2d(50, 40), Math.toRadians(0))
-                                .addTemporalMarker(9, () -> {})//targetSlidePos = RobotConstants.slideLow)
-                                //.splineToConstantHeading(new Vector2d(53, 31), Math.toRadians(0))
-                                .addTemporalMarker(9.5, () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
-                                .waitSeconds(.5)
+                                .lineTo(new Vector2d(-35, 45))
+                                .splineToSplineHeading(new Pose2d(-37, 30), Math.toRadians(270))
+                                .lineTo(new Vector2d(-37, 15))
+                                .addTemporalMarker(2.2, () -> {}) // robot.leftServo.setPosition(RobotConstants.leftIn))
+                                .splineToConstantHeading(new Vector2d(-39, 10), Math.toRadians(0))
+                                //.lineTo(new )
+
 
 //                                .lineTo(new Vector2d(45, 40))
 //                                .splineToConstantHeading(new Vector2d(28, 58), Math.toRadians(180))
