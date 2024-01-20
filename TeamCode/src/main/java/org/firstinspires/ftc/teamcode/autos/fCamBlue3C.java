@@ -140,7 +140,7 @@ public class fCamBlue3C extends LinearOpMode {
                 .lineTo(new Vector2d(9, 8))
                 .addTemporalMarker(11.7, () -> targetSlidePos = RobotConstants.slideLow)
                 .splineToConstantHeading(new Vector2d(53, 31), Math.toRadians(0))
-                .addTemporalMarker(12.5, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(12.5, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
                 .waitSeconds(.3)
                 .build();
 
