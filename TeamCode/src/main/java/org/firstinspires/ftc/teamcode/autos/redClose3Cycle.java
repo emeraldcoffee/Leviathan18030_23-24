@@ -78,7 +78,7 @@ public class redClose3Cycle {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMa);
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
 
