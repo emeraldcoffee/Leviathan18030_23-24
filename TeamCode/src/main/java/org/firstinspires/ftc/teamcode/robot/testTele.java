@@ -583,7 +583,7 @@ public class testTele extends LinearOpMode {
                 case BACK:
                     if (gamepad2.left_trigger > .8) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.OUT;
                     }
 
@@ -592,18 +592,19 @@ public class testTele extends LinearOpMode {
 
                     if (gamepad2.right_trigger > .8) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset );
                         spikemark = SpikeMark.IN;
                     }
                     else if (gamepad2.left_trigger < .8) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                        spikemark = SpikeMark.BACK;
                     }
                     break;
                 case IN:
                     if (gamepad2.right_trigger < .8) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.OUT;
                     }
                     break;
