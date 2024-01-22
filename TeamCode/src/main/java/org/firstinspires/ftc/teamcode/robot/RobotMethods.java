@@ -253,6 +253,12 @@ public class RobotMethods {
         }
     }
 
+    public static void relocalizeDistanceSensor(double leftDistance, double rightDistance, SampleMecanumDrive drive) {
+        double heading = -Math.tan((leftDistance-rightDistance)/10.03);
+        double lateralDistance = ((leftDistance+rightDistance)/2+9.74)*Math.cos(heading);
+
+        drive.setPoseEstimate(new Pose2d(lateralDistance-70, drive.getPoseEstimate().getY(), heading));
+    }
 
     /*public static double slidePID(hardwareMap hwMap, double kP, double kI, double kD, double distance) { // tuning and desired (in ticks)
 
@@ -294,4 +300,6 @@ public class RobotMethods {
     public static void slideRetract (hardwareMap hwMap, double distance) {
         hwMap.liftMotor.setPower(-slidePID(hwMap, .2, .2, .2, distance));
     }*/
+
+
 }

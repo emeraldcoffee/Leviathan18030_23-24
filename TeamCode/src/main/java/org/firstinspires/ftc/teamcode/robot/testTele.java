@@ -3,28 +3,18 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import static java.lang.Math.abs;
 
-import android.util.Size;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.concurrent.TimeUnit;
 
 
 @TeleOp()
@@ -144,11 +134,11 @@ public class testTele extends LinearOpMode {
     IntakeStackControl nextInakeStackControl = IntakeStackControl.HEIGHT_1;
 
     enum SpikeMark {
-        BACK,
+        GUIDE,
         OUT,
         IN,
     }
-    SpikeMark spikemark = SpikeMark.BACK;
+    SpikeMark spikemark = SpikeMark.GUIDE;
 
     enum Slide {
         BOTTOM,
@@ -270,8 +260,8 @@ public class testTele extends LinearOpMode {
 //        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
 //        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
 
-        robot.rightSpikeMarkServo.setPosition(spikeMarkTargetPos);
-        robot.leftSpikeMarkServo.setPosition(spikeMarkTargetPos);
+        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
+        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
 
 
 
@@ -580,10 +570,10 @@ public class testTele extends LinearOpMode {
             }
 
             switch (spikemark) {
-                case BACK:
+                case GUIDE:
                     if (gamepad2.left_trigger > .8) {
-                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut + RobotConstants.rightSpikeOffset);
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.OUT;
                     }
 
@@ -596,15 +586,15 @@ public class testTele extends LinearOpMode {
                         spikemark = SpikeMark.IN;
                     }
                     else if (gamepad2.left_trigger < .8) {
-                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
-                        spikemark = SpikeMark.BACK;
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
+                        spikemark = SpikeMark.GUIDE;
                     }
                     break;
                 case IN:
                     if (gamepad2.right_trigger < .8) {
-                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut + RobotConstants.rightSpikeOffset);
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.OUT;
                     }
                     break;
