@@ -28,7 +28,6 @@ public class meepMeepCode {
                                 .lineTo(new Vector2d(53, 37.5))
                                 .addTemporalMarker(3.9, () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
                                 .waitSeconds(.3)
-
                                 .lineTo(new Vector2d(51, 37.5))
                                 .addTemporalMarker(4, () -> {
 //                                    robot.transferMotor.setPower(.3);
@@ -41,23 +40,23 @@ public class meepMeepCode {
 //                                    robot.transferMotor.setPower(1);
 //                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
                                 })
-                                .splineToConstantHeading(new Vector2d(9, 8), Math.toRadians(180))
-                                .lineTo(new Vector2d(-20, 8))
-                                .splineToConstantHeading(new Vector2d(-53, 15), Math.toRadians(180))
-                                .waitSeconds(1.7)
-                                .addTemporalMarker(7.5, () -> {
+                                .splineToConstantHeading(new Vector2d(12, 9), Math.toRadians(180))
+                                .lineTo(new Vector2d(-20, 9))
+                                .splineToConstantHeading(new Vector2d(-53, 11.5), Math.toRadians(180))
+                                .waitSeconds(1.25)
+                                .addTemporalMarker(7.1, () -> {
 //                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
 //                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                                 })
-                                .addTemporalMarker(8, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                                .addTemporalMarker(7.7, () -> {
+//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut + RobotConstants.rightSpikeOffset);
+//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeOut);
                                 })
-                                .addTemporalMarker(8.5, () -> {
+                                .addTemporalMarker(8.3, () -> {
 //                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
 //                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                                 })
-                                .addTemporalMarker(8.7, () -> {})//driveTrain.followTrajectorySequenceAsync(cycleReturn);)
+                                .addTemporalMarker(8.3, () -> {})//driveTrain.followTrajectorySequenceAsync(cycleReturn);)
                                 .build());
 
 
