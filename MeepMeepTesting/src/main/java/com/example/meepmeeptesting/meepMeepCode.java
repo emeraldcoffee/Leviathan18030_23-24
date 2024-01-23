@@ -18,45 +18,18 @@ public class meepMeepCode {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 11)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(12, 63.5, Math.toRadians(270))))
-                                .lineTo(new Vector2d(12, 60))
-                                .splineToSplineHeading(new Pose2d(17, 33), Math.toRadians(270))
-                                .lineTo(new Vector2d(17,36))
-                                .addTemporalMarker(1.9, () -> {})//robot.rightServo.setPosition(RobotConstants.rightIn))
-                                .lineTo(new Vector2d(18, 36))
-                                .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
-                                .lineTo(new Vector2d(53, 37.5))
-                                .addTemporalMarker(3.9, () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
+                        .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-53, 11.5, Math.toRadians(0))))
+                                .lineTo(new Vector2d(-52, 11.5))
+                                .splineToConstantHeading(new Vector2d(-20, 9), Math.toRadians(0))
+                                .lineTo(new Vector2d(15, 9))
+                                .addTemporalMarker(2, () -> {
+//                                    targetSlidePos = RobotConstants.slideLow;
+//                                    robot.intakeMotor.setPower(0);
+//                                    robot.transferMotor.setPower(0);
+                                })
+                                .splineToConstantHeading(new Vector2d(53, 35), Math.toRadians(0))
+                                .addTemporalMarker(3.1, () -> {})//robot.dropServo.setPosition(RobotConstants.dropPartial))
                                 .waitSeconds(.3)
-                                .lineTo(new Vector2d(51, 37.5))
-                                .addTemporalMarker(4, () -> {
-//                                    robot.transferMotor.setPower(.3);
-                                })
-                                .addTemporalMarker(5, () -> {})//targetSlidePos = RobotConstants.slideBottom)
-                                .addTemporalMarker(6.4, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
-//                                    robot.intakeMotor.setPower(1);
-//                                    robot.transferMotor.setPower(1);
-//                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
-                                })
-                                .splineToConstantHeading(new Vector2d(12, 9), Math.toRadians(180))
-                                .lineTo(new Vector2d(-20, 9))
-                                .splineToConstantHeading(new Vector2d(-53, 11.5), Math.toRadians(180))
-                                .waitSeconds(1.25)
-                                .addTemporalMarker(7.1, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
-                                })
-                                .addTemporalMarker(7.7, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkOut + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeOut);
-                                })
-                                .addTemporalMarker(8.3, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
-                                })
-                                .addTemporalMarker(8.3, () -> {})//driveTrain.followTrajectorySequenceAsync(cycleReturn);)
                                 .build());
 
 

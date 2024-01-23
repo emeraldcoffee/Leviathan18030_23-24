@@ -63,6 +63,8 @@ public class fCamBlue3C extends LinearOpMode {
         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
 
+        ElapsedTime autoTimer = new ElapsedTime();
+
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
 
@@ -90,8 +92,12 @@ public class fCamBlue3C extends LinearOpMode {
         TrajectorySequence cycleReturn = driveTrain.trajectorySequenceBuilder(new Pose2d(-53, 11.5, Math.toRadians(0)))
                 .lineTo(new Vector2d(-52, 11.5))
                 .splineToConstantHeading(new Vector2d(-20, 9), Math.toRadians(0))
-                .lineTo(new Vector2d(9, 9))
-                .addTemporalMarker(2, () -> targetSlidePos = RobotConstants.slideLow)
+                .lineTo(new Vector2d(15, 9))
+                .addTemporalMarker(2, () -> {
+                                    targetSlidePos = RobotConstants.slideLow;
+                                    robot.intakeMotor.setPower(0);
+                                    robot.transferMotor.setPower(0);
+                })
                 .splineToConstantHeading(new Vector2d(53, 35), Math.toRadians(0))
                 .addTemporalMarker(3.1, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
                 .waitSeconds(.3)
@@ -165,10 +171,15 @@ public class fCamBlue3C extends LinearOpMode {
                 .lineTo(new Vector2d(-20, 9))
                 .splineToConstantHeading(new Vector2d(-53, 11.5), Math.toRadians(180))
                 .waitSeconds(1.3)
+                .addTemporalMarker(6.5, () -> {
+                    autoTimer.reset();
+                    while (autoTimer.seconds()<.6) {
+                        RobotMethods.relocalizeDistanceSensor(robot.leftDistanceSensor.getDistance(DistanceUnit.INCH), robot.rightDistanceSensor.getDistance(DistanceUnit.INCH), driveTrain);
+                    }
+                })
                 .addTemporalMarker(7.1, () -> {
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
-                                    RobotMethods.relocalizeDistanceSensor(robot.leftDistanceSensor.getDistance(DistanceUnit.INCH), robot.rightDistanceSensor.getDistance(DistanceUnit.INCH), driveTrain);
                 })
                 .addTemporalMarker(7.7, () -> {
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
