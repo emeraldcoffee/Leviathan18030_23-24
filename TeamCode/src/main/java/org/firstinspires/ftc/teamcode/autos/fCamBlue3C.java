@@ -149,12 +149,12 @@ public class fCamBlue3C extends LinearOpMode {
                 .lineTo(new Vector2d(53, 37.5))
                 .addTemporalMarker(3.9, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
                 .waitSeconds(.3)
-                .lineTo(new Vector2d(51, 37.5))
+                .lineTo(new Vector2d(51, 37))
                 .addTemporalMarker(4, () -> {
                                     robot.transferMotor.setPower(.3);
                 })
                 .addTemporalMarker(5, () -> targetSlidePos = RobotConstants.slideBottom)
-                .addTemporalMarker(6.4, () -> {
+                .addTemporalMarker(6, () -> {
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
                                     robot.intakeMotor.setPower(1);
@@ -163,7 +163,7 @@ public class fCamBlue3C extends LinearOpMode {
                 })
                 .splineToConstantHeading(new Vector2d(12, 9), Math.toRadians(180))
                 .lineTo(new Vector2d(-20, 9))
-                .splineToConstantHeading(new Vector2d(-53, 11.5), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-53, 11), Math.toRadians(180))
                 .waitSeconds(1.3)
                 .addTemporalMarker(7.1, () -> {
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
