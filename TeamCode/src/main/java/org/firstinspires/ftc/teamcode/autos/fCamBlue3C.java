@@ -91,13 +91,8 @@ public class fCamBlue3C extends LinearOpMode {
                 .lineTo(new Vector2d(-52, 11.5))
                 .splineToConstantHeading(new Vector2d(-20, 9), Math.toRadians(0))
                 .lineTo(new Vector2d(9, 9))
-                .addTemporalMarker(2, () -> {
-                    robot.transferMotor.setPower(0);
-                    robot.intakeMotor.setPower(0);
-                    targetSlidePos = RobotConstants.slideLow;
-                    robot.dropServo.setPosition(RobotConstants.dropClosed);
-                })
-                .splineToConstantHeading(new Vector2d(53, 37), Math.toRadians(0))
+                .addTemporalMarker(2, () -> targetSlidePos = RobotConstants.slideLow)
+                .splineToConstantHeading(new Vector2d(53, 35), Math.toRadians(0))
                 .addTemporalMarker(3.1, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
                 .waitSeconds(.3)
                 .build();
@@ -145,51 +140,45 @@ public class fCamBlue3C extends LinearOpMode {
                 .build();
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63.5, Math.toRadians(270)))
-                .lineTo(new Vector2d(13, 60))
+                .lineTo(new Vector2d(12, 60))
                 .splineToSplineHeading(new Pose2d(17, 33), Math.toRadians(270))
-                .lineTo(new Vector2d(16.5,36))
+                .lineTo(new Vector2d(17,36))
                 .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
                 .lineTo(new Vector2d(18, 36))
                 .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 37))
-                .addTemporalMarker(3.9, () -> {
-                    robot.dropServo.setPosition(RobotConstants.dropOpen);
+                .lineTo(new Vector2d(53, 37.5))
+                .addTemporalMarker(3.9, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .waitSeconds(.3)
+                .lineTo(new Vector2d(51, 37))
+                .addTemporalMarker(4, () -> {
+                                    robot.transferMotor.setPower(.3);
                 })
-                //.waitSeconds(.1)
-                .lineTo(new Vector2d(53, 37))
-                .addTemporalMarker(0.8, () -> {
-                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
-                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                .addTemporalMarker(5, () -> targetSlidePos = RobotConstants.slideBottom)
+                .addTemporalMarker(6, () -> {
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                                    robot.intakeMotor.setPower(1);
+                                    robot.transferMotor.setPower(1);
+                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
                 })
-                .addTemporalMarker(3.4, () -> {
-                    robot.transferMotor.setPower(.3);
-                })
-                .addTemporalMarker(4.6, () -> {
-                    targetSlidePos = RobotConstants.slideBottom;
-                })
-                .addTemporalMarker(5, () -> {
-                    robot.intakeMotor.setPower(1);
-                    robot.transferMotor.setPower(1);
-                    robot.dropServo.setPosition(RobotConstants.dropClosed);
-                })
-                .splineToConstantHeading(new Vector2d(18, 8), Math.toRadians(180))
-                .lineTo(new Vector2d(-20, 8))
-                .splineToConstantHeading(new Vector2d(-50, 13), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(12, 9), Math.toRadians(180))
+                .lineTo(new Vector2d(-20, 9))
+                .splineToConstantHeading(new Vector2d(-53, 11), Math.toRadians(180))
                 .waitSeconds(1.3)
-                .addTemporalMarker(5.8, () -> {
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
-//                        RobotMethods.relocalizeDistanceSensor(robot.leftDistanceSensor.getDistance(DistanceUnit.INCH), robot.rightDistanceSensor.getDistance(DistanceUnit.INCH), driveTrain);
+                .addTemporalMarker(7.1, () -> {
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                                    RobotMethods.relocalizeDistanceSensor(robot.leftDistanceSensor.getDistance(DistanceUnit.INCH), robot.rightDistanceSensor.getDistance(DistanceUnit.INCH), driveTrain);
                 })
-                .addTemporalMarker(6.4, () -> {
+                .addTemporalMarker(7.7, () -> {
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                 })
-                .addTemporalMarker(7.2, () -> {
+                .addTemporalMarker(8.3, () -> {
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                 })
-                .addTemporalMarker(7.5, () -> driveTrain.followTrajectorySequenceAsync(cycleReturn))
+                .addTemporalMarker(8.3, () -> driveTrain.followTrajectorySequenceAsync(cycleReturn))
                 .build();
 
 
@@ -219,20 +208,20 @@ public class fCamBlue3C extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(9, 8), Math.toRadians(180))
                 .lineTo(new Vector2d(-20, 8))
                 .splineToConstantHeading(new Vector2d(-53, 15), Math.toRadians(180))
-                .waitSeconds(1)
-                .addTemporalMarker(7.1, () -> {
+                .waitSeconds(1.7)
+                .addTemporalMarker(7.5, () -> {
                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                 })
-                .addTemporalMarker(7.7, () -> {
+                .addTemporalMarker(8, () -> {
                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
                 })
-                .addTemporalMarker(8.3, () -> {
+                .addTemporalMarker(8.5, () -> {
                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                 })
-                .addTemporalMarker(8.3, () -> {driveTrain.followTrajectorySequenceAsync(cycleReturn);})
+                .addTemporalMarker(8.7, () -> {driveTrain.followTrajectorySequenceAsync(cycleReturn);})
                 .build();
 
 
