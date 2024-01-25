@@ -92,6 +92,7 @@ public class redClose3Cycle extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(54.3, -28.5), Math.toRadians(0))
                 .addTemporalMarker(3.1, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
                 .waitSeconds(0.3)
+
                 .build();
 
         TrajectorySequence goToStackFromPath = driveTrain.trajectorySequenceBuilder(new Pose2d(19, -6.6, Math.toRadians(0)))
@@ -150,7 +151,7 @@ public class redClose3Cycle extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(54.2, -28.5))
                 .splineToConstantHeading(new Vector2d(19, -6.6), Math.toRadians(180))
                 .addTemporalMarker(5.62, () -> {
-                    driveTrain.followTrajectorySequenceAsync(cycleReturn);
+                    driveTrain.followTrajectorySequenceAsync(goToStackFromPath);
                 })
                 .build();
 
@@ -168,7 +169,7 @@ public class redClose3Cycle extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(54.2, -37.5))
                 .splineToConstantHeading(new Vector2d(19, -6.6), Math.toRadians(180))
                 .addTemporalMarker(5.99, () -> {
-                    driveTrain.followTrajectorySequenceAsync(cycleReturn);
+                    driveTrain.followTrajectorySequenceAsync(goToStackFromPath);
                 })
                 .build();
 
@@ -187,7 +188,7 @@ public class redClose3Cycle extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(54.2, -45))
                 .splineToConstantHeading(new Vector2d(19, -6.6), Math.toRadians(180))
                 .addTemporalMarker(5.98, () -> {
-                    driveTrain.followTrajectorySequenceAsync(cycleReturn);
+                    driveTrain.followTrajectorySequenceAsync(goToStackFromPath);
                 })
                 .build();
 
