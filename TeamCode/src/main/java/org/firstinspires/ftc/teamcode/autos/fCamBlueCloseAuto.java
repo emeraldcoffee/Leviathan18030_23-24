@@ -76,34 +76,38 @@ public class fCamBlueCloseAuto extends LinearOpMode {
             }
         });
 
-        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
-        robot.rightLiftServo.setPosition(intakePos);
+//        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
+//        robot.rightLiftServo.setPosition(intakePos);
+        robot.transferMotor.setPower(-.2);
 
         TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 61))
-                .splineToLinearHeading(new Pose2d(23, 40), Math.toRadians(270))
-                .lineTo(new Vector2d(23, 48))
-                .addTemporalMarker(2.15, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                .lineTo(new Vector2d(26, 48))
+                .splineToLinearHeading(new Pose2d(23, 42), Math.toRadians(270))
+                .lineTo(new Vector2d(23, 46))
+                .addTemporalMarker(1.7, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(26, 46))
                 .splineToConstantHeading(new Vector2d(47, 44), Math.toRadians(0))
                 .lineTo(new Vector2d(53, 44))
                 .addTemporalMarker(3.8, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
                 .waitSeconds(.2)
                 .lineTo(new Vector2d(40, 44))
-                .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
+                .addDisplacementMarker(() -> {
+                                    targetSlidePos = RobotConstants.slideBottom;
+                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
+                })
                 .lineTo(new Vector2d(40, 60))
                 .lineTo(new Vector2d(45, 60))
                 .build();
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 60))
-                .splineToSplineHeading(new Pose2d(17, 30), Math.toRadians(270))
-                .lineTo(new Vector2d(17,36))
-                .addTemporalMarker(2.0, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                .lineTo(new Vector2d(18, 36))
+                .splineToSplineHeading(new Pose2d(17, 34), Math.toRadians(270))
+                .lineTo(new Vector2d(17,37))
+                .addTemporalMarker(1.7, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(18, 37))
                 .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
                 .lineTo(new Vector2d(53, 37.5))
-                .addTemporalMarker(3.9, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(3.6, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(40, 37.5))
                 .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
