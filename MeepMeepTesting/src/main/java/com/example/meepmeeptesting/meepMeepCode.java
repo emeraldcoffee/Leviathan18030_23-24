@@ -26,23 +26,23 @@ public class meepMeepCode {
 
                         .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90))))
                                 .setVelConstraint(SampleMecanumDrive.getVelocityConstraint(45, Math.toRadians(310), 10.62))
-                                .splineToSplineHeading(new Pose2d(-40, -32, Math.toRadians(0)), Math.toRadians(90))
+                                .splineToSplineHeading(new Pose2d(-45, -28, Math.toRadians(0)), Math.toRadians(90))
                                 .addTemporalMarker(.1, () -> {})//targetSlidePos = RobotConstants.slideBottom)
-                                .lineTo(new Vector2d(-40, -33))
-                                .addTemporalMarker(1.7, () -> {})//{robot.leftServo.setPosition(RobotConstants.leftIn);})
-                                .addTemporalMarker(1.6, () -> {
+                                .lineTo(new Vector2d(-45, -34))
+                                .addTemporalMarker(2.3, () -> {})//{robot.leftServo.setPosition(RobotConstants.leftIn);})
+                                .addTemporalMarker(1.4, () -> {
 //                                    robot.intakeMotor.setPower(1);
 //                                    robot.transferMotor.setPower(1);
 //                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
 //                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
 
                                 })
-                                .splineToConstantHeading(new Vector2d(-54, -35), Math.toRadians(180))
-                                .addTemporalMarker(2.9, () -> {
+                                .splineToConstantHeading(new Vector2d(-56, -35), Math.toRadians(180))
+                                .addTemporalMarker(3.1, () -> {
 //                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
 //                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
                                 })
-                                .addTemporalMarker(3.2, () -> {
+                                .addTemporalMarker(3.4, () -> {
 //                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
 //                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
                                 })
@@ -57,13 +57,14 @@ public class meepMeepCode {
 //                                    robot.intakeMotor.setPower(0);
 //                                    robot.transferMotor.setPower(0);
                                 })
-                                .splineToConstantHeading(new Vector2d(52, -37), Math.toRadians(0))
-                                .addTemporalMarker(7.3, () -> {})//robot.dropServo.setPosition(RobotConstants.dropPartial))
-                                .waitSeconds(.3)
-                                .addTemporalMarker(8.4, () -> {})//targetSlidePos = RobotConstants.slideBottom)
-                                .lineTo(new Vector2d(45, -37))
-                                .lineTo(new Vector2d(45, -61))
-                                .lineTo(new Vector2d(55, -61))
+                                .splineToConstantHeading(new Vector2d(52, -32), Math.toRadians(0))
+                                .addTemporalMarker(7.7, () -> {})//robot.dropServo.setPosition(RobotConstants.dropPartial))
+                                .addTemporalMarker(7.9, () -> {})//targetSlidePos = RobotConstants.slideLow)
+                                .waitSeconds(.6)
+                                .addTemporalMarker(8.9, () -> {})//targetSlidePos = RobotConstants.slideBottom)
+                                .lineTo(new Vector2d(45, -32))
+                                .lineTo(new Vector2d(45, -65))
+                                .lineTo(new Vector2d(55, -65))
 
                                 .build());
 
