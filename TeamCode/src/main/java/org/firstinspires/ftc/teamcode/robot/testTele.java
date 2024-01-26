@@ -136,7 +136,8 @@ public class testTele extends LinearOpMode {
     enum SpikeMark {
         GUIDE,
         OUT,
-        IN,
+        HOLD,
+        IN
     }
     SpikeMark spikemark = SpikeMark.GUIDE;
 
@@ -571,34 +572,41 @@ public class testTele extends LinearOpMode {
 
             switch (spikemark) {
                 case GUIDE:
-                    if (gamepad2.left_trigger > .8) {
+                    if (gamepad2.left_trigger > .4) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.OUT;
                     }
-
                     break;
                 case OUT:
-
+                    if (gamepad2.left_trigger > .8) {
+                        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
+                        spikemark = SpikeMark.HOLD;
+                    } else if (gamepad2.left_trigger < .4) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
+                        spikemark = SpikeMark.GUIDE;
+                    }
+                    break;
+                case HOLD:
                     if (gamepad2.right_trigger > .8) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset );
                         spikemark = SpikeMark.IN;
-                    }
-                    else if (gamepad2.left_trigger < .8) {
-                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
-                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
-                        spikemark = SpikeMark.GUIDE;
+                    } else if (gamepad2.left_trigger < .8) {
+                        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
+                        spikemark = SpikeMark.OUT;
                     }
                     break;
                 case IN:
                     if (gamepad2.right_trigger < .8) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
-                        spikemark = SpikeMark.OUT;
+                        spikemark = SpikeMark.HOLD;
                     }
                     break;
             }
+
 
             //Switches btw intake heights and toggles drawbridge when necessary
 //            switch (f) {

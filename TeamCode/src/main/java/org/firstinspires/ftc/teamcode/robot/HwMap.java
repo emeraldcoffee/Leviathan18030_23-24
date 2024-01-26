@@ -53,7 +53,7 @@ public class HwMap {
 
     public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     //Servo names
-    public Servo dropServo, leftServo, rightServo, droneServo, leftLiftServo, rightLiftServo, leftSpikeMarkServo, rightSpikeMarkServo;
+    public Servo dropServo, leftServo, rightServo, droneServo, leftLiftServo, rightLiftServo, leftSpikeMarkServo, rightSpikeMarkServo, spikeMarkHoldServo;
 
     //Camera name
     public OpenCvCamera webcam, webcamR;
@@ -131,8 +131,9 @@ public class HwMap {
         droneServo = hwMap.servo.get("droneServo"); // ex hub 1
         leftSpikeMarkServo = hwMap.servo.get("leftSpikeMarkServo"); // control hub 2
         rightSpikeMarkServo = hwMap.servo.get("rightSpikeMarkServo"); // ex hub 4
-        leftLiftServo = hwMap.servo.get("leftLiftServo");// control hub 1
-        rightLiftServo = hwMap.servo.get("rightLiftServo"); // ex hub 5
+//        leftLiftServo = hwMap.servo.get("leftLiftServo");// control hub 1
+//        rightLiftServo = hwMap.servo.get("rightLiftServo"); // ex hub 5
+        spikeMarkHoldServo = hwMap.servo.get("rightLiftServo");
 
 
         rightLiftServo.setDirection(Servo.Direction.REVERSE);
