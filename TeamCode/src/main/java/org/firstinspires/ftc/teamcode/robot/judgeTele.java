@@ -37,6 +37,14 @@ public class judgeTele extends LinearOpMode {
         TOP
     }
 
+    enum SpikeMark {
+        GUIDE,
+        OUT,
+        HOLD,
+        IN
+    }
+    SpikeMark spikemark = SpikeMark.GUIDE;
+
     int targetPos = RobotConstants.slideBottom;
 
     double slideI = 0.0;
@@ -59,6 +67,10 @@ public class judgeTele extends LinearOpMode {
         ElapsedTime loopTimer = new ElapsedTime();
 
         robot.dropServo.setPosition(RobotConstants.dropClosed);
+
+        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
+        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
 
         waitForStart();
         if (isStopRequested()) return;
@@ -94,7 +106,7 @@ public class judgeTele extends LinearOpMode {
 
             switch (climb) {
                 case HOLD:
-                    if (gamepad2.left_bumper && gamepad2.right_bumper) {
+                    if (gamepad2.right_bumper) {
                         targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
                         robot.climbMotor.setTargetPosition(targetClimbPos);
                         climbTimer.reset();
@@ -107,44 +119,17 @@ public class judgeTele extends LinearOpMode {
                         climb = Climb.WAIT;
                     }
                     break;
-                case WAIT:
-                    if (!gamepad2.left_bumper) {
-                        climbTimer.reset();
-                        climb = Climb.STOPPED;
-                    }
-                    break;
-                case STOPPED:
-                    if (gamepad2.left_bumper) {
-                        targetClimbPos += 2.5 * climbTimer.milliseconds();
-                        robot.climbMotor.setTargetPosition(targetClimbPos);
-//                        climb = Climb.SPIN_IN;
-                    } else if (gamepad2.dpad_up) {
-                        targetClimbPos -= 2.5 * climbTimer.milliseconds();
-                        robot.climbMotor.setTargetPosition(targetClimbPos);
-//                        climb = Climb.SPIN_OUT;
-                    }
-                    climbTimer.reset();
-                    break;
             }
 
             switch (intake) {
                 case STOPPED:
-                    if (gamepad2.dpad_down) {
+                    if (gamepad2.dpad_down || gamepad2.left_trigger >.1) {
                         robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
                         intake = Spin.SPIN_IN;
-                    } else if (gamepad2.dpad_up) {
-                        robot.intakeMotor.setPower(-RobotConstants.intakeSpeed);
-                        intake = Spin.SPIN_OUT;
                     }
                     break;
                 case SPIN_IN:
-                    if (!gamepad2.dpad_down) {
-                        robot.intakeMotor.setPower(0);
-                        intake = Spin.STOPPED;
-                    }
-                    break;
-                case SPIN_OUT:
-                    if (!gamepad2.dpad_up) {
+                    if (!gamepad2.dpad_down || gamepad2.left_trigger <.1) {
                         robot.intakeMotor.setPower(0);
                         intake = Spin.STOPPED;
                     }
@@ -156,9 +141,6 @@ public class judgeTele extends LinearOpMode {
                     if (gamepad2.dpad_right) {
                         robot.transferMotor.setPower(RobotConstants.transferSpeed);
                         transfer = Spin.SPIN_IN;
-                    } else if (gamepad2.dpad_left) {
-                        robot.transferMotor.setPower(-RobotConstants.transferSpeed);
-                        transfer = Spin.SPIN_OUT;
                     }
                     break;
                 case SPIN_IN:
@@ -167,12 +149,69 @@ public class judgeTele extends LinearOpMode {
                         transfer = Spin.STOPPED;
                     }
                     break;
-                case SPIN_OUT:
-                    if (!gamepad2.dpad_left) {
+            }
+
+            switch (spikemark) {
+                case GUIDE:
+                    if (gamepad2.left_trigger > .1) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                        spikemark = SpikeMark.OUT;
+                    }
+                    break;
+                case OUT:
+                    if (gamepad2.left_trigger > .9) {
+                        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
+                        spikemark = SpikeMark.HOLD;
+                    } else if (gamepad2.left_trigger < .1) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
+                        spikemark = SpikeMark.GUIDE;
+                    }
+                    break;
+                case HOLD:
+                    if (gamepad2.right_trigger > .1) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset );
+                        spikemark = SpikeMark.IN;
+                    } else if (gamepad2.left_trigger < .9) {
+                        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
+                        spikemark = SpikeMark.OUT;
+                    }
+                    break;
+                case IN:
+                    if (gamepad2.right_trigger < .1) {
+                        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                        spikemark = SpikeMark.HOLD;
+                    }
+                    break;
+            }
+
+            switch (transfer) {
+                case STOPPED:
+                    if (gamepad2.dpad_right || gamepad2.left_trigger >.1) {
+                        robot.transferMotor.setPower(RobotConstants.transferSpeed);
+                        transfer = Spin.SPIN_IN;
+                    }
+                    break;
+                case SPIN_IN:
+                    if (!gamepad2.dpad_right || gamepad2.left_trigger <.1) {
                         robot.transferMotor.setPower(0);
                         transfer = Spin.STOPPED;
                     }
                     break;
+            }
+
+            if (gamepad2.left_bumper) {
+                robot.droneServo.setPosition(RobotConstants.droneRelease);
+            }
+
+            if (gamepad2.start) {
+                robot.leftServo.setPosition(RobotConstants.leftOut);
+            }
+            if (gamepad2.back) {
+                robot.leftServo.setPosition(RobotConstants.leftIn);
             }
         }
         robot.slideMotor.setPower(0.0);
