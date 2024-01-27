@@ -106,9 +106,12 @@ public class redFar2plus1 extends LinearOpMode {
                                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(52, -46), Math.toRadians(0))
-                .addTemporalMarker(8.5+4, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
-                .addTemporalMarker(8.7+4, () -> targetSlidePos = RobotConstants.slideLow)
-                .waitSeconds(.6)
+                .addTemporalMarker(8.5+4, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(9.0+4, () -> {
+                    targetSlidePos = RobotConstants.slideLow;
+                    robot.dropServo.setPosition(RobotConstants.dropPartial);
+                })
+                .waitSeconds(.9)
                 .addTemporalMarker(9.7+4, () -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(45, -46))
                 .lineTo(new Vector2d(45, -65))
@@ -155,10 +158,13 @@ public class redFar2plus1 extends LinearOpMode {
                                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(52, -39), Math.toRadians(0))
-                .addTemporalMarker(7.4+4, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
-                .addTemporalMarker(7.6+4, () -> targetSlidePos = RobotConstants.slideLow)
-                .waitSeconds(.6)
-                .addTemporalMarker(8.7+4, () -> targetSlidePos = RobotConstants.slideBottom)
+                .addTemporalMarker(7.4+4, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(7.9+4, () -> {
+                    targetSlidePos = RobotConstants.slideLow;
+                    robot.dropServo.setPosition(RobotConstants.dropPartial);
+                })
+                .waitSeconds(.9)
+                .addTemporalMarker(9.0+4, () -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(45, -39))
                 .lineTo(new Vector2d(45, -65))
                 .lineTo(new Vector2d(55, -65))
@@ -204,10 +210,13 @@ public class redFar2plus1 extends LinearOpMode {
                                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(52, -32), Math.toRadians(0))
-                .addTemporalMarker(7.7+4, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
-                .addTemporalMarker(7.9+4, () -> targetSlidePos = RobotConstants.slideLow)
-                .waitSeconds(.6)
-                .addTemporalMarker(8.9+4, () -> targetSlidePos = RobotConstants.slideBottom)
+                .addTemporalMarker(7.7+4, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(8.2+4, () -> {
+                    targetSlidePos = RobotConstants.slideLow;
+                    robot.dropServo.setPosition(RobotConstants.dropPartial);
+                })
+                .waitSeconds(.9)
+                .addTemporalMarker(9.2+4, () -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(45, -32))
                 .lineTo(new Vector2d(45, -65))
                 .lineTo(new Vector2d(55, -65))
