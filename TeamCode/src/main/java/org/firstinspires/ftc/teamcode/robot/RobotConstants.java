@@ -62,7 +62,7 @@ public class RobotConstants {
             spikeMarkGuide = 0.6,
             spikeMarkBack = .15,
             spikeMarkIn = .3,
-            holdServoUp = .3,
+            holdServoUp = .1,
             holdServoDown = .6,
             rightSpikeOffset = -.07,
 

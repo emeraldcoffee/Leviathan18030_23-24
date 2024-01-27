@@ -136,7 +136,7 @@ public class HwMap {
         spikeMarkHoldServo = hwMap.servo.get("rightLiftServo");
 
 
-        rightLiftServo.setDirection(Servo.Direction.REVERSE);
+//        rightLiftServo.setDirection(Servo.Direction.REVERSE);
         rightSpikeMarkServo.setDirection(Servo.Direction.REVERSE);
 
         leftDistanceSensor = hwMap.get(DistanceSensor.class, "leftDistanceSensor");

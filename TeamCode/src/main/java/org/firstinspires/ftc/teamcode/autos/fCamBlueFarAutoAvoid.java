@@ -54,6 +54,7 @@ public class fCamBlueFarAutoAvoid extends LinearOpMode {
 
         robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
         robot.rightLiftServo.setPosition(intakePos);
+        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
 
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));

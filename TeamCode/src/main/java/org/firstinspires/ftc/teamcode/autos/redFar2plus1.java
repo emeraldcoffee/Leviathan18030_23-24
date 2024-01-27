@@ -46,6 +46,7 @@ public class redFar2plus1 extends LinearOpMode {
         robot.init(hardwareMap);
 
         robot.transferMotor.setPower(-.2);
+        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
 
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
@@ -79,6 +80,9 @@ public class redFar2plus1 extends LinearOpMode {
 
                 })
                 .splineToConstantHeading(new Vector2d(-55.5, -35), Math.toRadians(180))
+                .addTemporalMarker(4.1, () -> {
+                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
+                })
                 .addTemporalMarker(4.2, () -> {
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
@@ -86,6 +90,9 @@ public class redFar2plus1 extends LinearOpMode {
                 .addTemporalMarker(4.5, () -> {
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
+                })
+                .addTemporalMarker(4.7, () -> {
+                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
                 })
                 .waitSeconds(.5+4)
                 .lineTo(new Vector2d(-53, -35))
@@ -122,6 +129,9 @@ public class redFar2plus1 extends LinearOpMode {
 
                 })
                 .splineToConstantHeading(new Vector2d(-56, -35), Math.toRadians(180))
+                .addTemporalMarker(2.9, () -> {
+                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
+                })
                 .addTemporalMarker(3.0, () -> {
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
@@ -129,6 +139,9 @@ public class redFar2plus1 extends LinearOpMode {
                 .addTemporalMarker(3.3, () -> {
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
+                })
+                .addTemporalMarker(3.5, () -> {
+                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
                 })
                 .waitSeconds(.5+4)
                 .lineTo(new Vector2d(-53, -35))
@@ -165,6 +178,9 @@ public class redFar2plus1 extends LinearOpMode {
 
                 })
                 .splineToConstantHeading(new Vector2d(-56, -35), Math.toRadians(180))
+                .addTemporalMarker(3.0, () -> {
+                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
+                })
                 .addTemporalMarker(3.1, () -> {
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
@@ -172,6 +188,9 @@ public class redFar2plus1 extends LinearOpMode {
                 .addTemporalMarker(3.4, () -> {
                                     robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                                     robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
+                })
+                .addTemporalMarker(3.6, () -> {
+                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
                 })
                 .waitSeconds(.5+4)
                 .lineTo(new Vector2d(-53, -35))

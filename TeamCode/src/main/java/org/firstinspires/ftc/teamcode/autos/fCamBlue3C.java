@@ -58,6 +58,7 @@ public class fCamBlue3C extends LinearOpMode {
         HwMap robot = new HwMap();
         robot.init(hardwareMap);
 
+        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
 //        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
 //        robot.rightLiftServo.setPosition(intakePos);
 //        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);

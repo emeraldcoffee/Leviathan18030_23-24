@@ -263,6 +263,7 @@ public class testTele extends LinearOpMode {
 
         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+        robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
 
 
 
@@ -548,7 +549,7 @@ public class testTele extends LinearOpMode {
 
             switch (intake) {
                 case STOPPED:
-                    if (gamepad2.dpad_down) {
+                    if (gamepad2.dpad_down || gamepad2.left_trigger >.1) {
                         robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
                         intake = Spin.SPIN_IN;
                     } else if (gamepad2.dpad_up) {
@@ -557,7 +558,7 @@ public class testTele extends LinearOpMode {
                     }
                     break;
                 case SPIN_IN:
-                    if (!gamepad2.dpad_down) {
+                    if (!gamepad2.dpad_down || gamepad2.left_trigger <.1) {
                         robot.intakeMotor.setPower(0);
                         intake = Spin.STOPPED;
                     }
@@ -572,34 +573,34 @@ public class testTele extends LinearOpMode {
 
             switch (spikemark) {
                 case GUIDE:
-                    if (gamepad2.left_trigger > .4) {
+                    if (gamepad2.left_trigger > .1) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.OUT;
                     }
                     break;
                 case OUT:
-                    if (gamepad2.left_trigger > .8) {
+                    if (gamepad2.left_trigger > .9) {
                         robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
                         spikemark = SpikeMark.HOLD;
-                    } else if (gamepad2.left_trigger < .4) {
+                    } else if (gamepad2.left_trigger < .1) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.GUIDE;
                     }
                     break;
                 case HOLD:
-                    if (gamepad2.right_trigger > .8) {
+                    if (gamepad2.right_trigger > .1) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset );
                         spikemark = SpikeMark.IN;
-                    } else if (gamepad2.left_trigger < .8) {
+                    } else if (gamepad2.left_trigger < .9) {
                         robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
                         spikemark = SpikeMark.OUT;
                     }
                     break;
                 case IN:
-                    if (gamepad2.right_trigger < .8) {
+                    if (gamepad2.right_trigger < .1) {
                         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
                         spikemark = SpikeMark.HOLD;
@@ -719,7 +720,7 @@ public class testTele extends LinearOpMode {
 
             switch (transfer) {
                 case STOPPED:
-                    if (gamepad2.dpad_right) {
+                    if (gamepad2.dpad_right || gamepad2.left_trigger >.1) {
                         robot.transferMotor.setPower(RobotConstants.transferSpeed);
                         transfer = Spin.SPIN_IN;
                     } else if (gamepad2.dpad_left) {
@@ -728,7 +729,7 @@ public class testTele extends LinearOpMode {
                     }
                     break;
                 case SPIN_IN:
-                    if (!gamepad2.dpad_right) {
+                    if (!gamepad2.dpad_right || gamepad2.left_trigger <.1) {
                         robot.transferMotor.setPower(0);
                         transfer = Spin.STOPPED;
                     }
