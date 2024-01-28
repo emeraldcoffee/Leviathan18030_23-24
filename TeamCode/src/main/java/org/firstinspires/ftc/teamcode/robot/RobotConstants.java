@@ -8,7 +8,7 @@ public class RobotConstants {
     //Whole # variables
     public static final int
             slideBottom         = (int)(8192 * 0.01),
-            slideAuto           = (int)(8192 * 2.1),
+            slideAuto           = (int)(8192 * 2.2),
             slideLow            = (int)(8192 * 3),
             slideMiddle         = (int) (8192 * 4.2),
             slideTop            = (int)(8192 * 6);
