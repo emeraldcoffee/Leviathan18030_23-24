@@ -474,7 +474,7 @@ public class testTele extends LinearOpMode {
 
             //Code to change target position of slides
             if (abs(gamepad2.left_stick_y)>.1) {
-                targetPos -= 8 * gamepad2.left_stick_y*slideTimer.milliseconds();
+                targetPos -= 14 * gamepad2.left_stick_y*slideTimer.milliseconds();
                 targetPos = Range.clip(targetPos, RobotConstants.slideBottom, RobotConstants.slideTop);
             } else if (gamepad2.a) {
                 targetPos = RobotConstants.slideBottom;
@@ -494,7 +494,7 @@ public class testTele extends LinearOpMode {
 
             slideI += distRemain * RobotConstants.slidePIDVals.i;
 
-            double slidePower = (distRemain * RobotConstants.slidePIDVals.p) + slideI + (slideVelo * RobotConstants.slidePIDVals.d);
+            double slidePower = (distRemain * RobotConstants.slidePIDVals.p) + slideI + .16 + (slideVelo * RobotConstants.slidePIDVals.d);
 
             robot.slideMotor.setPower(slidePower);
 
@@ -502,7 +502,7 @@ public class testTele extends LinearOpMode {
 
             switch (climb) {
                 case HOLD:
-                    if (gamepad1.dpad_down && gamepad1.right_bumper) {
+                    if (gamepad1.left_trigger>.9 && gamepad1.right_bumper) {
                         targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
                         robot.climbMotor.setTargetPosition(targetClimbPos);
                         climbTimer.reset();
@@ -512,7 +512,8 @@ public class testTele extends LinearOpMode {
                 case RELEASE:
                     if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
 //                        robot.climbMotor.setPower(0);
-                        climb = Climb.WAIT;
+                        //Changed to stop bc driver controls changed and its not necessary
+                        climb = Climb.STOPPED;
                     }
                     break;
                 case WAIT:
