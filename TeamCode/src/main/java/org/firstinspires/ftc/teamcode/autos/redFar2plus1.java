@@ -115,8 +115,8 @@ public class redFar2plus1 extends LinearOpMode {
                 .waitSeconds(.9)
                 .addTemporalMarker(9.7+4, () -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(45, -46))
-                .lineTo(new Vector2d(45, -65))
-                .lineTo(new Vector2d(55, -65))
+                .lineTo(new Vector2d(45, -64))
+                .lineTo(new Vector2d(55, -64))
                 .build();
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
@@ -168,8 +168,8 @@ public class redFar2plus1 extends LinearOpMode {
                 .waitSeconds(.9)
                 .addTemporalMarker(9.0+4, () -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(45, -39))
-                .lineTo(new Vector2d(45, -62))
-                .lineTo(new Vector2d(55, -62))
+                .lineTo(new Vector2d(45, -64))
+                .lineTo(new Vector2d(55, -64))
                 .build();
 
         TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
@@ -221,8 +221,8 @@ public class redFar2plus1 extends LinearOpMode {
                 .waitSeconds(.9)
                 .addTemporalMarker(9.4+4, () -> targetSlidePos = RobotConstants.slideBottom)
                 .lineTo(new Vector2d(45, -32.1))
-                .lineTo(new Vector2d(45, -62))
-                .lineTo(new Vector2d(55, -62))
+                .lineTo(new Vector2d(45, -64))
+                .lineTo(new Vector2d(55, -64))
                 .build();
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();

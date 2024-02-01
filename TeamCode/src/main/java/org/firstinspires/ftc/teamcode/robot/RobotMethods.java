@@ -48,6 +48,8 @@ public class RobotMethods {
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
 
+
+
     //Takes input values and sets drivetrain to corresponding powers while scaling all powers under maxPower
     public static void setMecanumDrive(double forward, double strafe, double turn, double maxPower, SampleMecanumDrive driveTrain) {
         //Find value to make all motor powers less than 1
@@ -56,6 +58,21 @@ public class RobotMethods {
         //Creating string with all drive powers for mecanum drive
         Double[] driveSpeeds = {(forward-strafe-turn)/scalePower, (forward+strafe-turn)/scalePower,
                                 (forward-strafe+turn/scalePower), (forward+strafe+turn)/scalePower};
+
+        //Setting motors to there new powers
+        driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+    public static void setMecanumDriveHeadingPriority(double forward, double strafe, double turn, SampleMecanumDrive driveTrain) {
+        turn = Range.clip(turn, -1, 1);
+
+        double remainingPower = 1-abs(turn);
+        //Find value to make all motor powers less than 1
+        double scalePower = max((abs(forward) + abs(strafe))/remainingPower, 1/remainingPower);
+
+        //Creating string with all drive powers for mecanum drive
+        Double[] driveSpeeds = {(forward-strafe)/scalePower-turn, (forward+strafe)/scalePower-turn,
+                (forward-strafe)/scalePower+turn, (forward+strafe)/scalePower+turn};
 
         //Setting motors to there new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
@@ -78,6 +95,25 @@ public class RobotMethods {
                                 (rotatedForward-rotatedStrafe+turn/scalePower), (rotatedForward+rotatedStrafe+turn)/scalePower};
 
         //Setting motors to their new powers
+        driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+    public static void setMecanumDriveFieldCentricHeadingPriority(double forward, double strafe, double turn, double heading, SampleMecanumDrive driveTrain) {
+        turn = Range.clip(turn, -1, 1);
+
+        //rotating Joystick values to account for robot heading
+        double rotatedForward = forward*Math.cos(-heading)-strafe*Math.sin(-heading),
+                rotatedStrafe = forward*Math.sin(-heading)+strafe*Math.cos(-heading);
+
+        double remainingPower = 1-abs(turn);
+        //Find value to make all motor powers less than 1
+        double scalePower = max((abs(rotatedForward) + abs(rotatedStrafe))/remainingPower, 1/remainingPower);
+
+        //Creating string with all drive powers for mecanum drive
+        Double[] driveSpeeds = {(rotatedForward-rotatedStrafe)/scalePower-turn, (rotatedForward+rotatedStrafe)/scalePower-turn,
+                (rotatedForward-rotatedStrafe)/scalePower+turn, (rotatedForward+rotatedStrafe)/scalePower+turn};
+
+        //Setting motors to there new powers
         driveTrain.setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
 
@@ -123,16 +159,16 @@ public class RobotMethods {
     }
 
     //Adds telemetry data for robot position
+    @SuppressLint("DefaultLocale")
     public static String updateRobotPosition(Pose2d pose) {
         //Adds roadrunner pose data to string, rounded to nearest 2 decimal places
-        return "x: " + (double)Math.round(pose.getX()*100)/100 + " y: " + (double)Math.round(pose.getY()*100)/100 +
-                " heading: " + (double)Math.round(pose.getHeading()*180/Math.PI*100)/100; //Heading is converted from radians to degrees
+        return String.format("x: %,3.2f y: %,3.2f heading: %,3.2f", pose.getX(), pose.getY(), pose.getHeading()*180/Math.PI);
     }
 
     @SuppressLint("DefaultLocale")
     public static String updateRobotPosAprilTag(AprilTagDetection aprilTag) {
         //Adding all april tag pose data to a string, numbers are rounded to nearest 2 decimal places
-        return String.format(" x: %,3.2f", aprilTag.ftcPose.x) + String.format(" y: %,3.2f", aprilTag.ftcPose.y) + String.format(" z: %,3.2f", aprilTag.ftcPose.z) + String.format(" heading: %,3.2f", aprilTag.ftcPose.yaw) + String.format(" confidence: %,3.2f", aprilTag.decisionMargin);
+        return String.format(" x: %,3.2f y: %,3.2f z: %,3.2f heading: %,3.2f, confidence: %,3.2f", aprilTag.ftcPose.x, aprilTag.ftcPose.y, aprilTag.ftcPose.z, aprilTag.ftcPose.yaw, aprilTag.decisionMargin);
     }
 
     public static void outtakePlace (HwMap hwMap) {

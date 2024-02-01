@@ -3,10 +3,15 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import static java.lang.Math.abs;
 
+import android.annotation.SuppressLint;
+
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -24,24 +29,19 @@ public class testTele extends LinearOpMode {
     double maxSpeed = 1;
 
     enum DriveStates {
-        GAMEPAD,
-        GAMEPAD_FIELDCENTRIC,
-        RELOCALIZE,
-        ALIGN,
-        HOLD
+        CorrectiveTurning,
+        FieldCentric,
+        BasicTurning
     }
 
     //target positions
     double targetX, targetY;
-    double turnPower = 0;
+
     double lastTurn = 0;
 
     //decides if robot uses field centric or robot centric driving
-    DriveStates driveMode = DriveStates.GAMEPAD;
 
-    String driveModeName = "Robot-centric";
-
-    DriveStates driveStates = driveMode;
+    DriveStates driveStates = DriveStates.CorrectiveTurning;
 
     enum Drop {
         OPEN,
@@ -66,72 +66,8 @@ public class testTele extends LinearOpMode {
         SPIN_IN,
         SPIN_OUT
     }
-
     Spin transfer = Spin.STOPPED;
     Spin intake = Spin.STOPPED;
-
-//    enum IntakeCount {
-//        CLEAR,
-//        PIXEL
-//    }
-//    IntakeCount intakeCount = IntakeCount.CLEAR;
-//    short robotPixelCount = 0;
-//
-//    enum OuttakeCount {
-//        CLEAR,
-//        WAIT,
-//        RECHECK,
-//        BLOCKED
-//    }
-//    OuttakeCount outtakeCount = OuttakeCount.CLEAR;
-//
-//    short outtakePixelCount = 0;
-//
-//    //Using AtomicReference bc variables are accessed by multiple threads
-//    //True when color black is not sensed in outtake
-//    AtomicReference<Boolean > outtakePixel = new AtomicReference<>(false);
-//    //True when distance sensor reads less than certain value
-//    AtomicReference<Boolean> intakePixel = new AtomicReference<>(false);
-//
-//    enum SmartTransfer {
-//        STOPPED,
-//        MANUAL_SPIN_IN,
-//        MANUAL_SPIN_OUT,
-//        AUTO_SPIN
-//    }
-//    SmartTransfer smartTransfer = SmartTransfer.STOPPED;
-//    boolean useSmartTransfer = false;
-//
-//    enum SmartIntake {
-//        STOPPED,
-//        MANUAL_SPIN_IN,
-//        WAIT,
-//        KICK_OUT,
-//        WAIT_FOR_RELEASE,
-//        MANUAL_SPIN_OUT
-//    }
-//    SmartIntake smartIntake = SmartIntake.STOPPED;
-//    boolean useSmartIntake = false;
-
-    enum IntakeStackControl {
-        HEIGHT_5,
-        HEIGHT_4,
-        HEIGHT_3,
-        HEIGHT_2,
-        HEIGHT_1,
-        SHIFT_DELAY
-    }
-    double drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
-    double liftServoTargetPos = RobotConstants.stack1;
-
-    double spikeMarkTargetPos = RobotConstants.spikeMarkBack;
-
-    double liftServoCurrentPos = RobotConstants.stack1;
-    double drawbridgeCurrentPos = RobotConstants.stackDrawbridgeUp;
-    double spikeMarkCurrentPos = RobotConstants.spikeMarkBack;
-
-    IntakeStackControl intakeStackControl = IntakeStackControl.HEIGHT_1;
-    IntakeStackControl nextInakeStackControl = IntakeStackControl.HEIGHT_1;
 
     enum SpikeMark {
         GUIDE,
@@ -162,6 +98,7 @@ public class testTele extends LinearOpMode {
     //Used to tell if camera has detected april tags
     boolean tagDetection;
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.setAutoClear(false);
@@ -174,41 +111,6 @@ public class testTele extends LinearOpMode {
         robot.init(hardwareMap);
         SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 
-
-//        AprilTagProcessor frontAprilTagProcessor;
-//        VisionPortal frontVisionPortal;
-//        frontAprilTagProcessor = new AprilTagProcessor.Builder()
-//                .setDrawAxes(true)
-//                .setDrawCubeProjection(true)
-//                .setDrawTagID(true)
-//                .setDrawTagOutline(true)
-//                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-//                .build();
-//
-//
-//        //Creates visionPortal with configured setting, passes the webcam and the aprilTag Processor
-//        frontVisionPortal = new VisionPortal.Builder()
-//                .addProcessor(frontAprilTagProcessor)
-//                .setCamera(robot.frontCamera)
-//                //default calibrations 640x480, 800x600, 640x360, 1920x1080, 800x448, 864x480
-//                .setCameraResolution(new Size(1920,1080))
-//                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-//                .build();
-
-//        while (frontVisionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-//
-//        }
-//
-//        frontAprilTagProcessor.setPoseSolver(AprilTagProcessor.PoseSolver.OPENCV_IPPE_SQUARE);
-//
-//        ExposureControl exposure = frontVisionPortal.getCameraControl(ExposureControl.class);
-//        exposure.setMode(ExposureControl.Mode.Manual);
-//        exposure.setExposure(15, TimeUnit.MILLISECONDS);
-//
-//        GainControl gain = frontVisionPortal.getCameraControl(GainControl.class);
-
-        //Max is 255
-//        gain.setGain(100);
 
         ElapsedTime dropTimer = new ElapsedTime();
 
@@ -234,32 +136,30 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
-//        double currentHeading = driveTrain.getPoseEstimate().getHeading();
-//        double targetHeading = currentHeading;
 
-        Telemetry.Item driveState = telemetry.addData("Drive Mode",driveModeName + " Drive State: Drive");
+        double targetHeading = driveTrain.getPoseEstimate().getHeading();
 
-//        Telemetry.Item turnValues = telemetry.addData("Turn vals", (double)currentHeading + "" + (double) targetHeading);
+        Telemetry.Item driveState = telemetry.addData("Drive Mode","Corrective Turning");
+
+        Telemetry.Item turnValues = telemetry.addData("Turn vals", "");
         //Adding roadrunner pose to telemetry
         Telemetry.Item robotPose = telemetry.addData("Robot pose:", RobotMethods.updateRobotPosition(driveTrain.getPoseEstimate()));
 
         //Adding odom pod encoders to telemetry
         Telemetry.Item odom = telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
 
-        Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
-
-        Telemetry.Item aprilTagSolveTime = telemetry.addData("Solve Time:", "");
+//        Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
+//
+//        Telemetry.Item aprilTagSolveTime = telemetry.addData("Solve Time:", "");
 
         Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetPos);
 
-        Telemetry.Item intakeHeight = telemetry.addData("Intake Height", "1");
+//        Telemetry.Item intakeHeight = telemetry.addData("Intake Height", "1");
 
         Telemetry.Item loopTime = telemetry.addData("Loop Time", "0ms");
         //Set starting positions
         robot.dropServo.setPosition(RobotConstants.dropClosed);
 
-//        robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-//        robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeLeftOffset);
 
         robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
         robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
@@ -279,156 +179,132 @@ public class testTele extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             loopTimer.reset();
 
-            //Threads read i2c sensors and update variables async bc reading the sensors can be slow
-//            updateColorSensor.run();
-//            updateDistanceSenor.run();
-
             //Getting robots estimated position
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
             robotPose.setValue(RobotMethods.updateRobotPosition(myPose));
             odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
-//            //Getting aprilTag detections
-//            if (frontAprilTagProcessor.getDetections().size() > 0) {
-//                //Gets all the april tag data for the 1st detection
-//                frontCamAprilTags = frontAprilTagProcessor.getDetections().get(0);
-//                aprilTagPosEstimate.setValue(RobotMethods.updateRobotPosAprilTag(frontCamAprilTags));
-//                driveTrain.setPoseEstimate(new Pose2d(70-frontCamAprilTags.ftcPose.y, myPose.getY(), frontCamAprilTags.ftcPose.yaw*Math.PI/180));
-//
-//                tagDetection = true;
-//            } else {
-//                aprilTagPosEstimate.setValue("No tags detected");
-//                tagDetection = false;
-//            }
-//
-//            aprilTagSolveTime.setValue(frontAprilTagProcessor.getPerTagAvgPoseSolveTime());
-
-
             //Driver 1 code
             //Front triggers being used to speedup or slowdown robots driving
-            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - (gamepad1.left_trigger)*.6) / 1.2);
+            double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - (gamepad1.left_trigger)*.4) / 1.2);
 
-//            switch (driveMode) {
-//                case GAMEPAD:
-//                    if (gamepad1.start) {
-//                        driveMode = DriveStates.GAMEPAD_FIELDCENTRIC;
-//                        driveModeName = "Field-centric";
-//                        if (driveStates == DriveStates.GAMEPAD) {
-//                            driveState.setValue(driveModeName + " Drive State: Drive");
-//                            driveStates = DriveStates.GAMEPAD_FIELDCENTRIC;
-//                        }
-//                    }
-//                    break;
-//                case GAMEPAD_FIELDCENTRIC:
-//                    if (gamepad1.back) {
-//                        driveMode = DriveStates.GAMEPAD;
-//                        driveModeName = "Robot-centric";
-//                        if (driveStates == DriveStates.GAMEPAD_FIELDCENTRIC) {
-//                            driveState.setValue(driveModeName + " Drive State: Drive");
-//                            driveStates = DriveStates.GAMEPAD;
-//                        }
-//                    }
-//                    break;
-//            }
+            double turnVelocity = (myPose.getHeading()-lastTurn)/driveTrainTimer.seconds();
+            lastTurn = myPose.getHeading();
+            //Using last turn here is the same as getting the current heading
+            if (abs(gamepad1.right_stick_x)>.1) {
+                targetHeading -= gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4*finalSpeed;
+// * (1-.7*(gamepad1.left_stick_y+gamepad1.left_stick_x))
+                //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
+                //Keeping range inside of 2pi
+                if (targetHeading>=2*Math.PI) {
+                    targetHeading -= 2*Math.PI;
+                } else if (targetHeading<0) {
+                    targetHeading += 2*Math.PI;
+                }
+            }
 
-//            double turnVelocity = (myPose.getHeading()-lastTurn)/driveTrainTimer.seconds();
-//            lastTurn = myPose.getHeading();
-//
-//            if (abs(gamepad1.right_stick_x)>.1) {
-//                targetHeading -= Range.clip((gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed, -.6, .6)*driveTrainTimer.seconds()*8;
-//                //gamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*4;
-//                //Keeping range inside of 2pi
-//                if (targetHeading>2*Math.PI) {
-//                    targetHeading -= 2*Math.PI;
-//                } else if (targetHeading<0) {
-//                    targetHeading += 2*Math.PI;
-//                }
-//            }
-//
-//            turnPower = (targetHeading-myPose.getHeading());
-//            if (turnPower>Math.PI) {
-//                turnPower -= 2*Math.PI;
-//            } else if (turnPower < -Math.PI) {
-//                turnPower += 2*Math.PI;
-//            }
-//            driveTrainTimer.reset();
-//
-//            turnValues.setValue("Power: " + (double)Math.round(turnPower*4-turnVelocity*.2*100)/100 + " Turn Vel: " + (double)Math.round(turnVelocity*100)/100);
+            double turnDegrees = (targetHeading-lastTurn);
 
-            //Calculating and applying the powers for mecanum wheels
-            //For field-centric driving replace below line with: robotMethods.setMecanumDriveFieldCentric(drive, strafe, turn, maxSpeed, myPose.getHeading(), driveTrain);
+            if (turnDegrees>Math.PI) {
+                turnDegrees -= 2*Math.PI;
+            } else if (turnDegrees < -Math.PI) {
+                turnDegrees += 2*Math.PI;
+            }
+
+            double headingComponent = Range.clip(turnDegrees*2, -1, 1)-turnVelocity*.18;
+
+            driveTrainTimer.reset();
+
+            turnValues.setValue(String.format("Target heading: %,3.2f Degrees Off: %,3.2f Heading Component: %,3.2f", targetHeading, turnDegrees, headingComponent));
+
+
             switch (driveStates) {
-                case GAMEPAD:
-                    //Calculating velocity
+                case CorrectiveTurning:
+                    RobotMethods.setMecanumDriveHeadingPriority(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
+                            , headingComponent, driveTrain);
 
-                    //Setting drive speeds for the robot
+                    if (gamepad1.back) {
+                        driveState.setValue("Basic Turning");
+                        driveStates = DriveStates.BasicTurning;
+                    } else if (gamepad1.y) {
+                        driveState.setValue("Field Centric");
+                        driveStates = DriveStates.FieldCentric;
+                    }
+                    break;
+                case FieldCentric:
+                    RobotMethods.setMecanumDriveFieldCentricHeadingPriority(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
+                            , headingComponent, lastTurn, driveTrain);
+
+                    if (gamepad1.b) {
+                        targetHeading = 0;
+                        driveTrain.setPoseEstimate(new Pose2d(myPose.getX(), myPose.getY(), 0));
+                    }
+
+                    if (gamepad1.back) {
+                        driveState.setValue("Basic Turning");
+                        driveStates = DriveStates.BasicTurning;
+                    } else if (gamepad1.start) {
+                        driveState.setValue("Corrective Turning");
+                        targetHeading = myPose.getHeading();
+                        driveStates = DriveStates.CorrectiveTurning;
+                    }
+                    break;
+                case BasicTurning:
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , -gamepad1.right_stick_x*abs(gamepad1.right_stick_x) * RobotConstants.turnSpeed * finalSpeed,
-                            maxSpeed, driveTrain);
-//Range.clip(turnPower*2-turnVelocity*.16, -4, 4)
+                            , -gamepad1.right_stick_x * RobotConstants.turnSpeed, driveTrain);
 
-                    //Aligns robot to backboard if april tags have a detection
-//                    if (gamepad1.left_bumper && tagDetection) {
-//                        driveState.setValue(driveModeName + " Drive State: Re-localize");
-//                        driveStates = DriveStates.RELOCALIZE;
-//                    }
-                    break;
-                case GAMEPAD_FIELDCENTRIC:
-                    //Setting drive speeds for the robot
-                    RobotMethods.setMecanumDriveFieldCentric(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
-                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed,
-                            -gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
-                            maxSpeed, driveTrain.getPoseEstimate().getHeading(), driveTrain);
-
-                    //Aligns robot to backboard if april tags have a detection
-                    if (gamepad1.left_bumper && tagDetection) {
-                        driveState.setValue(driveModeName + " Drive State: Re-localize");
-                        driveStates = DriveStates.RELOCALIZE;
+                    if (gamepad1.start) {
+                        driveState.setValue("Corrective Turning");
+                        targetHeading = myPose.getHeading();
+                        driveStates = DriveStates.CorrectiveTurning;
+                    } else if (gamepad1.y) {
+                        driveState.setValue("Field Centric");
+                        targetHeading = myPose.getHeading();
+                        driveStates = DriveStates.FieldCentric;
                     }
                     break;
-                case RELOCALIZE:
-                    //Setting the pose of the robot to pose detected by april tags
-                    driveTrain.setPoseEstimate(new Pose2d(frontCamAprilTags.ftcPose.x, frontCamAprilTags.ftcPose.y, frontCamAprilTags.ftcPose.yaw));
+            }
 
-                    //Setting target X of the robot
-                    targetX = RobotConstants.backDropAlignX;
-
-                    //Deciding which backboard to align to based on the robots pose
-                    if (frontCamAprilTags.ftcPose.y>0) {
-                        targetY = RobotConstants.backDropLeftY;
-                    } else {
-                        targetY = RobotConstants.backDropRightY;
-                    }
-                    driveState.setValue(driveModeName + " Drive State: Align");
-                    driveStates = DriveStates.ALIGN;
-                    break;
-                case ALIGN:
-                    //sets state back to default if drive1 exits the mode
-                    if (!gamepad1.left_bumper) {
-                        driveState.setValue(driveModeName + " Drive State: Drive");
-                        driveStates = driveMode;
-                    }
-
-                    RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
-                    if (abs(targetX-driveTrain.getPoseEstimate().getX())<.3 && abs(targetY-driveTrain.getPoseEstimate().getY())<.3) {
-                        driveState.setValue(driveModeName + " Drive State: Hold");
-                        driveStates = DriveStates.HOLD;
-                    }
-                    break;
+            //Climb code
+            switch (climb) {
                 case HOLD:
-                    //sets state back to default if drive1 exits the mode
-                    if (!gamepad1.left_bumper) {
-                        driveState.setValue(driveModeName + " Drive State: Drive");
-                        driveStates = driveMode;
+                    if (gamepad1.left_trigger>.9 && gamepad1.right_bumper) {
+                        targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
+                        robot.climbMotor.setTargetPosition(targetClimbPos);
+                        climbTimer.reset();
+                        climb = Climb.RELEASE;
                     }
-
-                    RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
                     break;
-                default:
-                    driveState.setValue(driveModeName + " Drive State: Drive");
-                    driveStates = driveMode;
+                case RELEASE:
+                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
+                        climb = Climb.STOPPED;
+                    }
+                    break;
+                case WAIT:
+                    if (!gamepad1.dpad_down) {
+                        climbTimer.reset();
+                        climb = Climb.STOPPED;
+                    }
+                    break;
+                case STOPPED:
+                    if (gamepad1.dpad_down) {
+                        targetClimbPos +=  2.5*climbTimer.milliseconds();
+                        robot.climbMotor.setTargetPosition(targetClimbPos);
+                    } else if (gamepad1.dpad_up) {
+                        targetClimbPos -=  2.5*climbTimer.milliseconds();
+                        robot.climbMotor.setTargetPosition(targetClimbPos);
+                    }
+                    climbTimer.reset();
+                    break;
+            }
+
+            //Drone Launch
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
+                robot.droneServo.setPosition(RobotConstants.droneRelease);
             }
 
 
@@ -438,7 +314,6 @@ public class testTele extends LinearOpMode {
                 case CLOSED:
                     if (gamepad2.left_bumper) {
                         robot.dropServo.setPosition(RobotConstants.dropOpen);
-//                        robotPixelCount -= 1;
                         dropTimer.reset();
                         drop = Drop.OPEN;
                     } else if (gamepad2.right_bumper) {
@@ -464,8 +339,6 @@ public class testTele extends LinearOpMode {
                 case RESET:
                     if (dropTimer.seconds() > RobotConstants.resetTime) {
                         drop = Drop.CLOSED;
-                        //Sets to clear so outtake will start checking for pixels again
-//                        outtakeCount = OuttakeCount.CLEAR;
                     }
                     break;
                 default:
@@ -487,6 +360,8 @@ public class testTele extends LinearOpMode {
             }
 
             slideTimer.reset();
+
+            //Slide PID control
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
 
@@ -498,54 +373,7 @@ public class testTele extends LinearOpMode {
 
             robot.slideMotor.setPower(slidePower);
 
-            slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetPos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
-
-            switch (climb) {
-                case HOLD:
-                    if (gamepad1.left_trigger>.9 && gamepad1.right_bumper) {
-                        targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
-                        robot.climbMotor.setTargetPosition(targetClimbPos);
-                        climbTimer.reset();
-                        climb = Climb.RELEASE;
-                    }
-                    break;
-                case RELEASE:
-                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
-//                        robot.climbMotor.setPower(0);
-                        //Changed to stop bc driver controls changed and its not necessary
-                        climb = Climb.STOPPED;
-                    }
-                    break;
-                case WAIT:
-                    if (!gamepad1.dpad_down) {
-                        climbTimer.reset();
-                        climb = Climb.STOPPED;
-                    }
-                    break;
-                case STOPPED:
-                    if (gamepad1.dpad_down) {
-                        targetClimbPos +=  2.5*climbTimer.milliseconds();
-                        robot.climbMotor.setTargetPosition(targetClimbPos);
-//                        climb = Climb.SPIN_IN;
-                    } else if (gamepad1.dpad_up) {
-                        targetClimbPos -=  2.5*climbTimer.milliseconds();
-                        robot.climbMotor.setTargetPosition(targetClimbPos);
-//                        climb = Climb.SPIN_OUT;
-                    }
-                    climbTimer.reset();
-                    break;
-//                case SPIN_IN:
-//                    if (!gamepad1.dpad_down) {
-//                        robot.climbMotor.setPower(0);
-//                        climb = Climb.STOPPED;
-//                    }
-//                    break;
-//                case SPIN_OUT:
-//                    if (!gamepad1.dpad_up) {
-//                        robot.climbMotor.setPower(0);
-//                        climb = Climb.STOPPED;
-//                    }
-            }
+            slideData.setValue( String.format("Encoder val: %d Target Val: %d Slide Power: %,3.2f", slideCurPos, targetPos, slidePower));
 
 
             switch (intake) {
@@ -609,116 +437,6 @@ public class testTele extends LinearOpMode {
                     break;
             }
 
-
-            //Switches btw intake heights and toggles drawbridge when necessary
-//            switch (f) {
-//                case HEIGHT_5:
-//                    if (gamepad2.right_trigger > .8) {
-//                        intakeHeight.setValue("4");
-//                        liftServoTargetPos = RobotConstants.stack4;
-//                        intakeHeightDelayTimer.reset();
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    }
-//                    break;
-//                case HEIGHT_4:
-//                    if (gamepad2.left_trigger > .8) {
-//                        intakeHeight.setValue("5");
-//                        liftServoTargetPos = RobotConstants.stack5;
-//                        intakeHeightDelayTimer.reset();
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_5;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    } else if (gamepad2.right_trigger > .8) {
-//                        intakeHeight.setValue("3");
-//                        liftServoTargetPos = RobotConstants.stack3;
-//                        intakeHeightDelayTimer.reset();
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    }
-//                    break;
-//                case HEIGHT_3:
-//                    if (gamepad2.left_trigger > .8) {
-//                        intakeHeight.setValue("4");
-//                        liftServoTargetPos = RobotConstants.stack4;
-//                        intakeHeightDelayTimer.reset();
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_4;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    } else if (gamepad2.right_trigger > .8) {
-//                        intakeHeight.setValue("2");
-//                        liftServoTargetPos = RobotConstants.stack2;
-//                        intakeHeightDelayTimer.reset();
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    }
-//                    break;
-//                case HEIGHT_2:
-//                    if (gamepad2.left_trigger > .8) {
-//                        intakeHeight.setValue("3");
-//                        liftServoTargetPos = RobotConstants.stack3;
-//                        intakeHeightDelayTimer.reset();
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_3;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    } else if (gamepad2.right_trigger > .8) {
-//                        intakeHeight.setValue("1");
-//                        liftServoTargetPos = RobotConstants.stack1;
-//
-//                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeUp;
-//
-//                        intakeHeightDelayTimer.reset();
-//
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_1;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    }
-//                    break;
-//                case HEIGHT_1:
-//                    if (gamepad2.left_trigger > .8) {
-//                        intakeHeight.setValue("2");
-////                        liftServoTargetPos = RobotConstants.stack2;
-//
-//                        drawbridgeTargetPos = RobotConstants.stackDrawbridgeDown;
-//
-//                        intakeHeightDelayTimer.reset();
-//
-//                        nextInakeStackControl = IntakeStackControl.HEIGHT_2;
-//                        intakeStackControl = IntakeStackControl.SHIFT_DELAY;
-//                    }
-//                    break;
-//                case SHIFT_DELAY:
-//                    if (intakeHeightDelayTimer.seconds() > RobotConstants.intakeAdjustDelayTime) {
-//                        intakeStackControl = nextInakeStackControl;
-//                    }
-//                    break;
-//            }
-
-            //Limits max speed servos move
-//            if (spikeMarkTargetPos<spikeMarkCurrentPos) {
-//                drawbridgeCurrentPos+= Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), -.015, -.0);
-////                robot.rightDrawbridgeServe.setPosition(spikeMarkCurrentPos+RobotConstants.drawbridgeRightOffset);
-////                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-//                robot.rightSpikeMarkServo.setPosition(spikeMarkCurrentPos);
-//                robot.leftSpikeMarkServo.setPosition(spikeMarkCurrentPos);
-//            } else if (spikeMarkTargetPos>spikeMarkCurrentPos) {
-//                drawbridgeCurrentPos+=Range.clip((drawbridgeTargetPos-drawbridgeCurrentPos), 0, .015);
-////                robot.rightDrawbridgeServo.setPosition(drawbridgeCurrentPos+RobotConstants.drawbridgeRightOffset);
-////                robot.leftDrawbridgeServo.setPosition(drawbridgeCurrentPos);
-//                robot.rightSpikeMarkServo.setPosition(spikeMarkCurrentPos);
-//                robot.leftSpikeMarkServo.setPosition(spikeMarkCurrentPos);
-//            }
-
-            //Limits max speed intake lift servos move
-//            if (liftServoTargetPos<liftServoCurrentPos) {
-//                liftServoCurrentPos+= Range.clip((liftServoTargetPos-liftServoCurrentPos), -.03, -.0);
-//                robot.rightLiftServo.setPosition(liftServoCurrentPos+.02);
-//                robot.leftLiftServo.setPosition(liftServoCurrentPos);
-//            } else if (liftServoTargetPos>liftServoCurrentPos) {
-//                liftServoCurrentPos+=Range.clip((liftServoTargetPos-liftServoCurrentPos), 0, .03);
-//                robot.rightLiftServo.setPosition(liftServoCurrentPos+.02);
-//                robot.leftLiftServo.setPosition(liftServoCurrentPos);
-//            }
-
-//            robot.rightLiftServo.setPosition(liftServoTargetPos);
-//            robot.leftLiftServo.setPosition(liftServoTargetPos+RobotConstants.stackLeftOffset);
-
             switch (transfer) {
                 case STOPPED:
                     if (gamepad2.dpad_right || gamepad2.left_trigger >.1) {
@@ -743,14 +461,10 @@ public class testTele extends LinearOpMode {
                     break;
             }
 
-            if (gamepad1.left_bumper && gamepad1.right_bumper) {
-                robot.droneServo.setPosition(RobotConstants.droneRelease);
-            }
-
             //Updating for roadrunner
             driveTrain.update();
 
-            loopTime.setValue((double)Math.round(loopTimer.milliseconds()*100)/100 + "ms");
+            loopTime.setValue(String.format("%,3.2f ms", loopTimer.milliseconds()));
 
             //Updating telemetry
             telemetry.update();
@@ -946,3 +660,75 @@ public class testTele extends LinearOpMode {
 //                        break;
 //                }
 //            }
+
+
+// Drivestates old code
+//case GAMEPAD:
+//                    //Calculating velocity
+//
+//                    //Setting drive speeds for the robot
+//                    RobotMethods.setMecanumDriveHeadingPriority(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+//                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
+//                            , headingComponent, driveTrain);
+////Range.clip(turnPower*2-turnVelocity*.16, -4, 4)
+//
+//                    //Aligns robot to backboard if april tags have a detection
+////                    if (gamepad1.left_bumper && tagDetection) {
+////                        driveState.setValue(driveModeName + " Drive State: Re-localize");
+////                        driveStates = DriveStates.RELOCALIZE;
+////                    }
+//                    break;
+//                case GAMEPAD_FIELDCENTRIC:
+//                    //Setting drive speeds for the robot
+//                    RobotMethods.setMecanumDriveFieldCentric(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+//                            -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed,
+//                            -gamepad1.right_stick_x * RobotConstants.turnSpeed * finalSpeed,
+//                            maxSpeed, driveTrain.getPoseEstimate().getHeading(), driveTrain);
+//
+//                    //Aligns robot to backboard if april tags have a detection
+//                    if (gamepad1.left_bumper && tagDetection) {
+//                        driveState.setValue(driveModeName + " Drive State: Re-localize");
+//                        driveStates = DriveStates.RELOCALIZE;
+//                    }
+//                    break;
+//                case RELOCALIZE:
+//                    //Setting the pose of the robot to pose detected by april tags
+//                    driveTrain.setPoseEstimate(new Pose2d(frontCamAprilTags.ftcPose.x, frontCamAprilTags.ftcPose.y, frontCamAprilTags.ftcPose.yaw));
+//
+//                    //Setting target X of the robot
+//                    targetX = RobotConstants.backDropAlignX;
+//
+//                    //Deciding which backboard to align to based on the robots pose
+//                    if (frontCamAprilTags.ftcPose.y>0) {
+//                        targetY = RobotConstants.backDropLeftY;
+//                    } else {
+//                        targetY = RobotConstants.backDropRightY;
+//                    }
+//                    driveState.setValue(driveModeName + " Drive State: Align");
+//                    driveStates = DriveStates.ALIGN;
+//                    break;
+//                case ALIGN:
+//                    //sets state back to default if drive1 exits the mode
+//                    if (!gamepad1.left_bumper) {
+//                        driveState.setValue(driveModeName + " Drive State: Drive");
+//                        driveStates = driveMode;
+//                    }
+//
+//                    RobotMethods.goToPoint(targetX, targetY, 0, driveTrain);
+//                    if (abs(targetX-driveTrain.getPoseEstimate().getX())<.3 && abs(targetY-driveTrain.getPoseEstimate().getY())<.3) {
+//                        driveState.setValue(driveModeName + " Drive State: Hold");
+//                        driveStates = DriveStates.HOLD;
+//                    }
+//                    break;
+//                case HOLD:
+//                    //sets state back to default if drive1 exits the mode
+//                    if (!gamepad1.left_bumper) {
+//                        driveState.setValue(driveModeName + " Drive State: Drive");
+//                        driveStates = driveMode;
+//                    }
+//
+//                    RobotMethods.goToLineY(targetX, gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed, 0, driveTrain);
+//                    break;
+//                default:
+//                    driveState.setValue(driveModeName + " Drive State: Drive");
+//                    driveStates = driveMode;
