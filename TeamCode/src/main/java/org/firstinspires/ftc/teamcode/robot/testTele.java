@@ -272,7 +272,7 @@ public class testTele extends LinearOpMode {
             //Climb code
             switch (climb) {
                 case HOLD:
-                    if (gamepad1.left_trigger>.9 && gamepad1.right_bumper) {
+                    if (gamepad1.dpad_down && gamepad1.right_bumper) {
                         targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
                         robot.climbMotor.setTargetPosition(targetClimbPos);
                         climbTimer.reset();
@@ -281,7 +281,7 @@ public class testTele extends LinearOpMode {
                     break;
                 case RELEASE:
                     if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
-                        climb = Climb.STOPPED;
+                        climb = Climb.WAIT;
                     }
                     break;
                 case WAIT:
