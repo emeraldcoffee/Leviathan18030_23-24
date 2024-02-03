@@ -31,7 +31,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 0.69; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 10.11798; // in; distance between the left and right wheels
+    //10.2573 10.2519
+    public static double LATERAL_DISTANCE = 10.2546; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 2.64; // in; offset of the lateral wheel 2.538776 1.0625
 
     /*RunLocalizationTest
@@ -43,12 +44,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
      */
     public static double X_MULTIPLIER = 1;
 
-    //100.009, 100.042, 100.032
-    public static double LEFT_MULTIPLIER = 100/100.027666;
-    //99.067, 99.040, 99.099
-    public static double RIGHT_MULTIPLIER = 100/99.0686666;
-    //-99.763, -99.795, -99.732
-    public static double Y_MULTIPLIER = 100/99.7633333;
+    //100.4952 100.3682 100.2338
+    public static double LEFT_MULTIPLIER = .9964;
+    //99.6024 99.5421 99.5564
+    public static double RIGHT_MULTIPLIER = 1.00435;
+    //100.0697 100.0856 99.998
+    public static double Y_MULTIPLIER = .9995;
 
     public static Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -79,9 +80,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     public static List<Double> getEncoderVals() {
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getCurrentPosition()) * X_MULTIPLIER * LEFT_MULTIPLIER,
-                encoderTicksToInches(rightEncoder.getCurrentPosition()) * X_MULTIPLIER * RIGHT_MULTIPLIER,
-                encoderTicksToInches(frontEncoder.getCurrentPosition()) * Y_MULTIPLIER);
+                encoderTicksToInches(leftEncoder.getCurrentPosition()),
+                encoderTicksToInches(rightEncoder.getCurrentPosition()),
+                encoderTicksToInches(frontEncoder.getCurrentPosition()));
 
     }
 

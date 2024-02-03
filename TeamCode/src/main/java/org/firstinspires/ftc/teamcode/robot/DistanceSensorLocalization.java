@@ -35,8 +35,8 @@ public class DistanceSensorLocalization extends LinearOpMode {
 //13.5-1.11909-2.64
             Pose2d currentPose = driveTrain.getPoseEstimate();
 
-            double leftDistance = robot.leftDistanceSensor.getDistance(DistanceUnit.INCH);
-            double rightDistance = robot.rightDistanceSensor.getDistance(DistanceUnit.INCH);
+            double leftDistance = 0;//robot.leftDistanceSensor.getDistance(DistanceUnit.INCH);
+            double rightDistance = 0;//robot.rightDistanceSensor.getDistance(DistanceUnit.INCH);
 
             distance.setValue(String.format( "%,3.2f", leftDistance) + String.format( " Right Distance: %,3.2f", rightDistance));
 

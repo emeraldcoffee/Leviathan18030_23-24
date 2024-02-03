@@ -31,7 +31,7 @@ public class HwMap {
 
     public ColorSensor outtakeColorSensor;
 
-    public DistanceSensor leftDistanceSensor, rightDistanceSensor;
+//    public DistanceSensor leftDistanceSensor, rightDistanceSensor;
     //Motor names (drive train motors are in drive/SampleMecanumDrive)
 
     /*
@@ -139,8 +139,8 @@ public class HwMap {
 //        rightLiftServo.setDirection(Servo.Direction.REVERSE);
         rightSpikeMarkServo.setDirection(Servo.Direction.REVERSE);
 
-        leftDistanceSensor = hwMap.get(DistanceSensor.class, "leftDistanceSensor");
-        rightDistanceSensor = hwMap.get(DistanceSensor.class, "rightDistanceSensor");
+//        leftDistanceSensor = hwMap.get(DistanceSensor.class, "leftDistanceSensor");
+//        rightDistanceSensor = hwMap.get(DistanceSensor.class, "rightDistanceSensor");
 
 
         //Optionally reverse them with: servo1.setDirection(Servo.Direction.REVERSE);
