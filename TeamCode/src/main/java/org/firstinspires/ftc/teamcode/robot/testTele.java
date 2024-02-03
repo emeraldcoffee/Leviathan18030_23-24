@@ -280,12 +280,13 @@ public class testTele extends LinearOpMode {
                     }
                     break;
                 case RELEASE:
-                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay) {
+                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay && !gamepad1.dpad_down) {
                         climb = Climb.WAIT;
                     }
                     break;
                 case WAIT:
-                    if (!gamepad1.dpad_down) {
+                    if (gamepad1.dpad_down) {
+                        driveStates = DriveStates.BasicTurning;
                         climbTimer.reset();
                         climb = Climb.STOPPED;
                     }
