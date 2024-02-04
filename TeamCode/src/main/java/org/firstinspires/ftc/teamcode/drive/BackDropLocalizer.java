@@ -25,10 +25,10 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     Runnable updateLeft = () -> {
-        leftDistance = leftDistanceSensor.getDistance(DistanceUnit.INCH);
+        leftDistance = -leftDistanceSensor.getDistance(DistanceUnit.INCH);
     };
     Runnable updateRight = () -> {
-        rightDistance = rightDistanceSensor.getDistance(DistanceUnit.INCH);
+        rightDistance = -rightDistanceSensor.getDistance(DistanceUnit.INCH);
     };
 
     public void update() {
@@ -36,9 +36,9 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
         updateRight.run();
 
         double heading = -Math.tan((leftDistance-rightDistance)/7.673);
-        double lateralDistance = ((leftDistance+rightDistance)/2+6.524)*Math.cos(heading);
+        double lateralDistance = ((leftDistance+rightDistance)/2-6.524)*Math.cos(heading);
 
-        poseEstimate = new Pose2d(poseEstimate.getX(), lateralDistance, heading);
+        poseEstimate = new Pose2d(lateralDistance+61, poseEstimate.getY(), heading);
     }
 
     public Pose2d getPoseEstimate() {

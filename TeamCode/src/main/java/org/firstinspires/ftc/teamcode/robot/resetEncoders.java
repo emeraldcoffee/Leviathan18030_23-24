@@ -15,7 +15,7 @@ public class resetEncoders extends LinearOpMode {
     public void runOpMode() {
 
         leftEncoder = hardwareMap.get(DcMotorEx.class, "leftFront");
-        rightEncoder = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rightEncoder = hardwareMap.get(DcMotorEx.class, "transferMotor");
         frontEncoder = hardwareMap.get(DcMotorEx.class, "rightRear");
         liftEncoder = hardwareMap.get(DcMotorEx.class, "slideMotor");
 

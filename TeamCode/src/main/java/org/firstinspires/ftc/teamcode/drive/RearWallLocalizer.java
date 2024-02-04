@@ -39,7 +39,7 @@ public class RearWallLocalizer extends TwoDistanceLocalizer{
         double heading = -Math.tan((leftDistance-rightDistance)/10.03);
         double lateralDistance = ((leftDistance+rightDistance)/2+9.74)*Math.cos(heading);
 
-        poseEstimate = new Pose2d(poseEstimate.getX(), lateralDistance, heading);
+        poseEstimate = new Pose2d(lateralDistance-70, poseEstimate.getY(), heading);
     }
 
     public Pose2d getPoseEstimate() {
