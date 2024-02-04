@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
+import com.qualcomm.robotcore.util.TypeConversion;
 
 @I2cDeviceType
 @DeviceProperties(name = "MaxSonar-EZ4", xmlTag = "MB1242")
@@ -15,6 +16,8 @@ public class UltraSonic extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     I2cAddr ADDRESS_I2C_DEFAULT = I2cAddr.create7bit(0x70);
 
     public enum Register {
+        WRITE(0xE0),
+        REPORT_LAST_VAL(0xE1),
         RANGE_READING(0x51),
         CHANGE_SENSOR_ADDRESS1(0xAA),
         CHANGE_SENSOR_ADDRESS2(0xA5);
@@ -26,10 +29,10 @@ public class UltraSonic extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         }
     }
 
-    @Override
-    public Manufacturer getManufacturer()
-    {
 
+
+    @Override
+    public Manufacturer getManufacturer() {
         return Manufacturer.Other;
     }
 
@@ -54,6 +57,34 @@ public class UltraSonic extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         super.registerArmingStateCallback(false);
         this.deviceClient.engage();
     }
+
+    protected void writeShort(final Register reg, short value) {
+        deviceClient.write(reg.bVal, TypeConversion.shortToByteArray(value));
+    }
+
+    protected short readShort(Register reg) {
+        return TypeConversion.byteArrayToShort(deviceClient.read(reg.bVal, 2));
+    }
+
+    public void rangeReading() {
+        int rangeRead = Register.RANGE_READING.bVal;
+        writeShort(Register.WRITE, (short) rangeRead);
+    }
+
+    public boolean isReading() {
+        return true;
+    }
+
+    public double reportRangeReadingCM() {
+        return readShort(Register.REPORT_LAST_VAL);
+    }
+
+    public double reportRangeReadingIN() {
+        return readShort(Register.REPORT_LAST_VAL)/2.54;
+    }
+
+
+
 
 
 
