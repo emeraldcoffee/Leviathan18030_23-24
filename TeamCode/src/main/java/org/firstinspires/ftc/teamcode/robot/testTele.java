@@ -136,6 +136,8 @@ public class testTele extends LinearOpMode {
         //Getting last pose
         driveTrain.setPoseEstimate(PassData.currentPose);
 
+        double slideEncoderOffset = 0;
+
 
         double targetHeading = driveTrain.getPoseEstimate().getHeading();
 
@@ -212,7 +214,7 @@ public class testTele extends LinearOpMode {
                 turnDegrees += 2*Math.PI;
             }
 
-            double headingComponent = Range.clip(turnDegrees*1.3, -1, 1)-turnVelocity*.0;
+            double headingComponent = Range.clip(turnDegrees*1.3, -1, 1)-turnVelocity*.16;
 
             driveTrainTimer.reset();
 
@@ -346,6 +348,11 @@ public class testTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
+            //Code to offset the slide pose incase we start the game with them in the wrong position
+            if (abs(gamepad2.right_stick_y)>.1 && gamepad2.back) {
+                slideEncoderOffset -= 8 * gamepad2.right_stick_y*slideTimer.milliseconds();
+            }
+
             //Code to change target position of slides
             if (abs(gamepad2.left_stick_y)>.1) {
                 targetPos -= 14 * gamepad2.left_stick_y*slideTimer.milliseconds();
@@ -366,7 +373,7 @@ public class testTele extends LinearOpMode {
             double slideVelo = robot.liftEncoder.getCorrectedVelocity();
             int slideCurPos = robot.liftEncoder.getCurrentPosition();
 
-            double distRemain = targetPos - slideCurPos;
+            double distRemain = targetPos + slideEncoderOffset - slideCurPos;
 
             slideI += distRemain * RobotConstants.slidePIDVals.i;
 

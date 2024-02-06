@@ -12,32 +12,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-public class CustomLocalizer implements Localizer {
+public class CustomLocalizer implements Localizer, CustomLocalizerImp {
     Pose2d poseEstimate = new Pose2d(0,0,0);
     StandardTrackingWheelLocalizer odomLocalizer;
     BackDropLocalizer backDropLocalizer;
     RearWallLocalizer rearWallLocalizer;
+public CustomLocalizer(HardwareMap hardwareMap,  List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
+    odomLocalizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
+    odomLocalizer.setPoseEstimate(poseEstimate);
 
-    public void localizers(HardwareMap hardwareMap) {
+    backDropLocalizer = new BackDropLocalizer(hardwareMap);
+    rearWallLocalizer = new RearWallLocalizer(hardwareMap);
+}
 
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-        List<Integer> lastTrackingEncVels = new ArrayList<>();
-
-        odomLocalizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
-        odomLocalizer.setPoseEstimate(poseEstimate);
-
-        backDropLocalizer = new BackDropLocalizer(hardwareMap);
-        rearWallLocalizer = new RearWallLocalizer(hardwareMap);
-
-
-
-    }
 
 
     public void update() {
         odomLocalizer.update();
+    }
+
+    public void updateBackdrop() {
         backDropLocalizer.update();
-        rearWallLocalizer.update();
+        setPoseEstimate(new Pose2d(backDropLocalizer.getPoseEstimate().getX(), poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading()));
     }
 
 //    public void

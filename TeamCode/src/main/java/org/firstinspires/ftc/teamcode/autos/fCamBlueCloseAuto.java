@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.CustomLocalizer;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.robot.HwMap;
@@ -80,23 +82,21 @@ public class fCamBlueCloseAuto extends LinearOpMode {
 //        robot.rightLiftServo.setPosition(intakePos);
         robot.transferMotor.setPower(-.2);
 
-        TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
+        TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(13.4, 64, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 61))
                 .splineToLinearHeading(new Pose2d(23, 42), Math.toRadians(270))
                 .lineTo(new Vector2d(23, 46))
-                .addTemporalMarker(1.7, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .addTemporalMarker(1.7, () -> {})//robot.rightServo.setPosition(RobotConstants.rightIn))
                 .lineTo(new Vector2d(26, 46))
-                .splineToConstantHeading(new Vector2d(47, 44), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 44))
-                .addTemporalMarker(3.8, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
-                .waitSeconds(.2)
-                .lineTo(new Vector2d(40, 44))
-                .addDisplacementMarker(() -> {
-                                    targetSlidePos = RobotConstants.slideBottom;
-                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
+                .splineToConstantHeading(new Vector2d(45, 44), Math.toRadians(0))
+                .waitSeconds(.5)
+                .addTemporalMarker(3.87, () -> {
+//                    driveTrain.
+//                    Trajectory test = driveTrain.trajectoryBuilder(new Pose2d(backDropLocalizer.getPoseEstimate().getX(), 0, backDropLocalizer.getPoseEstimate().getHeading()))
+//                            .lineToSplineHeading(new Pose2d(51.7, 0, Math.toRadians(0)))
+//                            .build();
+//                    driveTrain.followTrajectoryAsync(test);
                 })
-                .lineTo(new Vector2d(40, 60))
-                .lineTo(new Vector2d(45, 60))
                 .build();
 
         TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))

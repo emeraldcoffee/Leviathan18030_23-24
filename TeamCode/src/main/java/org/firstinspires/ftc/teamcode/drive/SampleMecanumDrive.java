@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -53,8 +54,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, .5, .2);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, .5, .2);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(19, .5, .4);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(25, .5, .7);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -85,6 +86,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         motor port 3:
      */
 
+
+    private CustomLocalizer localizer;
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
@@ -147,7 +150,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+        localizer = new CustomLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
+
+        setLocalizer((Localizer) localizer);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
@@ -158,6 +163,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     /*public SampleMecanumDrive(HardwareMap hwMap) {
         super();
     }*/
+
+    public void updateBackdrop() {
+        localizer.updateBackdrop();
+    }
+
+
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
@@ -220,6 +231,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
+        localizer.update();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }
