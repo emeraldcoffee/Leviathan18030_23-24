@@ -168,6 +168,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         localizer.updateBackdrop();
     }
 
+    public void smartUpdateBackdrop() {
+        localizer.smartUpdateBackdrop();
+    }
+
+    public void compensatedUpdateBackdrop() {localizer.compensatedUpdateBackdrop();}
+
+    public void smartCompensatedUpdateBackdrop() {localizer.smartCompensatedUpdateBackdrop();}
+
+
 
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -231,7 +240,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        localizer.update();
+//        localizer.update();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }

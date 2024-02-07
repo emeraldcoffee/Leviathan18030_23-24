@@ -22,18 +22,41 @@ public CustomLocalizer(HardwareMap hardwareMap,  List<Integer> lastTrackingEncPo
     odomLocalizer.setPoseEstimate(poseEstimate);
 
     backDropLocalizer = new BackDropLocalizer(hardwareMap);
-    rearWallLocalizer = new RearWallLocalizer(hardwareMap);
+//    rearWallLocalizer = new RearWallLocalizer(hardwareMap);
 }
 
 
 
     public void update() {
         odomLocalizer.update();
+        poseEstimate = odomLocalizer.getPoseEstimate();
     }
 
     public void updateBackdrop() {
         backDropLocalizer.update();
         setPoseEstimate(new Pose2d(backDropLocalizer.getPoseEstimate().getX(), poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading()));
+
+    }
+
+
+    public void compensatedUpdateBackdrop() {
+        backDropLocalizer.update();
+        setPoseEstimate(new Pose2d(poseEstimate.getX()*.5+backDropLocalizer.getPoseEstimate().getX()*.5, poseEstimate.getY(), poseEstimate.getHeading()*.5+backDropLocalizer.getPoseEstimate().getHeading()*.5));
+
+    }
+
+    public void smartUpdateBackdrop() {
+        backDropLocalizer.update();
+        if (backDropLocalizer.isInRange(poseEstimate)) {
+            setPoseEstimate(new Pose2d(backDropLocalizer.getPoseEstimate().getX(), poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading()));
+        }
+    }
+
+    public void smartCompensatedUpdateBackdrop() {
+        backDropLocalizer.update();
+        if (backDropLocalizer.isInRange(poseEstimate)) {
+            setPoseEstimate(poseEstimate.plus(new Pose2d(backDropLocalizer.getPoseEstimate().getX(), poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading())).div(2));
+        }
     }
 
 //    public void
