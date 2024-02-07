@@ -90,6 +90,8 @@ public class BlueClose2Plus2 extends LinearOpMode {
 //        robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
 //        robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
 
+        TrajectorySequence continueOne = driveTrain.trajectorySequenceBuilder(new Pose2d(53, 27, Math.toRadians(0)))
+                .build();
         //changed
         TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63.5, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 61))
@@ -159,12 +161,12 @@ public class BlueClose2Plus2 extends LinearOpMode {
                 })
 
                 .waitSeconds(.5+4)
-                .addTemporalMarker(12 + 4, () -> {
+                .addTemporalMarker(3.93 + 8.07 + 4, () -> {
                                     targetSlidePos = RobotConstants.slideAuto;
                 })
 
                 .lineToConstantHeading(new Vector2d(9, 12))
-                .addTemporalMarker( 11.5 + 4, () -> {
+                .addTemporalMarker( 3.43 + 8.07 + 4, () -> {
                                     targetSlidePos = RobotConstants.slideAuto;
                                     robot.intakeMotor.setPower(0);
                                     robot.transferMotor.setPower(0);
@@ -184,23 +186,23 @@ public class BlueClose2Plus2 extends LinearOpMode {
                 .lineTo(new Vector2d(12, 60))
                 .splineToSplineHeading(new Pose2d(17, 33), Math.toRadians(270))
                 .lineTo(new Vector2d(17,36))
-                .addTemporalMarker(1.9, () -> {})//robot.rightServo.setPosition(RobotConstants.rightIn))
+                .addTemporalMarker(1.9, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
                 .lineTo(new Vector2d(18, 36))
                 .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
                 .lineTo(new Vector2d(53, 37.5))
-                .addTemporalMarker(3.9, () -> {})//robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(3.9, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(51, 37))
                 .addTemporalMarker(4.2, () -> {
-//                                    robot.transferMotor.setPower(.3);
+                                    robot.transferMotor.setPower(.3);
                 })
-                .addTemporalMarker(5, () -> {})//targetSlidePos = RobotConstants.slideBottom)
+                .addTemporalMarker(5, () -> targetSlidePos = RobotConstants.slideBottom)
                 .addTemporalMarker(6, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
-//                                    robot.intakeMotor.setPower(1);
-//                                    robot.transferMotor.setPower(1);
-//                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                                    robot.intakeMotor.setPower(1);
+                                    robot.transferMotor.setPower(1);
+                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
                 })
                 .splineToConstantHeading(new Vector2d(9, 12), Math.toRadians(180))
                 .lineToConstantHeading(new Vector2d(-56.5, 12))
@@ -212,16 +214,16 @@ public class BlueClose2Plus2 extends LinearOpMode {
                 .waitSeconds(0.4)
 
                 .addTemporalMarker(0.1 + 7.8, () -> {
-//                                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
+                                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
                 })
                 .addTemporalMarker(0.1 + 0.1 + 7.8, () -> {
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
                 })
                 //0.2 to take in two pixels
                 .addTemporalMarker(0.2 + 0.1 + 0.1 + 7.8, () -> {
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
                 })
 
                 .waitSeconds(0.1)
@@ -230,20 +232,20 @@ public class BlueClose2Plus2 extends LinearOpMode {
 
                 .waitSeconds(0.5)
                 .addTemporalMarker(0.1 + 0.5 + 7.8, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                 })
                 .addTemporalMarker(0.2 + 0.1 + 0.5 + 7.8, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
                 })
                 .addTemporalMarker(0.1 + 0.2 + 0.1 + 0.5 + 7.8, () -> {
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
                 })
                 .addTemporalMarker(0.1 + 0.1 + 0.2 + 0.1 + 0.5 + 7.8, () -> {
-//                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
-//                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide+RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide+RobotConstants.rightSpikeOffset);
                 })
 
                 .waitSeconds(.5+4)
@@ -252,9 +254,9 @@ public class BlueClose2Plus2 extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(9, 12))
 
                 .addTemporalMarker(3.5 + 7.8 + 4, () -> {
-//                                    targetSlidePos = RobotConstants.slideAuto;
-//                                    robot.intakeMotor.setPower(0);
-//                                    robot.transferMotor.setPower(0);
+                                    targetSlidePos = RobotConstants.slideAuto;
+                                    robot.intakeMotor.setPower(0);
+                                    robot.transferMotor.setPower(0);
                 })
 
                 .splineToConstantHeading(new Vector2d(53, 27), Math.toRadians(0))
@@ -264,7 +266,7 @@ public class BlueClose2Plus2 extends LinearOpMode {
                 //4.98 + 4 + 7.8 = 16.78
                 .waitSeconds(0.2)
 
-                .addTemporalMarker(0.15 + 4.98 + 4 + 7.8, () -> {})//robot.dropServo.setPosition(RobotConstants.dropPartial))*/
+                .addTemporalMarker(0.15 + 4.98 + 4 + 7.8, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
 
                 .build();
 
@@ -279,36 +281,82 @@ public class BlueClose2Plus2 extends LinearOpMode {
                 .lineTo(new Vector2d(53, 28.5))
                 .addTemporalMarker(3.7, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
                 .waitSeconds(.3)
+                .lineTo(new Vector2d(52, 28.5))
 
-                .lineTo(new Vector2d(51, 37.5))
-                .addTemporalMarker(4, () -> {
-                    robot.transferMotor.setPower(.3);
+                .addTemporalMarker(4.2, () -> {
+                                    robot.transferMotor.setPower(.3);
                 })
                 .addTemporalMarker(5, () -> targetSlidePos = RobotConstants.slideBottom)
-                .addTemporalMarker(6.4, () -> {
-                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
-                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
-                    robot.intakeMotor.setPower(1);
-                    robot.transferMotor.setPower(1);
-                    robot.dropServo.setPosition(RobotConstants.dropClosed);
+                .addTemporalMarker(6, () -> {
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                                    robot.intakeMotor.setPower(1);
+                                    robot.transferMotor.setPower(1);
+                                    robot.dropServo.setPosition(RobotConstants.dropClosed);
                 })
-                .splineToConstantHeading(new Vector2d(9, 8), Math.toRadians(180))
-                .lineTo(new Vector2d(-20, 8))
-                .splineToConstantHeading(new Vector2d(-53, 15), Math.toRadians(180))
-                .waitSeconds(1.7)
-                .addTemporalMarker(7.5, () -> {
-                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                .splineToConstantHeading(new Vector2d(9, 12), Math.toRadians(180))
+                .lineToConstantHeading(new Vector2d(-56.5, 12))
+
+
+                //7.61, reaches stack
+                //take in pixels
+
+                .waitSeconds(0.4)
+
+                .addTemporalMarker(0.1 + 7.61, () -> {
+                                    robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoDown);
                 })
-                .addTemporalMarker(8, () -> {
-                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide + RobotConstants.rightSpikeOffset);
-                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                .addTemporalMarker(0.1 + 0.1 + 7.61, () -> {
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn+RobotConstants.rightSpikeOffset);
                 })
-                .addTemporalMarker(8.5, () -> {
-                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
-                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                //0.2 to take in two pixels
+                .addTemporalMarker(0.2 + 0.1 + 0.1 + 7.61, () -> {
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack+RobotConstants.rightSpikeOffset);
                 })
-                //.addTemporalMarker(8.7, () -> {driveTrain.followTrajectorySequenceAsync(cycleReturn);})
+
+                .waitSeconds(0.1)
+
+                // second
+
+                .waitSeconds(0.5)
+                .addTemporalMarker(0.1 + 0.5 + 7.61, () -> {
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                })
+                .addTemporalMarker(0.2 + 0.1 + 0.5 + 7.61, () -> {
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkBack);
+                })
+                .addTemporalMarker(0.1 + 0.2 + 0.1 + 0.5 + 7.61, () -> {
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn + RobotConstants.rightSpikeOffset);
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkIn);
+                })
+                .addTemporalMarker(0.1 + 0.1 + 0.2 + 0.1 + 0.5 + 7.61, () -> {
+                                    robot.leftSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide);
+                                    robot.rightSpikeMarkServo.setPosition(RobotConstants.spikeMarkGuide+RobotConstants.rightSpikeOffset);
+                })
+
+                .waitSeconds(.5+4)
+
+
+                .lineToConstantHeading(new Vector2d(9, 12))
+
+                .addTemporalMarker(3.5 + 7.61 + 4, () -> {
+                                    targetSlidePos = RobotConstants.slideAuto;
+                                    robot.intakeMotor.setPower(0);
+                                    robot.transferMotor.setPower(0);
+                })
+
+                .splineToConstantHeading(new Vector2d(52, 28.5), Math.toRadians(0))
+
+                //time up to here 16.74
+                //drop 2 pixels
+
+                .waitSeconds(0.2)
+
+                .addTemporalMarker(0.15 + 4.98 + 4 + 7.61, () -> robot.dropServo.setPosition(RobotConstants.dropPartial))
                 .build();
 
 
