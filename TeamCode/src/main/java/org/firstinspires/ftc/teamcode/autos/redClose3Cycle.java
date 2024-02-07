@@ -22,6 +22,7 @@ public class redClose3Cycle extends LinearOpMode {
 
     enum FollowPath {
         SAVE,
+        FINISHED,
         LEFT,
         RIGHT,
         CENTER,
