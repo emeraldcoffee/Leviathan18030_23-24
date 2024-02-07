@@ -214,7 +214,7 @@ public class testTele extends LinearOpMode {
                 turnDegrees += 2*Math.PI;
             }
 
-            double headingComponent = Range.clip(turnDegrees*1.3, -1, 1)-turnVelocity*.16;
+            double headingComponent = Range.clip(turnDegrees*1.4, -1, 1)-turnVelocity*.07;
 
             driveTrainTimer.reset();
 
