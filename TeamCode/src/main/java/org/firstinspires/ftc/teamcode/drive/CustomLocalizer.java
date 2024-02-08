@@ -41,7 +41,7 @@ public CustomLocalizer(HardwareMap hardwareMap,  List<Integer> lastTrackingEncPo
 
     public void compensatedUpdateBackdrop() {
         backDropLocalizer.update();
-        setPoseEstimate(new Pose2d(poseEstimate.getX()*.5+backDropLocalizer.getPoseEstimate().getX()*.5, poseEstimate.getY(), poseEstimate.getHeading()*.5+backDropLocalizer.getPoseEstimate().getHeading()*.5));
+        setPoseEstimate(new Pose2d(poseEstimate.getX()*.5+backDropLocalizer.getPoseEstimate().getX()*.5, poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading()));
 
     }
 
@@ -55,7 +55,7 @@ public CustomLocalizer(HardwareMap hardwareMap,  List<Integer> lastTrackingEncPo
     public void smartCompensatedUpdateBackdrop() {
         backDropLocalizer.update();
         if (backDropLocalizer.isInRange(poseEstimate)) {
-            setPoseEstimate(poseEstimate.plus(new Pose2d(backDropLocalizer.getPoseEstimate().getX(), poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading())).div(2));
+            setPoseEstimate(new Pose2d(poseEstimate.getX()*.5+backDropLocalizer.getPoseEstimate().getX()*.5, poseEstimate.getY(), backDropLocalizer.getPoseEstimate().getHeading()));
         }
     }
 

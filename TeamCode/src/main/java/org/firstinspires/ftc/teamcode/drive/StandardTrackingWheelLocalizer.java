@@ -35,11 +35,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     //10.244 10.232 10.252
 
 //  360.284 353.915
-    public static double LEFT_OFFSET = 5.1215;
-//   290.278 296.313
-    public static double RIGHT_OFFSET = -5.1215;
+//    public static double LEFT_OFFSET = 5.1215;
+////   290.278 296.313
+//    public static double RIGHT_OFFSET = -5.1215;
 
-    public static double LATERAL_DISTANCE = LEFT_OFFSET-RIGHT_OFFSET; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 10.256; // in; distance between the left and right wheels
 // 272.407 258.244
     //2.977 4.223
     public static double FORWARD_OFFSET = 2.977; // in; offset of the lateral wheel 2.538776 1.0625
@@ -53,13 +53,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
      */
     public static double X_MULTIPLIER = 1;
 
-    //100.4952 100.3682 100.2338
-    public static double LEFT_MULTIPLIER = .9964;
+    //100.324 100.478
+    public static double LEFT_MULTIPLIER = .996;
 
-//99.873 99.844 99.795
-    public static double RIGHT_MULTIPLIER = 1.0016;
-    //100.0697 100.0856 99.998
-    public static double Y_MULTIPLIER = .9995;
+//99.986 100
+    public static double RIGHT_MULTIPLIER = 1;
+    //98.816 99.197
+    public static double Y_MULTIPLIER = 1.01;
 
     public static Encoder leftEncoder, rightEncoder, frontEncoder;
 
@@ -68,8 +68,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
 
         super(Arrays.asList(
-                new Pose2d(0, LEFT_OFFSET, 0), // left
-                new Pose2d(0, RIGHT_OFFSET, 0), // right
+                new Pose2d(0, LATERAL_DISTANCE/2, 0), // left
+                new Pose2d(0, -LATERAL_DISTANCE/2, 0), // right
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
