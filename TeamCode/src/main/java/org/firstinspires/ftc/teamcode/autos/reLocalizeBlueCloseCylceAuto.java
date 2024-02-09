@@ -43,7 +43,6 @@ public class reLocalizeBlueCloseCylceAuto extends LinearOpMode {
 
     int targetSlidePos = RobotConstants.slideAuto;
 
-    double intakePos = RobotConstants.stackMax;
 
     double slideI = 0;
 

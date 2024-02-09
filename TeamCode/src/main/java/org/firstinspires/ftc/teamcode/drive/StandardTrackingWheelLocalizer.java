@@ -53,11 +53,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
      */
     public static double X_MULTIPLIER = 1;
 
-    //100.324 100.478
-    public static double LEFT_MULTIPLIER = .996;
+    //100.324 100.478 (.996)
 
-//99.986 100
-    public static double RIGHT_MULTIPLIER = 1;
+    public static double LEFT_MULTIPLIER = .998342;
+
+//99.986 100 (1)
+
+    public static double RIGHT_MULTIPLIER = .99911079;
     //98.816 99.197
     public static double Y_MULTIPLIER = 1.01;
 

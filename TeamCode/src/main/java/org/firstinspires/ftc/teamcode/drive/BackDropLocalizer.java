@@ -31,6 +31,7 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     public BackDropLocalizer(HardwareMap hardwareMap) {
         leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "frontLeftDistanceSensor");
         rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "frontRightDistanceSensor");
+        leftDistanceSensor.getDistance(DistanceUnit.INCH);
 
     }
 
