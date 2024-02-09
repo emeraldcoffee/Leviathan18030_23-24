@@ -22,13 +22,10 @@ public class TestingBackwards extends LinearOpMode {
                 .back(70)
                 .build();
 
-        Trajectory forwards = driveTrain.trajectoryBuilder(new Pose2d(13.4, 64, Math.toRadians(270)))
-                .forward(70)
-                .build();
 
         waitForStart();
         driveTrain.update();
-        driveTrain.setPoseEstimate(new Pose2d(13.4, 64, Math.toRadians(270)));
+        driveTrain.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
         driveTrain.followTrajectory(backwards);
     }
