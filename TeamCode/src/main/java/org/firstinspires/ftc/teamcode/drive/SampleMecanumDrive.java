@@ -164,6 +164,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         super();
     }*/
 
+    public void headingOffset(double offset) {
+        localizer.headingOffset(offset);
+    }
+
     public void updateBackdrop() {
         localizer.updateBackdrop();
     }

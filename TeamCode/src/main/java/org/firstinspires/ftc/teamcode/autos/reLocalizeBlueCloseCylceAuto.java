@@ -152,7 +152,8 @@ public class reLocalizeBlueCloseCylceAuto extends LinearOpMode {
                 .waitSeconds(.3)
                 .addTemporalMarker(4.1, () -> {
                     robot.dropServo.setPosition(RobotConstants.dropOpen);
-                    driveTrain.compensatedUpdateBackdrop();
+//                    driveTrain.compensatedUpdateBackdrop();
+                    driveTrain.headingOffset(90);
                 })
                 .back(.1)
                 .splineToConstantHeading(new Vector2d(22, 11), Math.toRadians(180))
