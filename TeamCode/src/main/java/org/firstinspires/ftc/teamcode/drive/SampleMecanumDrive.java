@@ -180,7 +180,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void smartCompensatedUpdateBackdrop() {localizer.smartCompensatedUpdateBackdrop();}
 
-
+    public List<Double> getEncoderVelocities() {
+        return localizer.getWheelVelocities();
+    }
 
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

@@ -25,9 +25,12 @@ public CustomLocalizer(HardwareMap hardwareMap,  List<Integer> lastTrackingEncPo
 //    rearWallLocalizer = new RearWallLocalizer(hardwareMap);
 }
 
+    public List<Double> getWheelVelocities() {
+    return odomLocalizer.getWheelVelocities();
+    }
 
     public void headingOffset(double offset) {
-        poseEstimate = new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()-offset);
+        poseEstimate = new Pose2d(poseEstimate.getX(), poseEstimate.getY(), poseEstimate.getHeading()+offset);
         odomLocalizer.setPoseEstimate(poseEstimate);
 
     }

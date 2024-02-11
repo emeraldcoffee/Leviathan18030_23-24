@@ -150,6 +150,8 @@ public class testTele extends LinearOpMode {
         //Adding odom pod encoders to telemetry
         Telemetry.Item odom = telemetry.addData("Encoder Positions:", StandardTrackingWheelLocalizer.getEncoderVals());
 
+        Telemetry.Item odomVelocity = telemetry.addData("Right Velocity", "");
+
 //        Telemetry.Item aprilTagPosEstimate = telemetry.addData("April-tag Estimated Pos:", "");
 //
 //        Telemetry.Item aprilTagSolveTime = telemetry.addData("Solve Time:", "");
@@ -185,8 +187,10 @@ public class testTele extends LinearOpMode {
             Pose2d myPose = driveTrain.getPoseEstimate();
             //Setting telemetry to display robots position
             robotPose.setValue(RobotMethods.updateRobotPosition(myPose));
-            odom.setValue(StandardTrackingWheelLocalizer.getEncoderVals());
 
+            odom.setValue(String.format("Left: %,3.2f Right: %,3.2f Center: %,3.2f", driveTrain.getEncoderVelocities().get(0), driveTrain.getEncoderVelocities().get(1), driveTrain.getEncoderVelocities().get(2)));
+
+//            odomVelocity.setValue(String.format("%,6.2f"));
             //Driver 1 code
             //Front triggers being used to speedup or slowdown robots driving
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (gamepad1.right_trigger - (gamepad1.left_trigger)*.4) / 1.2);

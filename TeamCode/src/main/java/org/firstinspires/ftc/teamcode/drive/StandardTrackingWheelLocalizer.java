@@ -118,6 +118,10 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         );
     }
 
+//    public double getRightWheelVelocities() {
+//        return rightEncoder.getCorrectedVelocity();
+//    }
+
     @NonNull
     @Override
     public List<Double> getWheelVelocities() {
