@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.purepursuit.Path;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -56,6 +57,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 @Config
 public class RobotConfig extends MecanumDrive {
@@ -101,6 +104,10 @@ public class RobotConfig extends MecanumDrive {
     public final double slideToInches = 1.6 * Math.PI / 8192;
 
     public Servo dropServo, leftPixelServo, rightPixelServo, droneServo, leftStackServo, rightStackServo, stackHoldServo;
+
+    //Pure pursuit
+    boolean followPurePursuitPath = false;
+    Path currentPath;
 
 
     enum StackArm {
@@ -216,9 +223,6 @@ public class RobotConfig extends MecanumDrive {
         //Slide encoder
         slideEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "slideMotor"));
 
-
-
-
     }
 
     public void manualBulkReads(boolean manualReads) {
@@ -246,6 +250,14 @@ public class RobotConfig extends MecanumDrive {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
+
+        if (followPurePursuitPath) {
+            double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
+            setMecanumDrive(driveTrainPowers[1], driveTrainPowers[0], driveTrainPowers[2]);
+
+            //stops the path from used once it is done
+            followPurePursuitPath = !currentPath.isFinished();
+        }
 
         //Must be called to get new results
         clearBulkCache();
@@ -311,8 +323,83 @@ public class RobotConfig extends MecanumDrive {
 
     }
 
+    //Drivetrain functions
+    public void followPurePursuitPath(Path path) {
+        path.init();
+        currentPath = path;
+        followPurePursuitPath = true;
+    }
 
-    //Roadrunner methods
+    public boolean isPurePursuitPathFinished() {
+        return currentPath.isFinished();
+    }
+
+
+    public void setMecanumDrive(double forward, double strafe, double turn) {
+        //Find value to make all motor powers less than 1
+        double scalePower = max(abs(forward) + abs(strafe) + abs(turn), 1);
+
+        //Creating string with all drive powers for mecanum drive
+        Double[] driveSpeeds = {(forward-strafe-turn)/scalePower, (forward+strafe-turn)/scalePower,
+                (forward-strafe+turn/scalePower), (forward+strafe+turn)/scalePower};
+
+        //Setting motors to their new powers
+        setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+    public void setMecanumDriveFieldCentric(double forward, double strafe, double turn, double heading) {
+
+        //rotating Joystick values to account for robot heading
+        double rotatedForward = forward*Math.cos(-heading)-strafe*Math.sin(-heading),
+                rotatedStrafe = forward*Math.sin(-heading)+strafe*Math.cos(-heading);
+
+        //Find value to make all motor powers less than 1
+        double scalePower = max(abs(rotatedForward) + abs(rotatedStrafe) + abs(turn), 1);
+
+        //Creating string with all drive powers for mecanum drive
+        Double[] driveSpeeds = {(rotatedForward-rotatedStrafe-turn)/scalePower, (rotatedForward+rotatedStrafe-turn)/scalePower,
+                (rotatedForward-rotatedStrafe+turn/scalePower), (rotatedForward+rotatedStrafe+turn)/scalePower};
+
+        //Setting motors to their new powers
+        setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+    public void setMecanumDriveHeadingPriority(double forward, double strafe, double turn) {
+        turn = Range.clip(turn, -1, 1);
+
+        double remainingPower = 1-abs(turn);
+        //Find value to make all motor powers less than 1
+        double scalePower = max((abs(forward) + abs(strafe))/remainingPower, 1/remainingPower);
+
+        //Creating string with all drive powers for mecanum drive
+        Double[] driveSpeeds = {(forward-strafe)/scalePower-turn, (forward+strafe)/scalePower-turn,
+                (forward-strafe)/scalePower+turn, (forward+strafe)/scalePower+turn};
+
+        //Setting motors to their new powers
+        setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+    public void setMecanumDriveFieldCentricHeadingPriority(double forward, double strafe, double turn, double heading) {
+        turn = Range.clip(turn, -1, 1);
+
+        //rotating Joystick values to account for robot heading
+        double rotatedForward = forward*Math.cos(-heading)-strafe*Math.sin(-heading),
+                rotatedStrafe = forward*Math.sin(-heading)+strafe*Math.cos(-heading);
+
+        double remainingPower = 1-abs(turn);
+        //Find value to make all motor powers less than 1
+        double scalePower = max((abs(rotatedForward) + abs(rotatedStrafe))/remainingPower, 1/remainingPower);
+
+        //Creating string with all drive powers for mecanum drive
+        Double[] driveSpeeds = {(rotatedForward-rotatedStrafe)/scalePower-turn, (rotatedForward+rotatedStrafe)/scalePower-turn,
+                (rotatedForward-rotatedStrafe)/scalePower+turn, (rotatedForward+rotatedStrafe)/scalePower+turn};
+
+        //Setting motors to their new powers
+        setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+
+    //Roadrunner functions
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
