@@ -106,8 +106,9 @@ public class RobotConfig extends MecanumDrive {
 
     public Servo dropServo, leftPixelServo, rightPixelServo, droneServo, leftStackServo, rightStackServo, stackHoldServo;
 
-    //Pure pursuit
+    //Pathing stuff
     boolean followPurePursuitPath = false;
+    boolean followRoadrunnerPath = false;
     Path currentPath;
 
 
@@ -203,11 +204,6 @@ public class RobotConfig extends MecanumDrive {
         climbMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         climbMotor.setPower(1);
 
-        if (!PassData.slidesInitiated) {
-            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            PassData.slidesInitiated = true;
-        }
-
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         allMotors = Arrays.asList(frontLeft, frontRight, backLeft, backRight, climbMotor, intakeMotor, transferMotor, slideMotor);
@@ -226,6 +222,16 @@ public class RobotConfig extends MecanumDrive {
         //Slide encoder
         slideEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "slideMotor"));
 
+        if (PassData.slidesInitiated) {
+            clearBulkCache();
+            //If slides are not at the bottom they are set to their current pose
+            if (slidePosInches()>1) {
+                targetSlidePos = slidePosInches();
+            }
+        } else {
+            slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            PassData.slidesInitiated = true;
+        }
     }
 
     public void manualBulkReads(boolean manualReads) {
@@ -250,9 +256,14 @@ public class RobotConfig extends MecanumDrive {
         localizer.update();
         updateLift(timer.seconds());
 
-        updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
-        if (signal != null) setDriveSignal(signal);
+//        updatePoseEstimate();
+        if (followRoadrunnerPath) {
+            DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+            if (signal != null) setDriveSignal(signal);
+            if (!isBusy()) {
+                followRoadrunnerPath = false;
+            }
+        }
 
         if (followPurePursuitPath) {
             double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
@@ -441,6 +452,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void turnAsync(double angle) {
+        followRoadrunnerPath = true;
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(getPoseEstimate())
                         .turn(angle)
@@ -449,11 +461,13 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void turn(double angle) {
+        followRoadrunnerPath = true;
         turnAsync(angle);
         waitForIdle();
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
+        followRoadrunnerPath = true;
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(trajectory.start())
                         .addTrajectory(trajectory)
@@ -462,15 +476,18 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void followTrajectory(Trajectory trajectory) {
+        followRoadrunnerPath = true;
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        followRoadrunnerPath = true;
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
     }
 
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+        followRoadrunnerPath = true;
         followTrajectorySequenceAsync(trajectorySequence);
         waitForIdle();
     }

@@ -91,7 +91,10 @@ public class newTele extends LinearOpMode {
 
         status.setValue("Running");
 
-        while (opModeIsActive() && !isStopRequested()) {
+        loopTimer.reset();
+        slideTimer.reset();
+
+        while (!isStopRequested()) {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
@@ -280,6 +283,7 @@ public class newTele extends LinearOpMode {
             }
 
             robot.update();
+            robotPose.setValue(RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
 
             prevGamepad1.copy(currentGamepad1);
             prevGamepad2.copy(currentGamepad2);
