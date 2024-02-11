@@ -23,6 +23,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robot.PassData;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
@@ -110,7 +111,7 @@ public class RobotConfig extends MecanumDrive {
     Path currentPath;
 
 
-    enum StackArm {
+    public enum StackArm {
         GUIDE(0.6),
         OUT(.15),
         IN(.3);
@@ -119,7 +120,7 @@ public class RobotConfig extends MecanumDrive {
         StackArm(double position) {this.position = position;}
     }
 
-    enum SlideHeight {
+    public enum SlideHeight {
         BOTTOM(0),
         PRELOAD_DROP(11.5),
         LOW(15),
@@ -130,7 +131,7 @@ public class RobotConfig extends MecanumDrive {
         SlideHeight(double height) {this.height = height;}
     }
 
-    enum Dropper {
+    public enum Dropper {
         CLOSED(.545),
         PARTIAL(.6275),
         OPEN(.71);
@@ -177,6 +178,8 @@ public class RobotConfig extends MecanumDrive {
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
         localizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
+
+        localizer.setPoseEstimate(PassData.currentPose);
 
         setLocalizer(localizer);
 
@@ -263,10 +266,27 @@ public class RobotConfig extends MecanumDrive {
         clearBulkCache();
     }
 
+    public void exit() {
+        PassData.currentPose = localizer.getPoseEstimate();
+
+    }
+
+    public void releaseDrone() {
+        droneServo.setPosition(RobotConstants.droneRelease);
+    }
+
     //Intake code
     public void stackArm(StackArm stackArm) {
         leftStackServo.setPosition(stackArm.position);
-        rightStackServo.setPosition(stackArm.position);
+        rightStackServo.setPosition(stackArm.position+RobotConstants.rightSpikeOffset);
+    }
+
+    public void stackHold(boolean holdStack) {
+        if (holdStack) {
+            stackHoldServo.setPosition(.6);
+        } else {
+            stackHoldServo.setPosition(.1);
+        }
     }
 
     //Outtake code
