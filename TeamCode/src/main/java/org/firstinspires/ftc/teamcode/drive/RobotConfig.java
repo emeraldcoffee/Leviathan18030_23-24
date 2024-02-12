@@ -87,6 +87,7 @@ public class RobotConfig extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
 
     public StandardTrackingWheelLocalizer localizer;
+    public BackDropLocalizer backDropLocalizer;
 
     List<LynxModule> allHubs;
 
@@ -188,6 +189,8 @@ public class RobotConfig extends MecanumDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
         );
+
+        backDropLocalizer = new BackDropLocalizer(hardwareMap);
 
         //Remaining motors
         climbMotor = hardwareMap.get(DcMotorEx.class, "climbMotor");
@@ -427,6 +430,20 @@ public class RobotConfig extends MecanumDrive {
 
         //Setting motors to their new powers
         setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
+    }
+
+    //Backdrop localizer
+    public void updateBackdropLocalizer() {
+        backDropLocalizer.update();
+    }
+
+    public Pose2d getBackdropPoseEstimate() {
+        return backDropLocalizer.getPoseEstimate();
+    }
+
+    public void relocalizeBackdrop() {
+        updateBackdropLocalizer();
+        setPoseEstimate(getBackdropPoseEstimate());
     }
 
 

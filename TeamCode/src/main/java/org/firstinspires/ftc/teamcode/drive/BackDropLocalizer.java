@@ -58,25 +58,25 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public boolean isInRange(Pose2d inputPose) {
-        return abs(poseEstimate.getX() - inputPose.getX()) < 1 && abs(poseEstimate.getHeading() - inputPose.getHeading()) < 1;
+        return abs(poseEstimate.getX() - inputPose.getX()) < 1 && abs(poseEstimate.getHeading() - inputPose.getHeading()) < Math.toRadians(5);
     }
 
     public boolean isInRange(Pose2d inputPose, double rangeVal) {
         return abs(poseEstimate.getX() - inputPose.getX()) < rangeVal && abs(poseEstimate.getHeading() - inputPose.getHeading()) < rangeVal;
     }
 
-    public Enum getRelBackdropPose(Pose2d inputPose) {
-        //The bigger the number the further the sensors are reading
-        //Bigger numbers signify that it is less infront of the backdrop
-        double headingDiff = poseEstimate.getHeading()-inputPose.getHeading();
-
-        if (headingDiff<Math.toRadians(-5)) {
-            return RelBackdropPose.LEFT;
-        } else if (headingDiff>Math.toRadians(5)) {
-            return RelBackdropPose.RIGHT;
-        } else if (inputPose.getX()-poseEstimate.getX()<2) {
-            return RelBackdropPose.CENTER;
-        } else return RelBackdropPose.FAR;
-    }
+//    public Enum getRelBackdropPose(Pose2d inputPose) {
+//        //The bigger the number the further the sensors are reading
+//        //Bigger numbers signify that it is less infront of the backdrop
+//        double headingDiff = poseEstimate.getHeading()-inputPose.getHeading();
+//
+//        if (headingDiff<Math.toRadians(-5)) {
+//            return RelBackdropPose.LEFT;
+//        } else if (headingDiff>Math.toRadians(5)) {
+//            return RelBackdropPose.RIGHT;
+//        } else if (inputPose.getX()-poseEstimate.getX()<2) {
+//            return RelBackdropPose.CENTER;
+//        } else return RelBackdropPose.FAR;
+//    }
 
 }
