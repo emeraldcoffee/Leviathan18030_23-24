@@ -4,15 +4,21 @@ import static java.lang.Math.abs;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 
+import java.util.Objects;
 import java.util.Timer;
 
+
+@TeleOp
 public class newTele extends LinearOpMode {
 
     enum DriveStates {
@@ -20,7 +26,9 @@ public class newTele extends LinearOpMode {
         FieldCentric,
         BasicTurning
     }
-    testTele.DriveStates driveStates = testTele.DriveStates.CorrectiveTurning;
+    DriveStates driveStates = DriveStates.CorrectiveTurning;
+    double targetHeading = 0;
+
 
     double lastTurn = 0;
 
@@ -67,11 +75,15 @@ public class newTele extends LinearOpMode {
 
         RobotConfig robot = new RobotConfig(hardwareMap);
 
+        Telemetry.Item driveState = telemetry.addData("Drive State", "Corrective Turning");
+        Telemetry.Item turnVals = telemetry.addData("Turn vals:", "");
         Telemetry.Item robotPose = telemetry.addData("Robot pose", RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
+        Telemetry.Item imuAngle = telemetry.addData("IMU rotation", "");
         Telemetry.Item loopTime = telemetry.addData("Loop time", "");
 
 
         ElapsedTime loopTimer = new ElapsedTime();
+        ElapsedTime driveTrainTimer = new ElapsedTime();
         ElapsedTime climbTimer = new ElapsedTime();
         ElapsedTime dropTimer = new ElapsedTime();
         ElapsedTime slideTimer = new ElapsedTime();
@@ -100,12 +112,70 @@ public class newTele extends LinearOpMode {
 
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (currentGamepad1.right_trigger - (currentGamepad1.left_trigger)*.4) / 1.2);
 
+            if (abs(currentGamepad1.right_stick_x)>.1) {
+                targetHeading = RobotMethods.fastInRangeRad( targetHeading-currentGamepad1.right_stick_x * RobotConstants.turnSpeed * driveTrainTimer.seconds()*5
+                );
+            }
+            driveTrainTimer.reset();
+            double vel = 0;
+            if (robot.getPoseVelocity() != null) {
+                vel = robot.getPoseVelocity().getHeading();
+            }
+
+            double headingComponent = Range.clip(RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading())*1.1, -1, 1)
+                    + vel*.00015;
+
+            turnVals.setValue(String.format("%,3.2f Velocity %,3.2f", headingComponent, vel));
+
             switch (driveStates) {
                 case BasicTurning:
                     robot.setMecanumDrive(-currentGamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -currentGamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , -currentGamepad1.right_stick_x * RobotConstants.turnSpeed);
+                            ,-currentGamepad1.right_stick_x * RobotConstants.turnSpeed);
+
+                    if (currentGamepad1.start) {
+                        driveState.setValue("Corrective Turning");
+                        targetHeading = robot.getPoseEstimate().getHeading();
+                        driveStates = DriveStates.CorrectiveTurning;
+                    } else if (currentGamepad1.y) {
+                        driveState.setValue("Field Centric");
+                        targetHeading = robot.getPoseEstimate().getHeading();
+                        driveStates = DriveStates.FieldCentric;
+                    }
                     break;
+                case CorrectiveTurning:
+                    robot.setMecanumDriveHeadingPriority(-currentGamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+                            -currentGamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
+                            , headingComponent);
+
+                    if (currentGamepad1.back) {
+                        driveState.setValue("Basic Turning");
+                        driveStates = DriveStates.BasicTurning;
+                    } else if (currentGamepad1.y) {
+                        driveState.setValue("Field Centric");
+                        driveStates = DriveStates.FieldCentric;
+                    }
+                    break;
+                case FieldCentric:
+                    robot.setMecanumDriveFieldCentricHeadingPriority(-currentGamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
+                            -currentGamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
+                            , headingComponent, robot.getPoseEstimate().getHeading());
+
+                    if (currentGamepad1.back) {
+                        driveState.setValue("Basic Turning");
+                        driveStates = DriveStates.BasicTurning;
+                    } else if (currentGamepad1.start) {
+                        driveState.setValue("Corrective Turning");
+                        targetHeading = robot.getPoseEstimate().getHeading();
+                        driveStates = DriveStates.CorrectiveTurning;
+                    }
+                    break;
+            }
+
+            //Resetting heading for field-centric
+            if (currentGamepad1.b && !prevGamepad1.b) {
+                targetHeading = 0;
+                robot.setPoseEstimate(new Pose2d(robot.getPoseEstimate().getX(), robot.getPoseEstimate().getY(), 0));
             }
 
             //Climb code
@@ -119,13 +189,13 @@ public class newTele extends LinearOpMode {
                     }
                     break;
                 case RELEASE:
-                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay && !gamepad1.dpad_down) {
+                    if (climbTimer.milliseconds()>RobotConstants.climbReleaseDelay && !currentGamepad1.dpad_down) {
                         climb = Climb.WAIT;
                     }
                     break;
                 case WAIT:
                     if (currentGamepad1.dpad_down) {
-                        driveStates = testTele.DriveStates.BasicTurning;
+                        driveStates = DriveStates.BasicTurning;
                         climbTimer.reset();
                         climb = Climb.STOPPED;
                     }
@@ -142,8 +212,10 @@ public class newTele extends LinearOpMode {
                     break;
             }
 
+
+
             //Drone Launch
-            if (gamepad1.left_bumper && gamepad1.right_bumper) {
+            if (currentGamepad1.left_bumper && currentGamepad1.right_bumper) {
                 robot.releaseDrone();
             }
 
@@ -187,7 +259,7 @@ public class newTele extends LinearOpMode {
 
             //Slide code
             if (abs(currentGamepad2.left_stick_y)>.1) {
-                robot.setTargetSlidePos(robot.getTargetSlidePos()-currentGamepad2.left_stick_y*slideTimer.milliseconds());
+                robot.setTargetSlidePos(robot.getTargetSlidePos()-currentGamepad2.left_stick_y*slideTimer.milliseconds()*.05);
             } else if (currentGamepad2.a) {
                 robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
             } else if (currentGamepad2.x) {
@@ -284,6 +356,7 @@ public class newTele extends LinearOpMode {
 
             robot.update();
             robotPose.setValue(RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
+            imuAngle.setValue(robot.getRawExternalHeading()*180/Math.PI);
 
             prevGamepad1.copy(currentGamepad1);
             prevGamepad2.copy(currentGamepad2);

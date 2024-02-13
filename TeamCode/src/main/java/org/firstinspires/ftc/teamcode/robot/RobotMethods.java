@@ -171,6 +171,32 @@ public class RobotMethods {
         return String.format(" x: %,3.2f y: %,3.2f z: %,3.2f heading: %,3.2f, confidence: %,3.2f", aprilTag.ftcPose.x, aprilTag.ftcPose.y, aprilTag.ftcPose.z, aprilTag.ftcPose.yaw, aprilTag.decisionMargin);
     }
 
+    public static double angleDifferenceRad(double a, double b) {
+        double d = a-b;
+
+        while (d>Math.PI) d-=2*Math.PI;
+        while (d<-Math.PI) d+=2*Math.PI;
+
+        return d;
+    }
+
+    //Assumes that both angles are in range (-2pi, 2pi)
+    public static double fastAngleDifferenceRad(double a, double b) {
+        double d = a-b;
+
+        if (d>Math.PI) d-=2*Math.PI;
+        else if (d<-Math.PI) d+=2*Math.PI;
+
+        return d;
+    }
+
+    public static double fastInRangeRad(double a) {
+        if (a>=2*Math.PI) a-=2*Math.PI;
+        else if (a<0) a+=2*Math.PI;
+
+        return a;
+    }
+
     public static void outtakePlace (HwMap hwMap) {
         ElapsedTime dropTime = new ElapsedTime();
         hwMap.dropServo.setPosition(RobotConstants.dropOpen);

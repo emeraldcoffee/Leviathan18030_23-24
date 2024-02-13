@@ -12,16 +12,22 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.purepursuit.Path;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cDevice;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -86,7 +92,7 @@ public class RobotConfig extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public StandardTrackingWheelLocalizer localizer;
+    public TwoWheelTrackingLocalizer localizer;
     public BackDropLocalizer backDropLocalizer;
 
     List<LynxModule> allHubs;
@@ -106,6 +112,8 @@ public class RobotConfig extends MecanumDrive {
     public final double slideToInches = 1.6 * Math.PI / 8192;
 
     public Servo dropServo, leftPixelServo, rightPixelServo, droneServo, leftStackServo, rightStackServo, stackHoldServo;
+
+    public IMU imu;
 
     //Pathing stuff
     boolean followPurePursuitPath = false;
@@ -160,12 +168,12 @@ public class RobotConfig extends MecanumDrive {
 
         //Drivetrain
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = hardwareMap.get(DcMotorEx.class, "leftRear");
         backRight = hardwareMap.get(DcMotorEx.class, "rightRear");
+        frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         driveTrainMotors = Arrays.asList(frontLeft, backLeft, backRight, frontRight);
 
@@ -177,9 +185,16 @@ public class RobotConfig extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        imu = hardwareMap.get(BHI260IMU.class, "imu");
+
+        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, -90, 37.533568);
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(hubOrientation);
+
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
-        localizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
+        localizer = new TwoWheelTrackingLocalizer(hardwareMap, this);
 
         localizer.setPoseEstimate(PassData.currentPose);
 
@@ -235,6 +250,8 @@ public class RobotConfig extends MecanumDrive {
             slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             PassData.slidesInitiated = true;
         }
+
+
     }
 
     public void manualBulkReads(boolean manualReads) {
@@ -270,7 +287,7 @@ public class RobotConfig extends MecanumDrive {
 
         if (followPurePursuitPath) {
             double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
-            setMecanumDrive(driveTrainPowers[1], driveTrainPowers[0], driveTrainPowers[2]);
+            setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
 
             //stops the path from used once it is done
             followPurePursuitPath = !currentPath.isFinished();
@@ -346,8 +363,8 @@ public class RobotConfig extends MecanumDrive {
                 p = .1;
             }
         } else {
-            p = error;
-            d = (error-prevError)/(currentTime-prevTime);
+            p = error*.2;
+            d = (error-prevError)/(currentTime-prevTime)*.0;
             //Add ifs to slow down more as it approaches
         }
 
@@ -399,7 +416,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void setMecanumDriveHeadingPriority(double forward, double strafe, double turn) {
-        turn = Range.clip(turn, -1, 1);
+        turn = Range.clip(turn, -.8, .8);
 
         double remainingPower = 1-abs(turn);
         //Find value to make all motor powers less than 1
@@ -409,7 +426,7 @@ public class RobotConfig extends MecanumDrive {
         Double[] driveSpeeds = {(forward-strafe)/scalePower-turn, (forward+strafe)/scalePower-turn,
                 (forward-strafe)/scalePower+turn, (forward+strafe)/scalePower+turn};
 
-        //Setting motors to their new powers
+        //Setting motors to there new powers
         setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
 
@@ -432,7 +449,7 @@ public class RobotConfig extends MecanumDrive {
         setMotorPowers(driveSpeeds[0], driveSpeeds[1], driveSpeeds[2], driveSpeeds[3]);
     }
 
-    //Backdrop localizer
+    //localizer stuff
     public void updateBackdropLocalizer() {
         backDropLocalizer.update();
     }
@@ -443,9 +460,18 @@ public class RobotConfig extends MecanumDrive {
 
     public void relocalizeBackdrop() {
         updateBackdropLocalizer();
-        setPoseEstimate(getBackdropPoseEstimate());
+        localizer.setPoseEstimate(getBackdropPoseEstimate());
     }
 
+    public boolean safeRelocalizeBackdrop() {
+        updateBackdropLocalizer();
+        if (backDropLocalizer.isInRange(getPoseEstimate(),.5, Math.toRadians(5))) {
+            localizer.setPoseEstimate(getBackdropPoseEstimate());
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     //Roadrunner functions
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -608,12 +634,12 @@ public class RobotConfig extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0;//imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) 0;//imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

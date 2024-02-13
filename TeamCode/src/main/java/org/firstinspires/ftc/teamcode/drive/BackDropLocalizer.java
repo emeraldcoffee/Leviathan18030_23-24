@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 
 
 public class BackDropLocalizer extends TwoDistanceLocalizer{
@@ -58,11 +59,13 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public boolean isInRange(Pose2d inputPose) {
-        return abs(poseEstimate.getX() - inputPose.getX()) < 1 && abs(poseEstimate.getHeading() - inputPose.getHeading()) < Math.toRadians(5);
+        return abs(poseEstimate.getX() - inputPose.getX()) < 1 &&
+                abs(RobotMethods.fastAngleDifferenceRad(poseEstimate.getHeading(), inputPose.getHeading())) < Math.toRadians(5);
     }
 
-    public boolean isInRange(Pose2d inputPose, double rangeVal) {
-        return abs(poseEstimate.getX() - inputPose.getX()) < rangeVal && abs(poseEstimate.getHeading() - inputPose.getHeading()) < rangeVal;
+    public boolean isInRange(Pose2d inputPose, double XrangeVal, double headingRangeVal) {
+        return abs(poseEstimate.getX() - inputPose.getX()) < XrangeVal &&
+                abs(RobotMethods.fastAngleDifferenceRad(poseEstimate.getHeading(), inputPose.getHeading())) < headingRangeVal;
     }
 
 //    public Enum getRelBackdropPose(Pose2d inputPose) {
