@@ -187,7 +187,7 @@ public class RobotConfig extends MecanumDrive {
 
         imu = hardwareMap.get(BHI260IMU.class, "imu");
 
-        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, -90, 37.533568);
+        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, 90, -37.533568);
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(hubOrientation);
 
         imu.initialize(new IMU.Parameters(orientationOnRobot));
