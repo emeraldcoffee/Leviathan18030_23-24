@@ -7,15 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.robot.HwMap;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-public class TestingBack extends LinearOpMode {
+public class TestingForwardsOld extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotConfig robot = new RobotConfig(hardwareMap);
+        SampleMecanumDrive robot = new SampleMecanumDrive(hardwareMap);
 //        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 //        HwMap robot = new HwMap();
 //        robot.init(hardwareMap);
@@ -25,7 +23,7 @@ public class TestingBack extends LinearOpMode {
                 .back(70)
                 .build();
 
-        TrajectorySequence forwards = robot.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        Trajectory forwards = robot.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .forward(70)
                 .build();
 
@@ -33,6 +31,6 @@ public class TestingBack extends LinearOpMode {
         robot.update();
         robot.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
-        robot.followTrajectory(backwards);
+        robot.followTrajectory(forwards);
     }
 }

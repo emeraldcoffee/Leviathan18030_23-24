@@ -7,15 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.robot.HwMap;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
-public class TestingBack extends LinearOpMode {
+public class TestingBackOld extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotConfig robot = new RobotConfig(hardwareMap);
+        SampleMecanumDrive robot = new SampleMecanumDrive(hardwareMap);
 //        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
 //        HwMap robot = new HwMap();
 //        robot.init(hardwareMap);

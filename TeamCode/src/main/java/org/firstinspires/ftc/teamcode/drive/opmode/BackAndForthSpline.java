@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /*
@@ -35,7 +36,7 @@ public class BackAndForthSpline extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        RobotConfig drive = new RobotConfig(hardwareMap);
 
         Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
                 .splineToSplineHeading(new Pose2d(DISTANCEX, DISTANCEY, 0), 0)

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.robot.HwMap;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -14,23 +15,24 @@ public class TestingForwards extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
-        HwMap robot = new HwMap();
-        robot.init(hardwareMap);
+        RobotConfig robot = new RobotConfig(hardwareMap);
+//        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
+//        HwMap robot = new HwMap();
+//        robot.init(hardwareMap);
 
 
-        Trajectory backwards = driveTrain.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+        Trajectory backwards = robot.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .back(70)
                 .build();
 
-        Trajectory forwards = driveTrain.trajectoryBuilder(new Pose2d(13.4, 64, Math.toRadians(270)))
+        Trajectory forwards = robot.trajectoryBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .forward(70)
                 .build();
 
         waitForStart();
-        driveTrain.update();
-        driveTrain.setPoseEstimate(new Pose2d(13.4, 64, Math.toRadians(270)));
+        robot.update();
+        robot.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
-        driveTrain.followTrajectory(forwards);
+        robot.followTrajectory(forwards);
     }
 }

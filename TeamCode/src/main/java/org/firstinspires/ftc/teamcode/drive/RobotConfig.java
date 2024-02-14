@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.PassData;
@@ -56,6 +57,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -71,8 +74,8 @@ import static java.lang.Math.max;
 public class RobotConfig extends MecanumDrive {
 
     //Roadrunner stuff
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(19, .5, .4);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(25, .5, .7);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(22, .5, .5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(35, .5, .8);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -106,7 +109,7 @@ public class RobotConfig extends MecanumDrive {
     public DcMotorEx slideMotor, climbMotor, intakeMotor, transferMotor;
     public List<DcMotorEx> allMotors;
 
-    public double targetSlidePos = 0, prevError = 0, prevTime = 0;
+    public double targetSlidePos = 0;//, prevError = 0, prevTime = 0;
 
     public Encoder slideEncoder;
     public final double slideToInches = 1.6 * Math.PI / 8192;
@@ -114,6 +117,8 @@ public class RobotConfig extends MecanumDrive {
     public Servo dropServo, leftPixelServo, rightPixelServo, droneServo, leftStackServo, rightStackServo, stackHoldServo;
 
     public IMU imu;
+
+    public OpenCvCamera webcam, webcamR;
 
     //Pathing stuff
     boolean followPurePursuitPath = false;
@@ -187,10 +192,12 @@ public class RobotConfig extends MecanumDrive {
 
         imu = hardwareMap.get(BHI260IMU.class, "imu");
 
-        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, 90, -37.533568);
+        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, -90, -37.533568);
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(hubOrientation);
 
         imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        imu.resetYaw();
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
@@ -237,6 +244,11 @@ public class RobotConfig extends MecanumDrive {
 
         rightStackServo.setDirection(Servo.Direction.REVERSE);
 
+        //Cameras
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
+        webcamR = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "cameraR"));
+
+
         //Slide encoder
         slideEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "slideMotor"));
 
@@ -274,10 +286,10 @@ public class RobotConfig extends MecanumDrive {
 
     public void update() {
         localizer.update();
-        updateLift(timer.seconds());
+        updateLift();//timer.seconds()
 
 //        updatePoseEstimate();
-        if (followRoadrunnerPath) {
+        if (true) {//followRoadrunnerPath
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
             if (signal != null) setDriveSignal(signal);
             if (!isBusy()) {
@@ -346,31 +358,38 @@ public class RobotConfig extends MecanumDrive {
         return (double) slideEncoder.getCurrentPosition() * slideToInches;//1.6 diameter * pi / 8192
     }
 
-    public void updateLift(double currentTime) {
+    public void updateLift() {//double currentTime
         //Error is positive when slide have to up
         double error = targetSlidePos - slidePosInches();
-        double absError = Math.abs(error);
 
-        double p, d;
+        double p;//d
 
         //Checks if error is in acceptable amounts
-        if (absError < .2) {
-            d = 0;
+        if (Math.abs(error) < .1) {
+//            d = 0;
             //If slides are at bottom give 0 power, otherwise slight power bc gravity
-            if (slidePosInches() < .2) {
+            if (slidePosInches() < .1) {
                 p = 0;
             } else {
-                p = .1;
+                p = .05;
             }
+        } else if (error>4 || error<-5.5) {
+            //Slides set to max power
+            p = Math.signum(error);
+//            d = 0;
+        } else if (error>0){
+            //with in 4 in but has to move up
+            p = error*.3;
+//            d = (error-prevError)/(currentTime-prevTime)*.0;
         } else {
-            p = error*.2;
-            d = (error-prevError)/(currentTime-prevTime)*.0;
-            //Add ifs to slow down more as it approaches
+            //with in 5 in but has to move down
+            p = error*.1;
+//            d = (error-prevError)/(currentTime-prevTime)*.0;
         }
 
-        slideMotor.setPower(p+d);
-        prevError = error;
-        prevTime = currentTime;
+        slideMotor.setPower(p);
+//        prevError = error;
+//        prevTime = currentTime;
 
     }
 
@@ -431,7 +450,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void setMecanumDriveFieldCentricHeadingPriority(double forward, double strafe, double turn, double heading) {
-        turn = Range.clip(turn, -1, 1);
+        turn = Range.clip(turn, -.8, .8);
 
         //rotating Joystick values to account for robot heading
         double rotatedForward = forward*Math.cos(-heading)-strafe*Math.sin(-heading),
