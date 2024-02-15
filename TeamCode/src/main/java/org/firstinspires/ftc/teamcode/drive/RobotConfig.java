@@ -13,6 +13,8 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUNew;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,6 +30,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
@@ -117,6 +121,7 @@ public class RobotConfig extends MecanumDrive {
     public Servo dropServo, leftPixelServo, rightPixelServo, droneServo, leftStackServo, rightStackServo, stackHoldServo;
 
     public IMU imu;
+    public BNO055IMUNew imuOld;
 
     public OpenCvCamera webcam, webcamR;
 
@@ -128,6 +133,7 @@ public class RobotConfig extends MecanumDrive {
 
     public enum StackArm {
         GUIDE(0.6),
+        FAR_OUT(0),
         OUT(.15),
         IN(.3);
 
@@ -191,6 +197,19 @@ public class RobotConfig extends MecanumDrive {
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = hardwareMap.get(BHI260IMU.class, "imu");
+        imuOld = hardwareMap.get(BNO055IMUNew.class, "imuExpansion");
+
+//        Orientation expansionHubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, 90, -37.533568);
+//        RevHubOrientationOnRobot expansionOrientationOnRobot = new RevHubOrientationOnRobot(expansionHubOrientation);
+
+        BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(
+                new RevHubOrientationOnRobot(
+                new Orientation(AxesReference.INTRINSIC,
+                AxesOrder.XYZ, AngleUnit.RADIANS,
+                90, 90, (float) -37.533568, 0))
+        );
+
+        imuOld.initialize(parameters);
 
         Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, -90, -37.533568);
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(hubOrientation);
@@ -373,7 +392,7 @@ public class RobotConfig extends MecanumDrive {
             } else {
                 p = .05;
             }
-        } else if (error>4 || error<-5.5) {
+        } else if (error>4 || error<-6) {
             //Slides set to max power
             p = Math.signum(error);
 //            d = 0;
@@ -382,8 +401,8 @@ public class RobotConfig extends MecanumDrive {
             p = error*.3;
 //            d = (error-prevError)/(currentTime-prevTime)*.0;
         } else {
-            //with in 5 in but has to move down
-            p = error*.1;
+            //with in 6 in but has to move down
+            p = error*.2;
 //            d = (error-prevError)/(currentTime-prevTime)*.0;
         }
 
@@ -653,12 +672,12 @@ public class RobotConfig extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        return imuOld.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+        return (double) imuOld.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
