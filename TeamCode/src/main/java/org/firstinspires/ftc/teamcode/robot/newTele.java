@@ -12,8 +12,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 
@@ -77,6 +80,8 @@ public class newTele extends LinearOpMode {
 
         Telemetry.Item driveState = telemetry.addData("Drive State", "Corrective Turning");
         Telemetry.Item turnVals = telemetry.addData("Turn vals:", "");
+        Telemetry.Item otherIMU = telemetry.addData("Other IMU vals", "");
+        Telemetry.Item currentIMU = telemetry.addData("IMU", "");
         Telemetry.Item robotPose = telemetry.addData("Robot pose", RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
         Telemetry.Item odomPositions = telemetry.addData("Encoder Positoions", "");
 //        Telemetry.Item imuAngle = telemetry.addData("IMU rotation", "");
@@ -125,8 +130,11 @@ public class newTele extends LinearOpMode {
 
             double headingComponent = Range.clip(RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading())*1.1, -1, 1)
                     + vel*.00015;
+            YawPitchRollAngles expansionRot = robot.expansionIMU.getRobotYawPitchRollAngles();
+            turnVals.setValue(String.format("Yaw: %,3.2f Pitch: %,3.2f Roll: %,3.2f Velocity %,3.2f", expansionRot.getYaw(AngleUnit.DEGREES), expansionRot.getPitch(AngleUnit.DEGREES), expansionRot.getRoll(AngleUnit.DEGREES),  vel));
+            otherIMU.setValue(String.format("%,3.2f Velocity %,3.2f", robot.controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)*180/Math.PI, robot.controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate));
 
-            turnVals.setValue(String.format("%,3.2f Velocity %,3.2f", headingComponent, vel));
+            currentIMU.setValue(robot.getCurrentIMU().toString());//java.lang.Enum.name(robot.getCurrentIMU())
 
             switch (driveStates) {
                 case BasicTurning:
