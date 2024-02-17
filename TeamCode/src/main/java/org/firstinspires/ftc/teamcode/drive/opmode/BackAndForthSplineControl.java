@@ -2,13 +2,11 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -28,32 +26,27 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Config
 @Autonomous(group = "drive")
-public class BackAndForthSpline extends LinearOpMode {
+public class BackAndForthSplineControl extends LinearOpMode {
 
-    public static double DISTANCEX = 80;
+    public static double DISTANCEX = 50;
     public static double DISTANCEY = 25;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         RobotConfig drive = new RobotConfig(hardwareMap);
+        drive.setCurrentIMU(RobotConfig.CurrentIMU.controlIMU);
 
-        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d(-56.5, -36.5, 0))
-                .forward(.5)
-                .splineToConstantHeading(new Vector2d(-25, -57), Math.toRadians(0))
-                .lineTo(new Vector2d(33, -57))
+        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
+                .splineToSplineHeading(new Pose2d(DISTANCEX, DISTANCEY, 0), 0)
                 .build();
 
         Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
                 .back(.1)
-                .lineTo(new Vector2d(-25, -57))
-                .splineToConstantHeading(new Vector2d(-56.5,-36.5), Math.toRadians(180))
+                .splineToSplineHeading(new Pose2d(0, 0, 0), Math.toRadians(180))
                 .build();
 
         waitForStart();
-
-        drive.update();
-        drive.setPoseEstimate(new Pose2d(-56.5, -36.5, 0));
 
         while (!isStopRequested()) {
             drive.followTrajectory(trajectoryForward);

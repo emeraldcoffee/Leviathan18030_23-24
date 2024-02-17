@@ -76,8 +76,8 @@ import static java.lang.Math.max;
 public class RobotConfig extends MecanumDrive {
 
     //Roadrunner stuff
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(22, .5, .5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(35, .5, .8);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(21, .5, 1.4);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(18, .5, 1.7);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -137,13 +137,14 @@ public class RobotConfig extends MecanumDrive {
 
     public enum StackArm {
         GUIDE(0.6),
-        FAR_OUT(0),
+        FAR_OUT(0.08),
         OUT(.15),
         IN(.3);
 
         public final double position;
         StackArm(double position) {this.position = position;}
     }
+
 
     public enum SlideHeight {
         BOTTOM(0),
@@ -208,15 +209,15 @@ public class RobotConfig extends MecanumDrive {
 
         BNO055IMUNew.Parameters parameters = new BNO055IMUNew.Parameters(
                 new RevHubOrientationOnRobot(
-                new Orientation(AxesReference.EXTRINSIC,
-                AxesOrder.XYZ, AngleUnit.RADIANS,
-                90/*pitch*/, 90, 0, 0))//52.466332f
+                new Orientation(AxesReference.INTRINSIC,
+                AxesOrder.XYZ, AngleUnit.DEGREES,
+                        90, 90, 52.466332f, 0))//52.466332f
         );//-90, 90, 52.466332f
 
         expansionIMU.initialize(parameters);
-//        expansionIMU.resetYaw();
+        expansionIMU.resetYaw();
 
-        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, -90, -37.533568);
+        Orientation hubOrientation = RevHubOrientationOnRobot.xyzOrientation(90, -90, -52.466332f);
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(hubOrientation);
 
         controlIMU.initialize(new IMU.Parameters(orientationOnRobot));
@@ -309,8 +310,8 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void update() {
-        double heading = getRawExternalHeading();
-        double headingVel = getExternalHeadingVelocity();
+//        double heading = getRawExternalHeading();
+//        double headingVel = getExternalHeadingVelocity();
         localizer.update();
         updateLift();//timer.seconds()
 
@@ -366,6 +367,13 @@ public class RobotConfig extends MecanumDrive {
     //Slide code
     public void setTargetSlidePos(double targetPos) {
         targetSlidePos = Range.clip(targetPos, 0, 35);
+    }
+
+    public void ResetSlides() {
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setTargetSlidePos(0);
+        PassData.slidesInitiated = true;
     }
 
     public void setTargetSlidePos(SlideHeight height) {
@@ -697,19 +705,15 @@ public class RobotConfig extends MecanumDrive {
         return currentIMU;
     }
 
+    public void setCurrentIMU(CurrentIMU imu) {currentIMU = imu;}
+
     @Override
     public double getRawExternalHeading() {
-        double heading = 0;
         switch (currentIMU) {
             case controlIMU:
-                heading = controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-                return heading;
+                return controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             case expansionIMU:
-//                heading = expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-//                if (heading>0)
-//                    return expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-//                else
-                    return expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);//-150 = 1
+                 return expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);//-150 = 1
             case noIMU:
                 checkSensors();
                 break;

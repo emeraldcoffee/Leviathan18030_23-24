@@ -130,9 +130,10 @@ public class newTele extends LinearOpMode {
 
             double headingComponent = Range.clip(RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading())*1.1, -1, 1)
                     + vel*.00015;
-            YawPitchRollAngles expansionRot = robot.expansionIMU.getRobotYawPitchRollAngles();
-            turnVals.setValue(String.format("Yaw: %,3.2f Pitch: %,3.2f Roll: %,3.2f Velocity %,3.2f", expansionRot.getYaw(AngleUnit.DEGREES), expansionRot.getPitch(AngleUnit.DEGREES), expansionRot.getRoll(AngleUnit.DEGREES),  vel));
-            otherIMU.setValue(String.format("%,3.2f Velocity %,3.2f", robot.controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)*180/Math.PI, robot.controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate));
+//            YawPitchRollAngles expansionRot = robot.expansionIMU.getRobotYawPitchRollAngles();
+            turnVals.setValue(String.format("%,3.2f Velocity %,3.2f", robot.expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES), robot.expansionIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate));
+//            Yaw: %,3.2f Pitch: %,3.2f Roll: %,3.2f Velocity %,3.2f
+            otherIMU.setValue(String.format("%,3.2f Velocity %,3.2f", robot.controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES), robot.controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate));
 
             currentIMU.setValue(robot.getCurrentIMU().toString());//java.lang.Enum.name(robot.getCurrentIMU())
 
