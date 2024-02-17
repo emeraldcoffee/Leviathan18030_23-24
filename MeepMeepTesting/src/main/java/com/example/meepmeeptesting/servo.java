@@ -5,4 +5,8 @@ public class servo {
 
     }
 
+    public void setPosition(double h) {
+
+    }
+
 }

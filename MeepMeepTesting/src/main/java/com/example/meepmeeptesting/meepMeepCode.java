@@ -17,6 +17,7 @@ public class meepMeepCode {
 
         MeepMeep meepMeep = new MeepMeep(800);
         RobotConfig robot = new RobotConfig();
+        robotConstants RobotConstants = new robotConstants();
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(40, 45, Math.toRadians(200), Math.toRadians(200), 10.64)
@@ -25,27 +26,27 @@ public class meepMeepCode {
                     .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))).setVelConstraint(SampleMecanumDrive.getVelocityConstraint(45, Math.toRadians(310), 10.62))
                             .splineToSplineHeading(new Pose2d(-36, -35, Math.toRadians(0)), Math.toRadians(90))
                             .addTemporalMarker(.1, () -> {
-//                                robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                                robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                             })
                             .lineTo(new Vector2d(-23, -35))
                             .addTemporalMarker(2.8, () -> {
-//                                robot.leftPixelServo.setPosition(RobotConstants.leftIn);
+                                robot.leftPixelServo.setPosition(RobotConstants.leftIn);
                             })
                             .lineTo(new Vector2d(-28, -35))
                             .addTemporalMarker(3.5, () -> {
                                 robot.intakeMotor.setPower(1);
-//                                robot.transferMotor.setPower(1);
-//                                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
+                                robot.transferMotor.setPower(1);
+                                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
                             })
                             .splineToConstantHeading(new Vector2d(-57.5, -36), Math.toRadians(180))
                             .addTemporalMarker(4.7, () -> {
-//                                robot.stackHold(true);
+                                robot.stackHold(true);
                             })
                             .addTemporalMarker(4.8, () -> {
-//                                robot.stackArm(RobotConfig.StackArm.IN);
+                                robot.stackArm(RobotConfig.StackArm.IN);
                             })
                             .addTemporalMarker(5.1, () -> {
-//                                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
+                                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
                             })
                             .addTemporalMarker(5.3, () -> {
                                 robot.stackHold(false);
@@ -55,60 +56,60 @@ public class meepMeepCode {
                             .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
                             .lineTo(new Vector2d(31, -57))
                             .addTemporalMarker(7.7, () -> {
-//                                robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
-//                                robot.intakeMotor.setPower(0);
-//                                robot.transferMotor.setPower(0);
+                                robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
+                                robot.intakeMotor.setPower(0);
+                                robot.transferMotor.setPower(0);
                             })
                             .splineToConstantHeading(new Vector2d(50, -41), Math.toRadians(0))
                             .lineTo(new Vector2d(53, -41))
                             .addTemporalMarker(9.6, () -> {
-//                                robot.dropper(RobotConfig.Dropper.OPEN);
+                                robot.dropper(RobotConfig.Dropper.OPEN);
                             })
                             .addTemporalMarker(9.9, () -> {
-//                                robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-//                                robot.dropper(RobotConfig.Dropper.PARTIAL);
+                                robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+                                robot.dropper(RobotConfig.Dropper.PARTIAL);
                             })
                             .waitSeconds(1.1)
 //                            //Cycle 1
                             .back(.1)
                             .splineToConstantHeading(new Vector2d(33, -57), Math.toRadians(180))
                             .addTemporalMarker(12.0, () -> {
-//                                robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                                robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                             })
                             .lineTo(new Vector2d(-33, -57))
                             .splineToConstantHeading(new Vector2d(-57.5, -36), Math.toRadians(180))
                             .addTemporalMarker(13.0, () -> {
-//                                robot.intakeMotor.setPower(1);
-//                                robot.transferMotor.setPower(1);
-//                                robot.dropper(RobotConfig.Dropper.CLOSED);
+                                robot.intakeMotor.setPower(1);
+                                robot.transferMotor.setPower(1);
+                                robot.dropper(RobotConfig.Dropper.CLOSED);
                             })
                             .waitSeconds(1.1)
                             .addTemporalMarker(14.7, () -> {
-//                                robot.stackHold(true);
+                                robot.stackHold(true);
                             })
                             .addTemporalMarker(14.8, () -> {
-//                                robot.stackArm(RobotConfig.StackArm.IN);
+                                robot.stackArm(RobotConfig.StackArm.IN);
                             })
                             .addTemporalMarker(15.1, () -> {
-//                                robot.stackArm(RobotConfig.StackArm.OUT);
+                                robot.stackArm(RobotConfig.StackArm.OUT);
                             })
                             .addTemporalMarker(15.3, () -> {
-//                                robot.stackArm(RobotConfig.StackArm.IN);
+                                robot.stackArm(RobotConfig.StackArm.IN);
                             })
                             .addTemporalMarker(15.6, () -> {
-//                                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
+                                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
                             })
                             .addTemporalMarker(15.7, () -> {
-//                                robot.stackHold(false);
+                                robot.stackHold(false);
                             })
 //                            .forward(.1)
 //                            .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
 //                            .lineTo(new Vector2d(33, -57))
 //                            .splineToConstantHeading(new Vector2d(50, -45), Math.toRadians(0))
 //                            .addTemporalMarker(17.1, () -> {
-////                                robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-////                                robot.transferMotor.setPower(0);
-////                                robot.intakeMotor.setPower(0);
+//                                robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+//                                robot.transferMotor.setPower(0);
+//                                robot.intakeMotor.setPower(0);
 //                            })
 //                            .waitSeconds(.5)
 //                            .addTemporalMarker(18.5, () -> {
