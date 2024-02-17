@@ -3,6 +3,7 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeBlueLight;
@@ -61,7 +62,7 @@ public class meepMeepCode {
                                 robot.transferMotor.setPower(0);
                             })
                             .splineToConstantHeading(new Vector2d(50, -41), Math.toRadians(0))
-                            .lineTo(new Vector2d(53, -41))
+                            .lineTo(new Vector2d(53, -41), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                             .addTemporalMarker(9.6, () -> {
                                 robot.dropper(RobotConfig.Dropper.OPEN);
                             })
@@ -84,22 +85,22 @@ public class meepMeepCode {
                                 robot.dropper(RobotConfig.Dropper.CLOSED);
                             })
                             .waitSeconds(1.1)
-                            .addTemporalMarker(14.7, () -> {
+                            .addTemporalMarker(14.9, () -> {
                                 robot.stackHold(true);
                             })
-                            .addTemporalMarker(14.8, () -> {
+                            .addTemporalMarker(15.0, () -> {
                                 robot.stackArm(RobotConfig.StackArm.IN);
-                            })
-                            .addTemporalMarker(15.1, () -> {
-                                robot.stackArm(RobotConfig.StackArm.OUT);
                             })
                             .addTemporalMarker(15.3, () -> {
+                                robot.stackArm(RobotConfig.StackArm.OUT);
+                            })
+                            .addTemporalMarker(15.5, () -> {
                                 robot.stackArm(RobotConfig.StackArm.IN);
                             })
-                            .addTemporalMarker(15.6, () -> {
+                            .addTemporalMarker(15.8, () -> {
                                 robot.stackArm(RobotConfig.StackArm.FAR_OUT);
                             })
-                            .addTemporalMarker(15.7, () -> {
+                            .addTemporalMarker(15.9, () -> {
                                 robot.stackHold(false);
                             })
 //                            .forward(.1)
