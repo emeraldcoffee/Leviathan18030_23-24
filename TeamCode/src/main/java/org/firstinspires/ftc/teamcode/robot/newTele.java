@@ -80,11 +80,9 @@ public class newTele extends LinearOpMode {
 
         Telemetry.Item driveState = telemetry.addData("Drive State", "Corrective Turning");
         Telemetry.Item turnVals = telemetry.addData("Turn vals:", "");
-        Telemetry.Item otherIMU = telemetry.addData("Other IMU vals", "");
         Telemetry.Item currentIMU = telemetry.addData("IMU", "");
         Telemetry.Item robotPose = telemetry.addData("Robot pose", RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
         Telemetry.Item odomPositions = telemetry.addData("Encoder Positoions", "");
-//        Telemetry.Item imuAngle = telemetry.addData("IMU rotation", "");
         Telemetry.Item loopTime = telemetry.addData("Loop time", "");
 
 
@@ -119,7 +117,7 @@ public class newTele extends LinearOpMode {
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (currentGamepad1.right_trigger - (currentGamepad1.left_trigger)*.4) / 1.2);
 
             if (abs(currentGamepad1.right_stick_x)>.05) {
-                targetHeading = RobotMethods.fastInRangeRad( targetHeading-currentGamepad1.right_stick_x*Math.abs(currentGamepad1.right_stick_x) * RobotConstants.turnSpeed * driveTrainTimer.seconds()*5
+                targetHeading = RobotMethods.fastInRangeRad( targetHeading-currentGamepad1.right_stick_x* RobotConstants.turnSpeed * driveTrainTimer.seconds()*3.5*(1-currentGamepad1.left_trigger*.4)
                 );
             }
             driveTrainTimer.reset();
@@ -128,12 +126,9 @@ public class newTele extends LinearOpMode {
                 vel = robot.getPoseVelocity().getHeading();
             }
 
-            double headingComponent = Range.clip(RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading())*1.1, -1, 1)
-                    + vel*.00015;
-//            YawPitchRollAngles expansionRot = robot.expansionIMU.getRobotYawPitchRollAngles();
-            turnVals.setValue(String.format("%,3.2f Velocity %,3.2f", robot.expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES), robot.expansionIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate));
-//            Yaw: %,3.2f Pitch: %,3.2f Roll: %,3.2f Velocity %,3.2f
-            otherIMU.setValue(String.format("%,3.2f Velocity %,3.2f", robot.controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES), robot.controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate));
+            double headingComponent = Range.clip(RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading())*.9, -1, 1)
+                    + vel*.00024;
+            turnVals.setValue(String.format("%,3.2f Velocity %,3.2f", headingComponent, vel));
 
             currentIMU.setValue(robot.getCurrentIMU().toString());//java.lang.Enum.name(robot.getCurrentIMU())
 
@@ -141,7 +136,7 @@ public class newTele extends LinearOpMode {
                 case BasicTurning:
                     robot.setMecanumDrive(-currentGamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -currentGamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            ,-currentGamepad1.right_stick_x*Math.abs(currentGamepad1.right_stick_x) * RobotConstants.turnSpeed);
+                            ,-currentGamepad1.right_stick_x*Math.abs(currentGamepad1.right_stick_x));// * RobotConstants.turnSpeed)
 
                     if (currentGamepad1.start) {
                         driveState.setValue("Corrective Turning");
@@ -267,10 +262,15 @@ public class newTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
+            if (currentGamepad2.back)
+                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
+            else if (currentGamepad2.right_stick_x>.1)
+                robot.stackArm(RobotConfig.StackArm.FAR_RIGHT);
+            else if (currentGamepad2.right_stick_x<-.1)
+                robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
+
             //Slide code
-            if (abs(currentGamepad2.left_stick_y)>.1) {
-                robot.setTargetSlidePos(robot.getTargetSlidePos()-currentGamepad2.left_stick_y*slideTimer.seconds()*Math.abs(currentGamepad2.left_stick_y*slideTimer.seconds())*10);
-            } else if (currentGamepad2.a) {
+            if (currentGamepad2.a) {
                 robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
             } else if (currentGamepad2.x) {
                 robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
@@ -278,6 +278,8 @@ public class newTele extends LinearOpMode {
                 robot.setTargetSlidePos(RobotConfig.SlideHeight.MEDIUM);
             } else if (currentGamepad2.y) {
                 robot.setTargetSlidePos(RobotConfig.SlideHeight.HIGH);
+            } else if (abs(currentGamepad2.left_stick_y)>.1) {
+                robot.setTargetSlidePos(robot.getTargetSlidePos()-currentGamepad2.left_stick_y*slideTimer.seconds()*Math.abs(currentGamepad2.left_stick_y*slideTimer.seconds())*300);
             }
 
             slideTimer.reset();
@@ -367,7 +369,6 @@ public class newTele extends LinearOpMode {
             robot.update();
             robotPose.setValue(RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
             odomPositions.setValue(robot.localizer.getWheelPositions());
-//            imuAngle.setValue(robot.getRawExternalHeading()*180/Math.PI);
 
             prevGamepad1.copy(currentGamepad1);
             prevGamepad2.copy(currentGamepad2);

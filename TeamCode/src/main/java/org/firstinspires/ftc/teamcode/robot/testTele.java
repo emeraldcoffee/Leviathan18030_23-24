@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
+@Disabled
 @TeleOp()
 public class testTele extends LinearOpMode {
 
@@ -261,7 +263,7 @@ public class testTele extends LinearOpMode {
                 case BasicTurning:
                     RobotMethods.setMecanumDrive(-gamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -gamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            , -gamepad1.right_stick_x * RobotConstants.turnSpeed, driveTrain);
+                            , -gamepad1.right_stick_x, driveTrain);
 
                     if (gamepad1.start) {
                         driveState.setValue("Corrective Turning");

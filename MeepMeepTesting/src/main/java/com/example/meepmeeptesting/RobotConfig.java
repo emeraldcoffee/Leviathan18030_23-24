@@ -27,7 +27,9 @@ public class RobotConfig {
         GUIDE(0.6),
         FAR_OUT(0),
         OUT(.15),
-        IN(.3);
+        IN(.3),
+        FAR_LEFT(1),
+        FAR_RIGHT(.59);
 
         public final double position;
         StackArm(double position) {this.position = position;}
@@ -78,6 +80,14 @@ public class RobotConfig {
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
+    }
+
+    public void safeRelocalizeBackdrop() {
+
+    }
+
+    public void relocalizeBackdrop() {
+
     }
 
 }

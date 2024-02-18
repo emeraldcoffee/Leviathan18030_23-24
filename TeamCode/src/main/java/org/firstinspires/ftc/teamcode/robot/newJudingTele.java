@@ -269,8 +269,8 @@ public class newJudingTele extends LinearOpMode {
             }
 
             //Slide code
-            if (abs(currentGamepad1.left_stick_y)>.1) {
-                robot.setTargetSlidePos(robot.getTargetSlidePos()-currentGamepad1.left_stick_y*slideTimer.seconds()*Math.abs(currentGamepad2.left_stick_y*slideTimer.seconds())*10);
+            if (abs(currentGamepad1.left_stick_y)>.3) {
+                robot.setTargetSlidePos(robot.getTargetSlidePos()-currentGamepad1.left_stick_y*slideTimer.seconds()*Math.abs(currentGamepad1.left_stick_y*slideTimer.seconds())*10);
             } else if (currentGamepad1.a) {
                 robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
             } else if (currentGamepad1.x) {
@@ -295,7 +295,7 @@ public class newJudingTele extends LinearOpMode {
                     if (currentGamepad1.left_trigger > .9) {
                         robot.stackHold(true);
                         spikemark = SpikeMark.HOLD;
-                    } else if (currentGamepad2.left_trigger < .1) {
+                    } else if (currentGamepad1.left_trigger < .1) {
                         robot.stackArm(RobotConfig.StackArm.GUIDE);
                         spikemark = SpikeMark.GUIDE;
                     }
@@ -304,7 +304,7 @@ public class newJudingTele extends LinearOpMode {
                     if (currentGamepad1.right_trigger > .1) {
                         robot.stackArm(RobotConfig.StackArm.IN);
                         spikemark = SpikeMark.IN;
-                    } else if (currentGamepad2.left_trigger < .9) {
+                    } else if (currentGamepad1.left_trigger < .9) {
                         robot.stackHold(false);
                         spikemark = SpikeMark.OUT;
                     }
@@ -319,22 +319,22 @@ public class newJudingTele extends LinearOpMode {
 
             switch (intake) {
                 case STOPPED:
-                    if (currentGamepad1.right_stick_y>.1) {
+                    if (currentGamepad1.right_stick_y>.3) {
                         robot.intakeMotor.setPower(RobotConstants.intakeSpeed);
                         intake = Spin.SPIN_IN;
-                    } else if (currentGamepad1.right_stick_y<-.1) {
+                    } else if (currentGamepad1.right_stick_y<-.3) {
                         robot.intakeMotor.setPower(-RobotConstants.intakeSpeed);
                         intake = Spin.SPIN_OUT;
                     }
                     break;
                 case SPIN_IN:
-                    if (currentGamepad1.right_stick_y<.1) {
+                    if (currentGamepad1.right_stick_y<.3) {
                         robot.intakeMotor.setPower(0);
                         intake = Spin.STOPPED;
                     }
                     break;
                 case SPIN_OUT:
-                    if (currentGamepad1.right_stick_y>-.1) {
+                    if (currentGamepad1.right_stick_y>-.3) {
                         robot.intakeMotor.setPower(0);
                         intake = Spin.STOPPED;
                     }
@@ -343,22 +343,22 @@ public class newJudingTele extends LinearOpMode {
 
             switch (transfer) {
                 case STOPPED:
-                    if (currentGamepad1.right_stick_x>.1) {
+                    if (currentGamepad1.right_stick_x>.3) {
                         robot.transferMotor.setPower(RobotConstants.transferSpeed);
                         transfer = Spin.SPIN_IN;
-                    } else if (currentGamepad1.right_stick_x<-.1) {
+                    } else if (currentGamepad1.right_stick_x<-.3) {
                         robot.transferMotor.setPower(-RobotConstants.transferSpeed);
                         transfer = Spin.SPIN_OUT;
                     }
                     break;
                 case SPIN_IN:
-                    if (currentGamepad1.right_stick_x<.1) {
+                    if (currentGamepad1.right_stick_x<.3) {
                         robot.transferMotor.setPower(0);
                         transfer = Spin.STOPPED;
                     }
                     break;
                 case SPIN_OUT:
-                    if (currentGamepad1.right_stick_x>-.1) {
+                    if (currentGamepad1.right_stick_x>-.3) {
                         robot.transferMotor.setPower(0);
                         transfer = Spin.STOPPED;
                     }

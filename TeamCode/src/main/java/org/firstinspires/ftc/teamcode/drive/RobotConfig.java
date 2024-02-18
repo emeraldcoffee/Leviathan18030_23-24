@@ -136,19 +136,25 @@ public class RobotConfig extends MecanumDrive {
     CurrentIMU currentIMU = CurrentIMU.expansionIMU;
 
     public enum StackArm {
-        GUIDE(0.6),
-        FAR_OUT(0.08),
-        OUT(.15),
-        IN(.3);
+        GUIDE(1, 1 + RobotConstants.rightSpikeOffset),
+        FAR_OUT(0.52, .52 + RobotConstants.rightSpikeOffset),
+        OUT(.59, .59 + RobotConstants.rightSpikeOffset),
+        IN(.74,  .74 + RobotConstants.rightSpikeOffset),
+        FAR_LEFT(.2, .59 + RobotConstants.rightSpikeOffset),
+        FAR_RIGHT(.59, .2 + RobotConstants.rightSpikeOffset);
 
-        public final double position;
-        StackArm(double position) {this.position = position;}
+        public final double position, position2;
+        StackArm(double position, double position2) {
+            this.position = position;
+            this.position2  = position2;
+        }
     }
+
 
 
     public enum SlideHeight {
         BOTTOM(0),
-        PRELOAD_DROP(11.5),
+        PRELOAD_DROP(11.1),
         LOW(15),
         MEDIUM(21),
         HIGH(30);
@@ -348,7 +354,7 @@ public class RobotConfig extends MecanumDrive {
     //Intake code
     public void stackArm(StackArm stackArm) {
         leftStackServo.setPosition(stackArm.position);
-        rightStackServo.setPosition(stackArm.position+RobotConstants.rightSpikeOffset);
+        rightStackServo.setPosition(stackArm.position2);
     }
 
     public void stackHold(boolean holdStack) {
@@ -372,7 +378,7 @@ public class RobotConfig extends MecanumDrive {
     public void ResetSlides() {
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setTargetSlidePos(0);
+        setTargetSlidePos(SlideHeight.BOTTOM);
         PassData.slidesInitiated = true;
     }
 
@@ -518,7 +524,7 @@ public class RobotConfig extends MecanumDrive {
 
     public boolean safeRelocalizeBackdrop() {
         updateBackdropLocalizer();
-        if (backDropLocalizer.isInRange(getPoseEstimate(),.5, Math.toRadians(5))) {
+        if (backDropLocalizer.isInRange(getPoseEstimate(),.5, Math.toRadians(2))) {
             localizer.setPoseEstimate(getBackdropPoseEstimate());
             return true;
         } else {
