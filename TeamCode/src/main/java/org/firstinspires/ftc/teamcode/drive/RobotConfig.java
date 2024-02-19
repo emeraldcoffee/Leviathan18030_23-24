@@ -102,7 +102,7 @@ public class RobotConfig extends MecanumDrive {
 
     List<LynxModule> allHubs;
 
-    ElapsedTime timer = new ElapsedTime();
+    ElapsedTime stackTimer = new ElapsedTime();
 
     //Hardware Components
     public DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -150,7 +150,17 @@ public class RobotConfig extends MecanumDrive {
         }
     }
 
-
+    public enum AutoStackCycle {
+        HOLD_2,
+        GRAB_2,
+        RELEASE_2,
+        HOLD_1,
+        GRAB_1,
+        RELEASE_1,
+        RELEASE_HOLD,
+        WAIT
+    }
+    AutoStackCycle autoStackCycle = AutoStackCycle.WAIT;
 
     public enum SlideHeight {
         BOTTOM(0),
@@ -316,13 +326,13 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void update() {
-//        double heading = getRawExternalHeading();
-//        double headingVel = getExternalHeadingVelocity();
         localizer.update();
-        updateLift();//timer.seconds()
+
+        updateLift();
+        updateIntake();
 
 //        updatePoseEstimate();
-        if (true) {//followRoadrunnerPath
+        if (followRoadrunnerPath) {//followRoadrunnerPath
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
             if (signal != null) setDriveSignal(signal);
             if (!isBusy()) {
@@ -362,6 +372,66 @@ public class RobotConfig extends MecanumDrive {
             stackHoldServo.setPosition(.6);
         } else {
             stackHoldServo.setPosition(.1);
+        }
+    }
+
+    public void grabFromStack(double pixels) {
+        stackTimer.reset();
+        stackHold(true);
+
+        if (pixels == 1) {
+            autoStackCycle = AutoStackCycle.HOLD_1;
+        } else if (pixels == 2) {
+            autoStackCycle = AutoStackCycle.HOLD_2;
+        }
+    }
+
+    public void updateIntake() {
+        switch (autoStackCycle) {
+            case HOLD_2:
+                if (stackTimer.seconds()>.2) {
+                    stackArm(StackArm.IN);
+                    autoStackCycle = AutoStackCycle.GRAB_2;
+                }
+                break;
+            case GRAB_2:
+                if (stackTimer.seconds()>.4) {
+                    stackArm(StackArm.OUT);
+                    autoStackCycle = AutoStackCycle.RELEASE_2;
+                }
+                break;
+            case RELEASE_2:
+                if (stackTimer.seconds()>.6) {
+                    stackArm(StackArm.IN);
+                    stackTimer.reset();
+                    autoStackCycle = AutoStackCycle.GRAB_1;
+                }
+                break;
+            case HOLD_1:
+                if (stackTimer.seconds()>.2) {
+                    stackArm(StackArm.IN);
+                    stackTimer.reset();
+                    autoStackCycle = AutoStackCycle.GRAB_1;
+                }
+                break;
+            case GRAB_1:
+                if (stackTimer.seconds()>.4) {
+                    stackArm(StackArm.OUT);
+                    autoStackCycle = AutoStackCycle.RELEASE_1;
+                }
+                break;
+            case RELEASE_1:
+                if (stackTimer.seconds()>.5) {
+                    stackHold(false);
+                    stackTimer.reset();
+                    autoStackCycle = AutoStackCycle.WAIT;
+                }
+                break;
+//            case RELEASE_HOLD:
+//                if (stackTimer.seconds()>.5) {
+//
+//                }
+
         }
     }
 

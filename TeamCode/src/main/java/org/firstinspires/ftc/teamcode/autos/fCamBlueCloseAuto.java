@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.autos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,9 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
-import org.firstinspires.ftc.teamcode.robot.HwMap;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -29,14 +27,12 @@ public class fCamBlueCloseAuto extends LinearOpMode {
     }
     Camera camera = Camera.WAIT;
 
-    enum BackDropAlign {
-        WAIT,
-        START,
-        DRIVE_INFRONT,
-        DRIVE_TO
-    }
-    BackDropAlign backDropAlign = BackDropAlign.WAIT;
-
+//    enum AutoPath {
+//        LEFT,
+//        CENTER,
+//        RIGHT
+//    }
+//    AutoPath autoPath = AutoPath.RIGHT;
 
     int targetSlidePos = RobotConstants.slideAuto;
 
@@ -49,14 +45,13 @@ public class fCamBlueCloseAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-
-        SampleMecanumDrive driveTrain = new SampleMecanumDrive(hardwareMap);
+        RobotConfig robot = new RobotConfig(hardwareMap);
         ColorMask pipeline = new ColorMask();
-        HwMap robot = new HwMap();
-        robot.init(hardwareMap);
 
 //        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
 //        robot.rightLiftServo.setPosition(intakePos);
+        robot.transferMotor.setPower(-.2);
+        robot.stackHold(false);
 
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
@@ -77,77 +72,92 @@ public class fCamBlueCloseAuto extends LinearOpMode {
             }
         });
 
-//        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
-//        robot.rightLiftServo.setPosition(intakePos);
-        robot.transferMotor.setPower(-.2);
 
-        TrajectorySequence left = driveTrain.trajectorySequenceBuilder(new Pose2d(13.4, 64, Math.toRadians(270)))
+        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 61))
-                .splineToLinearHeading(new Pose2d(23, 42), Math.toRadians(270))
-                .lineTo(new Vector2d(23, 46))
-                .addTemporalMarker(1.7, () -> {})//robot.rightServo.setPosition(RobotConstants.rightIn))
-                .lineTo(new Vector2d(26, 46))
-                .splineToConstantHeading(new Vector2d(45, 44), Math.toRadians(0))
-                .lineTo(new Vector2d(51.7, 44))
-                .lineTo(new Vector2d(50, 37))
+                .splineToLinearHeading(new Pose2d(23, 40), Math.toRadians(270))
+                .lineTo(new Vector2d(23, 48))
+                .addTemporalMarker(2.15, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(26, 48))
+                .splineToConstantHeading(new Vector2d(47, 44), Math.toRadians(0))
+                .lineTo(new Vector2d(53, 44))
+                .addTemporalMarker(3.8, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .waitSeconds(.4)
+                .lineTo(new Vector2d(40, 44))
                 .addDisplacementMarker(() -> {
-
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                    robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
+                .lineTo(new Vector2d(40, 12))
+                .lineTo(new Vector2d(45, 12))
                 .build();
 
-        TrajectorySequence center = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
+        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 60))
-                .splineToSplineHeading(new Pose2d(17, 34), Math.toRadians(270))
-                .lineTo(new Vector2d(17,37))
-                .addTemporalMarker(1.7, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
-                .lineTo(new Vector2d(18, 37))
+                .splineToSplineHeading(new Pose2d(17, 31), Math.toRadians(270))
+                .lineTo(new Vector2d(17,36))
+                .addTemporalMarker(1.9, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(18, 36))
                 .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
                 .lineTo(new Vector2d(53, 37.5))
-                .addTemporalMarker(3.6, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .addTemporalMarker(3.9, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(40, 37.5))
-                .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                .lineTo(new Vector2d(40, 60))
-                .lineTo(new Vector2d(45, 60))
+                .addDisplacementMarker(() -> {
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                    robot.dropper(RobotConfig.Dropper.CLOSED);
+                })
+                .lineTo(new Vector2d(40, 12))
+                .lineTo(new Vector2d(45, 12))
                 .build();
 
-        TrajectorySequence right = driveTrain.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
+        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 45))
                 .splineToConstantHeading(new Vector2d(8.5, 36), Math.toRadians(180))
-                .lineTo(new Vector2d(7, 36))
-                .addTemporalMarker(1.6, () -> robot.rightServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(8, 36))
+                .addTemporalMarker(1.5, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
                 .lineTo(new Vector2d(20, 36))
-                .splineToSplineHeading(new Pose2d(45, 28.5, Math.toRadians(0)), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 28.5))
-                .addTemporalMarker(3.7, () -> robot.dropServo.setPosition(RobotConstants.dropOpen))
+                .splineToSplineHeading(new Pose2d(45, 31, Math.toRadians(0)), Math.toRadians(0))
+                .lineTo(new Vector2d(53, 31))
+                .addTemporalMarker(4.1, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.3)
-                .lineTo(new Vector2d(40, 28.5))
-                .addDisplacementMarker(() -> {targetSlidePos = RobotConstants.slideBottom; robot.dropServo.setPosition(RobotConstants.dropClosed);})
-                .lineTo(new Vector2d(40, 60))
-                .lineTo(new Vector2d(45, 60))
+                .lineTo(new Vector2d(40, 31))
+                .addDisplacementMarker(() -> {
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                    robot.dropper(RobotConfig.Dropper.CLOSED);
+                })
+                .lineTo(new Vector2d(40, 12))
+                .lineTo(new Vector2d(45, 12))
                 .build();
+
+
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();
 
         telemetry.setAutoClear(false);
         Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
         Telemetry.Item wasPos = telemetry.addData("Was pos", "");
-        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
-        robot.rightServo.setPosition(RobotConstants.rightOut);
+//        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
+
+        robot.rightPixelServo.setPosition(RobotConstants.rightOut);
         robot.dropServo.setPosition(RobotConstants.dropClosed);
+        robot.ResetSlides();
 
         waitForStart();
         if (isStopRequested()) return;
 
         robot.climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        driveTrain.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
+        robot.update();
+        robot.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
+
+        robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
 
         cameraDelayTimer.reset();
 
         while (opModeIsActive() && !isStopRequested()) {
-            driveTrain.update();
+//            robot.update();
 
             switch (camera) {
                 case WAIT:
@@ -159,69 +169,33 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                     pos = pipeline.getPos();
                     switch (pos) {
                         case "left":
-                            driveTrain.followTrajectorySequenceAsync(left);
+                            robot.followTrajectorySequenceAsync(left);
                             detectedPos.setValue("Left");
                             break;
                         case "center":
-                            driveTrain.followTrajectorySequenceAsync(center);
+                            robot.followTrajectorySequenceAsync(center);
                             detectedPos.setValue("Center");
                             break;
                         case "right":
-                            driveTrain.followTrajectorySequenceAsync(right);
+                            robot.followTrajectorySequenceAsync(right);
                             detectedPos.setValue("Right");
                             break;
                         default:
-                            driveTrain.followTrajectorySequenceAsync(center);
+                            robot.followTrajectorySequenceAsync(center);
                             detectedPos.setValue("Default center (No detection)");
                             break;
-
                     }
+//                    wasPos.setValue(RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
 
-                    driveTrain.setPoseEstimate(new Pose2d(12, 63, Math.toRadians(270)));
                     camera = Camera.FINISHED;
                     break;
                 case FINISHED:
                     break;
             }
 
-            switch (backDropAlign) {
-                case START:
-                    driveTrain.compensatedUpdateBackdrop();
-                    Trajectory test = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
-                            .lineToSplineHeading(new Pose2d(50, 44, Math.toRadians(0)))
-                            .build();
-                    driveTrain.followTrajectoryAsync(test);
-                    backDropAlign = BackDropAlign.DRIVE_INFRONT;
-                    break;
-                case DRIVE_INFRONT:
-                    if (!driveTrain.isBusy()) {
-                        driveTrain.compensatedUpdateBackdrop();
-                        Trajectory driveInfront = driveTrain.trajectoryBuilder(driveTrain.getPoseEstimate())
-                                .lineToSplineHeading(new Pose2d(51.7, 44, Math.toRadians(0)))
-                                .build();
-                        driveTrain.followTrajectoryAsync(driveInfront);
-                        backDropAlign = BackDropAlign.DRIVE_TO;
-                    }
-                    break;
-                case DRIVE_TO:
-                    if (!driveTrain.isBusy()) {
-                        backDropAlign = BackDropAlign.WAIT;
-                    }
-                    break;
-            }
+           robot.update();
 
-            double slideVelo = robot.liftEncoder.getCorrectedVelocity();
-            int slideCurPos = robot.liftEncoder.getCurrentPosition();
-
-            double distRemain = targetSlidePos - slideCurPos;
-
-            slideI += distRemain * RobotConstants.slidePIDVals.i;
-
-            double slidePower = (distRemain * RobotConstants.slidePIDVals.p) + slideI + (slideVelo * RobotConstants.slidePIDVals.d);
-
-            robot.slideMotor.setPower(slidePower);
-
-            slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetSlidePos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
+//            slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetSlidePos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
 
         }
 

@@ -105,6 +105,10 @@ public class newTele extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
+        robot.stackHold(false);
+        robot.stackArm(RobotConfig.StackArm.GUIDE);
+        robot.dropper(RobotConfig.Dropper.CLOSED);
+
         status.setValue("Running");
 
         loopTimer.reset();
@@ -117,7 +121,7 @@ public class newTele extends LinearOpMode {
             double finalSpeed = RobotConstants.speedMultiplier * (1 + (currentGamepad1.right_trigger - (currentGamepad1.left_trigger)*.4) / 1.2);
 
             if (abs(currentGamepad1.right_stick_x)>.05) {
-                targetHeading = RobotMethods.fastInRangeRad( targetHeading-currentGamepad1.right_stick_x* RobotConstants.turnSpeed * driveTrainTimer.seconds()*3.5*(1-currentGamepad1.left_trigger*.4)
+                targetHeading = RobotMethods.fastInRangeRad( targetHeading-currentGamepad1.right_stick_x* RobotConstants.turnSpeed * driveTrainTimer.seconds()*3.5*(1-currentGamepad1.left_trigger*.6)
                 );
             }
             driveTrainTimer.reset();
@@ -125,18 +129,30 @@ public class newTele extends LinearOpMode {
             if (robot.getPoseVelocity() != null) {
                 vel = robot.getPoseVelocity().getHeading();
             }
+            double headingDiff = RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading());
+            double absHeadingDiff = abs(headingDiff);
 
-            double headingComponent = Range.clip(RobotMethods.fastAngleDifferenceRad(targetHeading,robot.getPoseEstimate().getHeading())*.9, -1, 1)
-                    + vel*.00024;
+            double headingComponent = 0;
+
+            if (absHeadingDiff>Math.toRadians(25)) {
+                headingComponent = Math.signum(headingDiff)/2;
+            } else if (absHeadingDiff>Math.toRadians(8)) {
+                headingComponent = headingDiff*1.0;// + Math.signum(headingDiff)/15
+            } else if (absHeadingDiff>Math.toRadians(3)) {
+                headingComponent = headingDiff*.6 + Math.signum(headingDiff)/21 + .012*vel;
+            } else if (absHeadingDiff>Math.toRadians(1)) {
+                headingComponent = headingDiff*.4 + Math.signum(headingDiff)/26 + .008*vel;
+            }
+
             turnVals.setValue(String.format("%,3.2f Velocity %,3.2f", headingComponent, vel));
 
-            currentIMU.setValue(robot.getCurrentIMU().toString());//java.lang.Enum.name(robot.getCurrentIMU())
+            currentIMU.setValue(robot.getCurrentIMU().toString());
 
             switch (driveStates) {
                 case BasicTurning:
                     robot.setMecanumDrive(-currentGamepad1.left_stick_y * RobotConstants.driveSpeed * finalSpeed,
                             -currentGamepad1.left_stick_x * RobotConstants.strafeSpeed * finalSpeed
-                            ,-currentGamepad1.right_stick_x*Math.abs(currentGamepad1.right_stick_x));// * RobotConstants.turnSpeed)
+                            ,-currentGamepad1.right_stick_x * RobotConstants.turnSpeed);// * RobotConstants.turnSpeed)
 
                     if (currentGamepad1.start) {
                         driveState.setValue("Corrective Turning");
@@ -262,12 +278,12 @@ public class newTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
-            if (currentGamepad2.back)
-                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
-            else if (currentGamepad2.right_stick_x>.1)
-                robot.stackArm(RobotConfig.StackArm.FAR_RIGHT);
-            else if (currentGamepad2.right_stick_x<-.1)
-                robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
+//            if (currentGamepad2.back)
+//                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
+//            else if (currentGamepad2.right_stick_x>.1)
+//                robot.stackArm(RobotConfig.StackArm.FAR_RIGHT);
+//            else if (currentGamepad2.right_stick_x<-.1)
+//                robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
 
             //Slide code
             if (currentGamepad2.a) {
