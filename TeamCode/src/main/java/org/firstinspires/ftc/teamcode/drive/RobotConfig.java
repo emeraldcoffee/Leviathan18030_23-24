@@ -293,14 +293,15 @@ public class RobotConfig extends MecanumDrive {
         //Slide encoder
         slideEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "slideMotor"));
 
-        if (PassData.slidesInitiated) {
-            clearBulkCache();
+        clearBulkCache();
+        if (PassData.slidesInitiated && slidePosInches()>-.1) {
             //If slides are not at the bottom they are set to their current pose
             if (slidePosInches()>1) {
                 targetSlidePos = slidePosInches();
             }
         } else {
             slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             PassData.slidesInitiated = true;
         }
 
