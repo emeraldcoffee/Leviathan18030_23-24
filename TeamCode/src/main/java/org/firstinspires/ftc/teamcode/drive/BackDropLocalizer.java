@@ -58,14 +58,18 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
         return poseEstimate;
     }
 
+    public Pose2d getPoseEstimate(Pose2d pose) {
+        return new Pose2d(poseEstimate.getX(), pose.getY(), poseEstimate.getHeading());
+    }
+
     public boolean isInRange(Pose2d inputPose) {
         return abs(poseEstimate.getX() - inputPose.getX()) < 1 &&
-                abs(RobotMethods.fastAngleDifferenceRad(poseEstimate.getHeading(), inputPose.getHeading())) < Math.toRadians(5);
+                abs(RobotMethods.angleDifferenceRad(poseEstimate.getHeading(), inputPose.getHeading())) < Math.toRadians(5);
     }
 
     public boolean isInRange(Pose2d inputPose, double XrangeVal, double headingRangeVal) {
         return abs(poseEstimate.getX() - inputPose.getX()) < XrangeVal &&
-                abs(RobotMethods.fastAngleDifferenceRad(poseEstimate.getHeading(), inputPose.getHeading())) < headingRangeVal;
+                abs(RobotMethods.angleDifferenceRad(poseEstimate.getHeading(), inputPose.getHeading())) < headingRangeVal;
     }
 
 //    public Enum getRelBackdropPose(Pose2d inputPose) {

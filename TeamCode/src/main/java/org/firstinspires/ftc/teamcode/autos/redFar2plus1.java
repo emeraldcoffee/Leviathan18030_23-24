@@ -79,16 +79,7 @@ public class redFar2plus1 extends LinearOpMode {
                 })
                 .splineToConstantHeading(new Vector2d(-57, -35.5), Math.toRadians(180))
                 .addTemporalMarker(4.7, () -> {
-                    robot.stackHold(true);
-                })
-                .addTemporalMarker(4.8, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(5.1, () -> {
-                    robot.stackArm(RobotConfig.StackArm.FAR_OUT);
-                })
-                .addTemporalMarker(5.3, () -> {
-                    robot.stackHold(false);
+                    robot.grabFromStack(1);
                 })
                 .waitSeconds(.9)
                 .forward(.5)
@@ -130,29 +121,14 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
                 .addTemporalMarker(15.6, () -> {
-                    robot.stackHold(true);
-                })
-                .addTemporalMarker(15.8, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(16.1, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(16.3, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(16.6, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(16.7, () -> {
-                    robot.stackHold(false);
+                    robot.grabFromStack(2);
                 })
                 //To backdrop
                 .forward(.5)
                 .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
                 .lineTo(new Vector2d(31, -57))
                 .addTemporalMarker(19.6, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+                    robot.setTargetSlidePos(18);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
@@ -164,7 +140,7 @@ public class redFar2plus1 extends LinearOpMode {
                 })
                 .waitSeconds(2)
                 .addTemporalMarker(24.3, () -> {
-//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
                 .back(6)
@@ -173,12 +149,12 @@ public class redFar2plus1 extends LinearOpMode {
 
         //3.88 stack 1, 14.68 stack 2
         TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-                .splineToSplineHeading(new Pose2d(-39, -32, Math.toRadians(0)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-39, -32.5, Math.toRadians(0)), Math.toRadians(90))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
                 .lineTo(new Vector2d(-39, -37))
-                .addTemporalMarker(1.8, () -> {
+                .addTemporalMarker(1.6, () -> {
                     robot.leftPixelServo.setPosition(RobotConstants.leftIn);
                 })
                 .back(.1)
@@ -187,18 +163,9 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .splineToConstantHeading(new Vector2d(-57, -35.8), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-57, -36), Math.toRadians(180))
                 .addTemporalMarker(4.0, () -> {
-                    robot.stackHold(true);
-                })
-                .addTemporalMarker(4.1, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(4.4, () -> {
-                    robot.stackArm(RobotConfig.StackArm.FAR_OUT);
-                })
-                .addTemporalMarker(4.6, () -> {
-                    robot.stackHold(false);
+                    robot.grabFromStack(1);
                 })
                 .waitSeconds(.9)
                 .forward(.5)
@@ -209,13 +176,13 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -36), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -36), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .splineToConstantHeading(new Vector2d(50, -35.5), Math.toRadians(0))
+                .lineTo(new Vector2d(53, -35.5), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                 .addTemporalMarker(9.2, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     robot.safeRelocalizeBackdrop();
                 })
-                .addTemporalMarker(9.5, () -> {
+                .addTemporalMarker(9.7, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
                 })
@@ -228,7 +195,7 @@ public class redFar2plus1 extends LinearOpMode {
                 })
                 .lineTo(new Vector2d(-33, -57))
                 .splineToConstantHeading(new Vector2d(-52, -37.5), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(-56.5, -36), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.4, -35), Math.toRadians(180))
                 .addTemporalMarker(13.7, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
@@ -236,44 +203,29 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
                 })
                 .waitSeconds(1.7)
-                .addTemporalMarker(14.4, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(14.6, () -> {
-                    robot.stackHold(true);
-                })
-                .addTemporalMarker(14.8, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(15.1, () -> {
+                .addTemporalMarker(15.0, () -> {
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
                 .addTemporalMarker(15.3, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(15.6, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(15.7, () -> {
-                    robot.stackHold(false);
+                    robot.grabFromStack(2);
                 })
                 //To backdrop
                 .forward(.5)
                 .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
                 .lineTo(new Vector2d(31, -57))
                 .addTemporalMarker(19.1, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+                    robot.setTargetSlidePos(18);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -41), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -41), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
-                .addTemporalMarker(20.9, () -> {
+                .splineToConstantHeading(new Vector2d(50, -37), Math.toRadians(0))
+                .lineTo(new Vector2d(53, -37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .addTemporalMarker(21.7, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
                     robot.safeRelocalizeBackdrop();
                 })
                 .waitSeconds(1)
-                .addTemporalMarker(22.3, () -> {
+                .addTemporalMarker(23.5, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
@@ -283,111 +235,89 @@ public class redFar2plus1 extends LinearOpMode {
 
         //3.38 stack 1, 14.46 stack 2
         TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-                .splineToSplineHeading(new Pose2d(-45, -28, Math.toRadians(0)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-48, -36, Math.toRadians(105)), Math.toRadians(100))
+                .splineToLinearHeading(new Pose2d(-46, -31, Math.toRadians(0)), Math.toRadians(0))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(-45, -31))
-                .addTemporalMarker(2.1, () -> {
+                .strafeRight(2)
+                .addTemporalMarker(2.7, () -> {
                     robot.leftPixelServo.setPosition(RobotConstants.leftIn);
                 })
-                .addTemporalMarker(2.4, () -> {
+                .addTemporalMarker(3.0, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
                 .splineToConstantHeading(new Vector2d(-57, -35.8), Math.toRadians(180))
-                .addTemporalMarker(3.5, () -> {
-                    robot.stackHold(true);
-                })
-                .addTemporalMarker(3.6, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(3.9, () -> {
-                    robot.stackArm(RobotConfig.StackArm.FAR_OUT);
-                })
-                .addTemporalMarker(4.1, () -> {
-                    robot.stackHold(false);
+                .addTemporalMarker(3.7, () -> {
+                    robot.grabFromStack(1);
                 })
                 .waitSeconds(.9)
                 .forward(.5)
                 .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
-                .lineTo(new Vector2d(31, -57))
-                .addTemporalMarker(6.7, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
-                    robot.intakeMotor.setPower(0);
-                    robot.transferMotor.setPower(0);
-                })
-                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -30), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
-                .addTemporalMarker(9.1, () -> {
-                    robot.dropper(RobotConfig.Dropper.OPEN);
-                    robot.safeRelocalizeBackdrop();
-                })
-                .addTemporalMarker(9.4, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-                    robot.dropper(RobotConfig.Dropper.PARTIAL);
-                })
-                .waitSeconds(1.3)
-                //Cycle 1
-                .back(.1)
-                .splineToConstantHeading(new Vector2d(33, -57), Math.toRadians(180))
-                .addTemporalMarker(11.1, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
-                })
-                .lineTo(new Vector2d(-33, -57))
-                .splineToConstantHeading(new Vector2d(-52, -37.5), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(-56.5, -36), Math.toRadians(180))
-                .addTemporalMarker(13.5, () -> {
-                    robot.intakeMotor.setPower(1);
-                    robot.transferMotor.setPower(1);
-                    robot.dropper(RobotConfig.Dropper.CLOSED);
-                    robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
-                })
-                .waitSeconds(1.7)
-                .addTemporalMarker(14.2, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(14.4, () -> {
-                    robot.stackHold(true);
-                })
-                .addTemporalMarker(14.6, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(14.9, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(15.1, () -> {
-                    robot.stackArm(RobotConfig.StackArm.IN);
-                })
-                .addTemporalMarker(15.4, () -> {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .addTemporalMarker(15.5, () -> {
-                    robot.stackHold(false);
-                })
-                //To backdrop
-                .forward(.5)
-                .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
-                .lineTo(new Vector2d(31, -57))
-                .addTemporalMarker(18.5, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-                    robot.intakeMotor.setPower(0);
-                    robot.transferMotor.setPower(0);
-                })
-                .splineToConstantHeading(new Vector2d(50, -41), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -41), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
-                .addTemporalMarker(21, () -> {
-                    robot.dropper(RobotConfig.Dropper.PARTIAL);
-                    robot.safeRelocalizeBackdrop();
-                })
-                .waitSeconds(1)
-                .addTemporalMarker(22.3, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
-                    robot.dropper(RobotConfig.Dropper.CLOSED);
-                })
-                .back(6)
-                .waitSeconds(1)
+//                .lineTo(new Vector2d(31, -57))
+//                .addTemporalMarker(6.9, () -> {
+//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
+//                    robot.intakeMotor.setPower(0);
+//                    robot.transferMotor.setPower(0);
+//                })
+//                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
+//                .lineTo(new Vector2d(53, -30), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+//                .addTemporalMarker(9.8, () -> {
+//                    robot.dropper(RobotConfig.Dropper.OPEN);
+//                    robot.safeRelocalizeBackdrop();
+//                })
+//                .addTemporalMarker(10.1, () -> {
+//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+//                    robot.dropper(RobotConfig.Dropper.PARTIAL);
+//                })
+//                .waitSeconds(1.3)
+//                //Cycle 1
+//                .back(.1)
+//                .splineToConstantHeading(new Vector2d(33, -57), Math.toRadians(180))
+//                .addTemporalMarker(12.0, () -> {
+//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+//                })
+//                .lineTo(new Vector2d(-33, -57))
+//                .splineToConstantHeading(new Vector2d(-52, -37.5), Math.toRadians(110))
+//                .splineToConstantHeading(new Vector2d(-56.5, -36), Math.toRadians(180))
+//                .addTemporalMarker(14.2, () -> {
+//                    robot.intakeMotor.setPower(1);
+//                    robot.transferMotor.setPower(1);
+//                    robot.dropper(RobotConfig.Dropper.CLOSED);
+//                    robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
+//                })
+//                .waitSeconds(1.7)
+//                .addTemporalMarker(14.8, () -> {
+//                    robot.stackArm(RobotConfig.StackArm.OUT);
+//                })
+//                .addTemporalMarker(15.1, () -> {
+//                    robot.grabFromStack(2);
+//                })
+//                //To backdrop
+//                .forward(.5)
+//                .splineToConstantHeading(new Vector2d(-33, -57), Math.toRadians(0))
+//                .lineTo(new Vector2d(31, -57))
+//                .addTemporalMarker(19, () -> {
+//                    robot.setTargetSlidePos(18);
+//                    robot.intakeMotor.setPower(0);
+//                    robot.transferMotor.setPower(0);
+//                })
+//                .splineToConstantHeading(new Vector2d(50, -37), Math.toRadians(0))
+//                .lineTo(new Vector2d(53, -37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+//                .addTemporalMarker(21.7,7, () -> {
+//                    robot.dropper(RobotConfig.Dropper.PARTIAL);
+//                    robot.safeRelocalizeBackdrop();
+//                })
+//                .waitSeconds(1)
+//                .addTemporalMarker(23.0, () -> {
+//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+//                    robot.dropper(RobotConfig.Dropper.CLOSED);
+//                })
+//                .back(6)
+//                .waitSeconds(1)
+                .waitSeconds(10)
                 .build();
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();

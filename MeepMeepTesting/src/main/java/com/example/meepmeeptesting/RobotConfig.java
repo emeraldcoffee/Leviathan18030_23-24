@@ -71,6 +71,14 @@ public class RobotConfig {
 
     }
 
+    public void setTargetSlidePos(double x) {
+
+    }
+
+    public void grabFromStack(int pixels) {
+
+    }
+
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
         return new MinVelocityConstraint(Arrays.asList(
                 new AngularVelocityConstraint(maxAngularVel),

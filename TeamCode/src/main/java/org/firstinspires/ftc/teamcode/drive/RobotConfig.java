@@ -585,7 +585,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public Pose2d getBackdropPoseEstimate() {
-        return backDropLocalizer.getPoseEstimate();
+        return backDropLocalizer.getPoseEstimate(localizer.getPoseEstimate());
     }
 
     public void relocalizeBackdrop() {
