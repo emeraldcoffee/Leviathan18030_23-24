@@ -69,6 +69,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static java.lang.Double.isNaN;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
@@ -134,6 +135,8 @@ public class RobotConfig extends MecanumDrive {
         noIMU;
     }
     CurrentIMU currentIMU = CurrentIMU.expansionIMU;
+
+    public double externalHeading = 0, externalHeadingVel = 0;
 
     public enum StackArm {
         GUIDE(1, 1 + RobotConstants.rightSpikeOffset),
@@ -327,6 +330,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void update() {
+        updateIMU();
         localizer.update();
 
         updateLift();
@@ -639,6 +643,19 @@ public class RobotConfig extends MecanumDrive {
         waitForIdle();
     }
 
+    public void cancelTrajectory() {
+        trajectorySequenceRunner.cancelTrajectory();
+    }
+
+    //Add code for cancel and pause later
+    public void pauseTrajectory() {
+        cancelTrajectory();
+    }
+
+    public void resumeTrajectory() {
+
+    }
+
     public void followTrajectoryAsync(Trajectory trajectory) {
         followRoadrunnerPath = true;
         trajectorySequenceRunner.followTrajectorySequenceAsync(
@@ -764,18 +781,13 @@ public class RobotConfig extends MecanumDrive {
 
     //
     public void checkSensors() {
-//        if (currentIMU != CurrentIMU.controlIMU) {
-//            if (controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) != 0) {
-//                currentIMU = CurrentIMU.controlIMU;
-//            }
-//        } else if (currentIMU!= CurrentIMU.expansionIMU) {
-//            if (expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) != 0) {
-//                currentIMU = CurrentIMU.expansionIMU;
-//            }
-//        } else {
-//            currentIMU = CurrentIMU.noIMU;
-//        }
-
+            if (!isNaN(controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))) {
+                currentIMU = CurrentIMU.controlIMU;
+                resumeTrajectory();
+            } else if (!isNaN(expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS))) {
+                currentIMU = CurrentIMU.expansionIMU;
+                resumeTrajectory();
+            }
     }
 
     public CurrentIMU getCurrentIMU() {
@@ -784,29 +796,42 @@ public class RobotConfig extends MecanumDrive {
 
     public void setCurrentIMU(CurrentIMU imu) {currentIMU = imu;}
 
-    @Override
-    public double getRawExternalHeading() {
+    public void updateIMU() {
         switch (currentIMU) {
             case controlIMU:
-                return controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                externalHeading = controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                if (isNaN(externalHeading)) {
+                    currentIMU = CurrentIMU.noIMU;
+                    pauseTrajectory();
+                } else {
+                    externalHeadingVel = controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+                }
+                break;
             case expansionIMU:
-                 return expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);//-150 = 1
+                externalHeading = expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                if (isNaN(externalHeading)) {
+                    currentIMU = CurrentIMU.noIMU;
+                    pauseTrajectory();
+                } else {
+                    externalHeadingVel = expansionIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+                }
+                break;
             case noIMU:
                 checkSensors();
-                break;
         }
-        return  0;
+
+    }
+
+    @Override
+    public double getRawExternalHeading() {
+        return externalHeading;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        switch (currentIMU) {
-            case controlIMU:
-                return (double) controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
-            case expansionIMU:
-                return (double) expansionIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
-        }
-        return  0.0;
+        return  externalHeadingVel;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
