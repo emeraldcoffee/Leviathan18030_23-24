@@ -9,16 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Timer;
 
 
 @TeleOp
@@ -59,10 +52,10 @@ public class newTele extends LinearOpMode {
 //    }
 //    SpikeMark spikemark = SpikeMark.GUIDE;
     enum ArmToggle {
-        IN,
+    GUIDE,
         OUT
     }
-    ArmToggle armToggle = ArmToggle.IN;
+    ArmToggle armToggle = ArmToggle.GUIDE;
 
     enum Spin {
         STOPPED,
@@ -283,12 +276,6 @@ public class newTele extends LinearOpMode {
                     drop = Drop.RESET;
             }
 
-//            if (currentGamepad2.back)
-//                robot.stackArm(RobotConfig.StackArm.FAR_OUT);
-//            else if (currentGamepad2.right_stick_x>.1)
-//                robot.stackArm(RobotConfig.StackArm.FAR_RIGHT);
-//            else if (currentGamepad2.right_stick_x<-.1)
-//                robot.stackArm(RobotConfig.StackArm.FAR_LEFT);
 
             //Slide code
             if (currentGamepad2.a) {
@@ -313,59 +300,20 @@ public class newTele extends LinearOpMode {
             }
 
             switch (armToggle) {
-                case IN:
-                    if (currentGamepad2.back != prevGamepad2.back) {
+                case GUIDE:
+                    if (currentGamepad2.back && !prevGamepad2.back) {
                         robot.stackArm(RobotConfig.StackArm.OUT);
                         armToggle = ArmToggle.OUT;
                     }
                     break;
                 case OUT:
-                    if (currentGamepad2.back != prevGamepad2.back) {
-                        robot.stackArm(RobotConfig.StackArm.IN);
-                        armToggle = ArmToggle.IN;
+                    if (currentGamepad2.back && !prevGamepad2.back) {
+                        robot.stackArm(RobotConfig.StackArm.GUIDE);
+                        armToggle = ArmToggle.GUIDE;
                     }
                     break;
             }
-            if (currentGamepad2.back != prevGamepad2.back) {
-                if (currentGamepad2.back) {
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                } else {
-                    robot.stackArm(RobotConfig.StackArm.GUIDE);
-                }
-            }
 
-//            switch (spikemark) {
-//                case GUIDE:
-//                    if (currentGamepad2.left_trigger > .1) {
-//                        robot.stackArm(RobotConfig.StackArm.OUT);
-//                        spikemark = SpikeMark.OUT;
-//                    }
-//                    break;
-//                case OUT:
-//                    if (currentGamepad2.left_trigger > .9) {
-//                        robot.stackHold(true);
-//                        spikemark = SpikeMark.HOLD;
-//                    } else if (currentGamepad2.left_trigger < .1) {
-//                        robot.stackArm(RobotConfig.StackArm.GUIDE);
-//                        spikemark = SpikeMark.GUIDE;
-//                    }
-//                    break;
-//                case HOLD:
-//                    if (currentGamepad2.right_trigger > .1) {
-//                        robot.stackArm(RobotConfig.StackArm.IN);
-//                        spikemark = SpikeMark.IN;
-//                    } else if (currentGamepad2.left_trigger < .9) {
-//                        robot.stackHold(false);
-//                        spikemark = SpikeMark.OUT;
-//                    }
-//                    break;
-//                case IN:
-//                    if (currentGamepad2.right_trigger < .1) {
-//                        robot.stackArm(RobotConfig.StackArm.OUT);
-//                        spikemark = SpikeMark.HOLD;
-//                    }
-//                    break;
-//            }
 
             switch (intake) {
                 case STOPPED:
@@ -393,7 +341,7 @@ public class newTele extends LinearOpMode {
 
             switch (transfer) {
                 case STOPPED:
-                    if (currentGamepad2.dpad_right || currentGamepad2.left_trigger >.1) {
+                    if (currentGamepad2.dpad_right) {// || currentGamepad2.left_trigger >.1
                         robot.transferMotor.setPower(RobotConstants.transferSpeed);
                         transfer = Spin.SPIN_IN;
                     } else if (currentGamepad2.dpad_left) {
@@ -402,7 +350,7 @@ public class newTele extends LinearOpMode {
                     }
                     break;
                 case SPIN_IN:
-                    if (!currentGamepad2.dpad_right || currentGamepad2.left_trigger <.1) {
+                    if (!currentGamepad2.dpad_right) {// || currentGamepad2.left_trigger <.1
                         robot.transferMotor.setPower(0);
                         transfer = Spin.STOPPED;
                     }

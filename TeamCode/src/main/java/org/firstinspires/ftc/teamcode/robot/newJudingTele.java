@@ -46,13 +46,11 @@ public class newJudingTele extends LinearOpMode {
     }
     Drop drop = Drop.CLOSED;
 
-    enum SpikeMark {
+    enum ArmToggle {
         GUIDE,
-        OUT,
-        HOLD,
-        IN
+        OUT
     }
-    SpikeMark spikemark = SpikeMark.GUIDE;
+    ArmToggle armToggle = ArmToggle.GUIDE;
 
     enum Spin {
         STOPPED,
@@ -284,35 +282,24 @@ public class newJudingTele extends LinearOpMode {
             slideTimer.reset();
 
             //Intake code
-            switch (spikemark) {
+            //Intake code
+            if (currentGamepad1.left_trigger>.5 && prevGamepad1.left_trigger<=.5) {
+                robot.grabFromStack(2);
+            } else if (currentGamepad1.right_trigger>.5 && prevGamepad1.right_trigger<=.5) {
+                robot.grabFromStack(1);
+            }
+
+            switch (armToggle) {
                 case GUIDE:
-                    if (currentGamepad1.left_trigger > .1) {
+                    if (currentGamepad1.back && !prevGamepad1.back) {
                         robot.stackArm(RobotConfig.StackArm.OUT);
-                        spikemark = SpikeMark.OUT;
+                        armToggle = ArmToggle.OUT;
                     }
                     break;
                 case OUT:
-                    if (currentGamepad1.left_trigger > .9) {
-                        robot.stackHold(true);
-                        spikemark = SpikeMark.HOLD;
-                    } else if (currentGamepad1.left_trigger < .1) {
+                    if (currentGamepad1.back && !prevGamepad1.back) {
                         robot.stackArm(RobotConfig.StackArm.GUIDE);
-                        spikemark = SpikeMark.GUIDE;
-                    }
-                    break;
-                case HOLD:
-                    if (currentGamepad1.right_trigger > .1) {
-                        robot.stackArm(RobotConfig.StackArm.IN);
-                        spikemark = SpikeMark.IN;
-                    } else if (currentGamepad1.left_trigger < .9) {
-                        robot.stackHold(false);
-                        spikemark = SpikeMark.OUT;
-                    }
-                    break;
-                case IN:
-                    if (currentGamepad1.right_trigger < .1) {
-                        robot.stackArm(RobotConfig.StackArm.OUT);
-                        spikemark = SpikeMark.HOLD;
+                        armToggle = ArmToggle.GUIDE;
                     }
                     break;
             }
