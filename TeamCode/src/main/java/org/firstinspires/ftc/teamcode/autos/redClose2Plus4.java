@@ -22,7 +22,7 @@ public class redClose2Plus4 extends LinearOpMode {
         FINISHED
     }
 
-    fCamRedFarAutoAvoid.Camera camera = fCamRedFarAutoAvoid.Camera.WAIT;
+    Camera camera = Camera.WAIT;
 
     String pos = "";
 
@@ -356,7 +356,7 @@ public class redClose2Plus4 extends LinearOpMode {
             switch (camera) {
                 case WAIT:
                     if (cameraDelayTimer.seconds() > .8) {
-                        camera = fCamRedFarAutoAvoid.Camera.SAVE;
+                        camera = Camera.SAVE;
                     }
                     break;
                 case SAVE:
@@ -379,7 +379,7 @@ public class redClose2Plus4 extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-                    camera = fCamRedFarAutoAvoid.Camera.FINISHED;
+                    camera = Camera.FINISHED;
                     break;
                 case FINISHED:
                     break;
