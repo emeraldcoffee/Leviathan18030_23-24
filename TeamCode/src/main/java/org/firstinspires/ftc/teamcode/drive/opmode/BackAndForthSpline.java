@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
@@ -36,28 +39,27 @@ public class BackAndForthSpline extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotConfig drive = new RobotConfig(hardwareMap);
+        RobotConfig robot = new RobotConfig(hardwareMap);
 
-        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d(-56.5, -36.5, 0))
-                .forward(.5)
-                .splineToConstantHeading(new Vector2d(-25, -57), Math.toRadians(0))
-                .lineTo(new Vector2d(33, -57))
+        TrajectorySequence trajectoryForward = robot.trajectorySequenceBuilder(new Pose2d(-37, 62, Math.toRadians(270)))
+                .splineToConstantHeading(new Vector2d(-51, 35), Math.toRadians(270))
+                .splineToSplineHeading(new Pose2d(-46.5, 34), Math.toRadians(30))
+                .waitSeconds(.4)
                 .build();
 
-        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
-                .back(.1)
-                .lineTo(new Vector2d(-25, -57))
-                .splineToConstantHeading(new Vector2d(-56.5,-36.5), Math.toRadians(180))
+        TrajectorySequence trajectoryBackward = robot.trajectorySequenceBuilder(trajectoryForward.end())
+                .splineToSplineHeading(trajectoryForward.start(), Math.toRadians(90))
+                .waitSeconds(.3)
                 .build();
 
         waitForStart();
 
-        drive.update();
-        drive.setPoseEstimate(new Pose2d(-56.5, -36.5, 0));
+        robot.update();
+        robot.setPoseEstimate(new Pose2d(-37, 62, Math.toRadians(270)));
 
         while (!isStopRequested()) {
-            drive.followTrajectory(trajectoryForward);
-            drive.followTrajectory(trajectoryBackward);
+            robot.followTrajectorySequence(trajectoryForward);
+            robot.followTrajectorySequence(trajectoryBackward);
         }
     }
 }

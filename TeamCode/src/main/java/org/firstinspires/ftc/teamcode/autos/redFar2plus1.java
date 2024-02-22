@@ -324,6 +324,7 @@ public class redFar2plus1 extends LinearOpMode {
 
         telemetry.setAutoClear(false);
         Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
+        Telemetry.Item IMU = telemetry.addData("Current IMU", "");
 
 //        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
@@ -344,6 +345,8 @@ public class redFar2plus1 extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             robot.update();
+            IMU.setValue(robot.getCurrentIMU().toString());
+            telemetry.update();
 
             switch (camera) {
                 case WAIT:

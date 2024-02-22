@@ -78,7 +78,7 @@ public class RobotConfig extends MecanumDrive {
 
     //Roadrunner stuff
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(21, .5, 1.4);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(18, .5, 1.7);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(19, .5, 1.4);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -119,6 +119,7 @@ public class RobotConfig extends MecanumDrive {
 
     public Servo dropServo, leftPixelServo, rightPixelServo, droneServo, leftStackServo, rightStackServo, stackHoldServo;
 
+    public StandardTrackingWheelLocalizer threeWheelLocalizer;
     public IMU controlIMU;
     public BNO055IMUNew expansionIMU;
 
@@ -132,6 +133,7 @@ public class RobotConfig extends MecanumDrive {
     public enum CurrentIMU {
         expansionIMU,
         controlIMU,
+        threeWheel,
         noIMU;
     }
     CurrentIMU currentIMU = CurrentIMU.expansionIMU;
@@ -220,6 +222,11 @@ public class RobotConfig extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        List<Integer> lastTrackingEncPositions = new ArrayList<>();
+        List<Integer> lastTrackingEncVels = new ArrayList<>();
+
+        threeWheelLocalizer = new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels);
+
         controlIMU = hardwareMap.get(BHI260IMU.class, "imu");
         expansionIMU = hardwareMap.get(BNO055IMUNew.class, "imuExpansion");
 
@@ -243,8 +250,6 @@ public class RobotConfig extends MecanumDrive {
 
         controlIMU.resetYaw();
 
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-        List<Integer> lastTrackingEncVels = new ArrayList<>();
         localizer = new TwoWheelTrackingLocalizer(hardwareMap, this);
 
         localizer.setPoseEstimate(PassData.currentPose);
@@ -331,12 +336,12 @@ public class RobotConfig extends MecanumDrive {
 
     public void update() {
         updateIMU();
-        localizer.update();
+
+        updatePoseEstimate();
 
         updateLift();
         updateIntake();
 
-//        updatePoseEstimate();
         if (followRoadrunnerPath) {//followRoadrunnerPath
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
             if (signal != null) setDriveSignal(signal);
@@ -802,8 +807,15 @@ public class RobotConfig extends MecanumDrive {
                 externalHeading = controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
                 if (isNaN(externalHeading)) {
-                    currentIMU = CurrentIMU.noIMU;
-                    pauseTrajectory();
+                    externalHeading = expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                    if (isNaN(externalHeading)) {
+                        currentIMU = CurrentIMU.noIMU;
+                        threeWheelLocalizer.update();
+                        threeWheelLocalizer.setPoseEstimate(localizer.getPoseEstimate());
+                        setLocalizer(threeWheelLocalizer);
+                    } else {
+                        currentIMU = CurrentIMU.expansionIMU;
+                    }
                 } else {
                     externalHeadingVel = controlIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
                 }
@@ -812,14 +824,21 @@ public class RobotConfig extends MecanumDrive {
                 externalHeading = expansionIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
                 if (isNaN(externalHeading)) {
-                    currentIMU = CurrentIMU.noIMU;
-                    pauseTrajectory();
+                    externalHeading = controlIMU.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                    if (isNaN(externalHeading)) {
+                        currentIMU = CurrentIMU.noIMU;
+                        threeWheelLocalizer.update();
+                        threeWheelLocalizer.setPoseEstimate(localizer.getPoseEstimate());
+                        setLocalizer(threeWheelLocalizer);
+                    } else {
+                        currentIMU = CurrentIMU.controlIMU;
+                    }
                 } else {
                     externalHeadingVel = expansionIMU.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
                 }
                 break;
             case noIMU:
-                checkSensors();
+//                checkSensors();
         }
 
     }
