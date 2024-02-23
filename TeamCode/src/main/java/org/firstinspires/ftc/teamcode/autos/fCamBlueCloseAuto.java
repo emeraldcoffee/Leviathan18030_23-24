@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
+import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -48,8 +49,12 @@ public class fCamBlueCloseAuto extends LinearOpMode {
         RobotConfig robot = new RobotConfig(hardwareMap);
         ColorMask pipeline = new ColorMask();
 
-//        robot.leftLiftServo.setPosition(intakePos+RobotConstants.stackLeftOffset);
-//        robot.rightLiftServo.setPosition(intakePos);
+        telemetry.setAutoClear(false);
+        Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
+        Telemetry.Item IMU = telemetry.addData("Current IMU", robot.getCurrentIMU().toString());
+        Telemetry.Item Park = telemetry.addData("Park Position", PassData.parkPosition.toString());
+        telemetry.update();
+
         robot.transferMotor.setPower(-.2);
         robot.stackHold(false);
 
@@ -88,8 +93,8 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, 12))
-                .lineTo(new Vector2d(45, 12))
+                .lineTo(new Vector2d(40, PassData.parkPosition.blue))
+                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
                 .build();
 
         TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
@@ -107,8 +112,8 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, 12))
-                .lineTo(new Vector2d(45, 12))
+                .lineTo(new Vector2d(40, PassData.parkPosition.blue))
+                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
                 .build();
 
         TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
@@ -126,19 +131,13 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, 12))
-                .lineTo(new Vector2d(45, 12))
+                .lineTo(new Vector2d(40, PassData.parkPosition.blue))
+                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
                 .build();
 
 
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();
-
-        telemetry.setAutoClear(false);
-        Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
-        Telemetry.Item wasPos = telemetry.addData("Was pos", "");
-
-//        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
         robot.rightPixelServo.setPosition(RobotConstants.rightOut);
         robot.dropServo.setPosition(RobotConstants.dropClosed);
@@ -157,7 +156,9 @@ public class fCamBlueCloseAuto extends LinearOpMode {
         cameraDelayTimer.reset();
 
         while (opModeIsActive() && !isStopRequested()) {
-//            robot.update();
+            robot.update();
+            IMU.setValue(robot.getCurrentIMU().toString());
+            telemetry.update();
 
             switch (camera) {
                 case WAIT:
@@ -185,18 +186,12 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-//                    wasPos.setValue(RobotMethods.updateRobotPosition(robot.getPoseEstimate()));
 
                     camera = Camera.FINISHED;
                     break;
                 case FINISHED:
                     break;
             }
-
-           robot.update();
-
-//            slideData.setValue( "Encoder Val: " + slideCurPos + " Target Val: " + targetSlidePos + " Slide Power: " + (double)Math.round(slidePower*100)/100);
-
         }
 
     }

@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autos.old.fCamRedFarAutoAvoid;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
+import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -24,7 +26,7 @@ public class blueFar2plus1 extends LinearOpMode {
         FINISHED
     }
 
-    fCamRedFarAutoAvoid.Camera camera = fCamRedFarAutoAvoid.Camera.WAIT;
+    Camera camera = Camera.WAIT;
 
     String pos = "";
 
@@ -33,6 +35,12 @@ public class blueFar2plus1 extends LinearOpMode {
 
         RobotConfig robot = new RobotConfig(hardwareMap);
         ColorMask pipeline = new ColorMask();
+
+        telemetry.setAutoClear(false);
+        Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
+        Telemetry.Item IMU = telemetry.addData("Current IMU", robot.getCurrentIMU().toString());
+        Telemetry.Item Park = telemetry.addData("Park Position", PassData.parkPosition.toString());
+        telemetry.update();
 
         robot.ResetSlides();
 
@@ -59,11 +67,11 @@ public class blueFar2plus1 extends LinearOpMode {
 
         //4.57 stack 1, 15.09 stack 2
         TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(-37, 62, Math.toRadians(270)))
-                .splineToConstantHeading(new Vector2d(-51, 37), Math.toRadians(270))
+                .splineToConstantHeading(new Vector2d(-52.5, 38), Math.toRadians(270))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .splineToLinearHeading(new Pose2d(-47, 34.3), Math.toRadians(30))
+                .splineToLinearHeading(new Pose2d(-47.4, 34.6), Math.toRadians(30))
                 .waitSeconds(.6)//.4
                 .addTemporalMarker(3.0, () -> {
                     robot.rightPixelServo.setPosition(RobotConstants.rightIn);
@@ -74,8 +82,8 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
                 .back(.1)
-                .splineToConstantHeading(new Vector2d(-57, 34.9), Math.toRadians(180))
-                .addTemporalMarker(3.7, () -> {
+                .splineToConstantHeading(new Vector2d(-57.2, 34.9), Math.toRadians(180))
+                .addTemporalMarker(3.8, () -> {
                     robot.grabFromStack(1);
                 })
                 .waitSeconds(.9)
@@ -87,8 +95,8 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, 28.1), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 28.1), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .splineToConstantHeading(new Vector2d(49, 27.6), Math.toRadians(0))
+                .lineTo(new Vector2d(53, 27.6), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                 .addTemporalMarker(10.0, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     robot.safeRelocalizeBackdrop();
@@ -106,18 +114,18 @@ public class blueFar2plus1 extends LinearOpMode {
                 })
                 .lineTo(new Vector2d(-33, 57))
                 .splineToConstantHeading(new Vector2d(-52, 36), Math.toRadians(250))
-                .splineToConstantHeading(new Vector2d(-56.5, 33.4), Math.toRadians(180))
-                .addTemporalMarker(14.4, () -> {
+                .splineToConstantHeading(new Vector2d(-56.7, 33.2), Math.toRadians(180))
+                .addTemporalMarker(14.7, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                     robot.stackArm(RobotConfig.StackArm.FAR_RIGHT);
                 })
                 .waitSeconds(1.7)
-                .addTemporalMarker(15.1, () -> {
+                .addTemporalMarker(15.9, () -> {
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .addTemporalMarker(15.7, () -> {
+                .addTemporalMarker(16.3, () -> {
                     robot.grabFromStack(2);
                 })
                 //To backdrop
@@ -130,18 +138,18 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(50, 37), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
-                .addTemporalMarker(22.2, () -> {
+                .lineTo(new Vector2d(53.2, 37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .addTemporalMarker(22.5, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
                     robot.safeRelocalizeBackdrop();
                 })
-                .waitSeconds(1)
-                .addTemporalMarker(23.8, () -> {
+                .waitSeconds(.8)
+                .addTemporalMarker(24.6, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .back(6)
-                .waitSeconds(1.5)
+                .lineTo(new Vector2d(47, 37))
+                .lineTo(new Vector2d(47, PassData.parkPosition.blue))
                 .build();
 
         //3.88 stack 1, 14.68 stack 2
@@ -250,8 +258,8 @@ public class blueFar2plus1 extends LinearOpMode {
 //                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .back(6)
-                .waitSeconds(1.5)
+                .lineTo(new Vector2d(47, 37))
+                .lineTo(new Vector2d(47, PassData.parkPosition.blue))
                 .build();
 
         //3.38 stack 1, 14.46 stack 2
@@ -262,7 +270,7 @@ public class blueFar2plus1 extends LinearOpMode {
                 })
                 .lineTo(new Vector2d(-24, 35))
                 .addTemporalMarker(2.7, () -> {
-                    robot.leftPixelServo.setPosition(RobotConstants.rightIn);
+                    robot.rightPixelServo.setPosition(RobotConstants.rightIn);
                 })
                 .lineTo(new Vector2d(-28, 35))
                 .addTemporalMarker(3.5, () -> {
@@ -270,7 +278,7 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .splineToConstantHeading(new Vector2d(-57, 35.5), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-58, 35.25), Math.toRadians(180))
                 .addTemporalMarker(4.7, () -> {
                     robot.grabFromStack(1);
                 })
@@ -279,30 +287,30 @@ public class blueFar2plus1 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-33, 57), Math.toRadians(0))
                 .lineTo(new Vector2d(31, 57))
                 .addTemporalMarker(7.9, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
+                    robot.setTargetSlidePos(12.1);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, 42), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 42), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .splineToConstantHeading(new Vector2d(48, 39.7), Math.toRadians(0))
+                .lineTo(new Vector2d(50, 39.7), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                 .addTemporalMarker(10.1, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     robot.safeRelocalizeBackdrop();
                 })
                 .addTemporalMarker(10.4, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+                    robot.setTargetSlidePos(17);
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
                 })
                 .waitSeconds(1.3)
 //                            //Cycle 1
                 .back(.1)
                 .splineToConstantHeading(new Vector2d(33, 57), Math.toRadians(180))
-                .addTemporalMarker(12.2, () -> {
+                .addTemporalMarker(12.8, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
                 .lineTo(new Vector2d(-33, 57))
                 .splineToConstantHeading(new Vector2d(-52, 37.5), Math.toRadians(250))
-                .splineToConstantHeading(new Vector2d(-56.5, 35), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-57.9, 34.1), Math.toRadians(180))
                 .addTemporalMarker(14.2, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
@@ -310,7 +318,7 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.stackArm(RobotConfig.StackArm.FAR_RIGHT);
                 })
                 .waitSeconds(1.7)
-                .addTemporalMarker(15.2, () -> {
+                .addTemporalMarker(15.4, () -> {
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
                 .addTemporalMarker(15.6, () -> {
@@ -325,28 +333,22 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, 41), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 41), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
-                .addTemporalMarker(22.3, () -> {
+                .splineToConstantHeading(new Vector2d(49, 35), Math.toRadians(0))
+                .lineTo(new Vector2d(51, 35), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .addTemporalMarker(22.4, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
                     robot.safeRelocalizeBackdrop();
                 })
-                .waitSeconds(2)
-                .addTemporalMarker(24.3, () -> {
+                .waitSeconds(1)
+                .addTemporalMarker(24.7, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .back(6)
-                .waitSeconds(1.5)
+                .lineTo(new Vector2d(45, 35))
+                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
                 .build();
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();
-
-        telemetry.setAutoClear(false);
-        Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
-        Telemetry.Item IMU = telemetry.addData("Current IMU", "");
-//        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
-
 
         robot.rightPixelServo.setPosition(RobotConstants.rightOut);
         robot.dropper(RobotConfig.Dropper.CLOSED);
@@ -370,7 +372,7 @@ public class blueFar2plus1 extends LinearOpMode {
             switch (camera) {
                 case WAIT:
                     if (cameraDelayTimer.seconds() > .8) {
-                        camera = fCamRedFarAutoAvoid.Camera.SAVE;
+                        camera = Camera.SAVE;
                     }
                     break;
                 case SAVE:
@@ -393,7 +395,7 @@ public class blueFar2plus1 extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-                    camera = fCamRedFarAutoAvoid.Camera.FINISHED;
+                    camera = Camera.FINISHED;
                     break;
                 case FINISHED:
                     break;

@@ -5,6 +5,18 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 //Use this file to set up values that will be used by the robot like servo positions
 public class RobotConstants {
 
+    public static enum ParkPosition {
+        WALL(-60, 60),
+        CENTER(-8, 8);
+
+        public final double red, blue;
+
+        ParkPosition(double red, double blue) {
+            this.red = red;
+            this.blue = blue;
+        }
+    }
+
     //Whole # variables
     public static final int
             slideBottom         = (int)(8192 * 0),

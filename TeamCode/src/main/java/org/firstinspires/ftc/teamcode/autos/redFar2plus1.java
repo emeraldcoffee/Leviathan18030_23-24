@@ -4,17 +4,15 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autos.old.fCamRedFarAutoAvoid;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
-import org.firstinspires.ftc.teamcode.robot.HwMap;
+import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
-import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -28,7 +26,7 @@ public class redFar2plus1 extends LinearOpMode {
         FINISHED
     }
 
-    fCamRedFarAutoAvoid.Camera camera = fCamRedFarAutoAvoid.Camera.WAIT;
+    Camera camera = Camera.WAIT;
 
     String pos = "";
 
@@ -37,6 +35,12 @@ public class redFar2plus1 extends LinearOpMode {
 
         RobotConfig robot = new RobotConfig(hardwareMap);
         ColorMask pipeline = new ColorMask();
+
+        telemetry.setAutoClear(false);
+        Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
+        Telemetry.Item IMU = telemetry.addData("Current IMU", robot.getCurrentIMU().toString());
+        Telemetry.Item Park = telemetry.addData("Park Position", PassData.parkPosition.toString());
+        telemetry.update();
 
         robot.ResetSlides();
 
@@ -143,8 +147,8 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .back(6)
-                .waitSeconds(1.5)
+                .lineTo(new Vector2d(47, -41))
+                .lineTo(new Vector2d(47, PassData.parkPosition.red))
                 .build();
 
         //3.88 stack 1, 14.68 stack 2
@@ -229,8 +233,8 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .back(6)
-                .waitSeconds(1)
+                .lineTo(new Vector2d(47, -37))
+                .lineTo(new Vector2d(47, PassData.parkPosition.red))
                 .build();
 
         //3.38 stack 1, 14.46 stack 2
@@ -316,18 +320,11 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .back(6)
-                .waitSeconds(1.5)
+                .lineTo(new Vector2d(47, -37))
+                .lineTo(new Vector2d(47, PassData.parkPosition.red))
                 .build();
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();
-
-        telemetry.setAutoClear(false);
-        Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
-        Telemetry.Item IMU = telemetry.addData("Current IMU", "");
-
-//        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
-
 
         robot.leftPixelServo.setPosition(RobotConstants.leftOut);
         robot.dropper(RobotConfig.Dropper.CLOSED);
@@ -351,7 +348,7 @@ public class redFar2plus1 extends LinearOpMode {
             switch (camera) {
                 case WAIT:
                     if (cameraDelayTimer.seconds() > .8) {
-                        camera = fCamRedFarAutoAvoid.Camera.SAVE;
+                        camera = Camera.SAVE;
                     }
                     break;
                 case SAVE:
@@ -374,7 +371,7 @@ public class redFar2plus1 extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-                    camera = fCamRedFarAutoAvoid.Camera.FINISHED;
+                    camera = Camera.FINISHED;
                     break;
                 case FINISHED:
                     break;

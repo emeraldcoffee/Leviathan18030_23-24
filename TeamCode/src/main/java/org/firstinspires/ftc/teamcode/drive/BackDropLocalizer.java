@@ -48,7 +48,7 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
         rightDistance = -rightDistanceSensor.getDistance(DistanceUnit.INCH);
 
 
-        double heading = -Math.tan((leftDistance-rightDistance)/7.673);
+        double heading = -Math.atan((leftDistance-rightDistance)/7.673);
         double lateralDistance = ((leftDistance+rightDistance)/2-6.524)*Math.cos(heading);
 //should read 51.7
         poseEstimate = new Pose2d(lateralDistance+61.75, poseEstimate.getY(), heading);

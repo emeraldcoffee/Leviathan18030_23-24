@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Disabled
+@Disabled
 @TeleOp
 public class testing extends LinearOpMode {
 
