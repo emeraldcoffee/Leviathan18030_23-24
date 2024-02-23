@@ -603,13 +603,14 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public boolean safeRelocalizeBackdrop() {
-        updateBackdropLocalizer();
-        if (backDropLocalizer.isInRange(getPoseEstimate(),.5, Math.toRadians(2))) {
-            localizer.setPoseEstimate(getBackdropPoseEstimate());
-            return true;
-        } else {
-            return false;
-        }
+//        updateBackdropLocalizer();
+//        if (backDropLocalizer.isInRange(getPoseEstimate(),.5, Math.toRadians(2))) {
+//            localizer.setPoseEstimate(getBackdropPoseEstimate());
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return false;
     }
 
     //Roadrunner functions
