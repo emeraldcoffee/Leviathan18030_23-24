@@ -254,7 +254,7 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
                 .back(.1)
-                .splineToConstantHeading(new Vector2d(-57, -35.2), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-57, -35.4), Math.toRadians(180))
                 .addTemporalMarker(3.7, () -> {
                     robot.grabFromStack(1);
                 })
@@ -268,7 +268,7 @@ public class redFar2plus1 extends LinearOpMode {
                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(50, -28), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -28.1), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .lineTo(new Vector2d(53, -28.7), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                 .addTemporalMarker(10.0, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     robot.safeRelocalizeBackdrop();
@@ -281,12 +281,12 @@ public class redFar2plus1 extends LinearOpMode {
                 //Cycle 1
                 .back(.1)
                 .splineToConstantHeading(new Vector2d(33, -57), Math.toRadians(180))
-                .addTemporalMarker(12.2, () -> {
+                .addTemporalMarker(12.4, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
                 .lineTo(new Vector2d(-33, -57))
                 .splineToConstantHeading(new Vector2d(-52, -36), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(-56.5, -33.65), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.5, -33.2), Math.toRadians(180))
                 .addTemporalMarker(14.2, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
@@ -352,7 +352,8 @@ public class redFar2plus1 extends LinearOpMode {
                     }
                     break;
                 case SAVE:
-                    pos = pipeline.getPos();
+//                    pos = pipeline.getPos();
+                    pos = "left";
                     switch (pos) {
                         case "left":
                             robot.followTrajectorySequenceAsync(left);

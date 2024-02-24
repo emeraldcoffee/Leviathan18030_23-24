@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.pipelines;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.opencv.core.Core.bitwise_and;
+import static org.opencv.core.Core.bitwise_not;
+import static org.opencv.core.Core.bitwise_or;
 import static org.opencv.core.Core.inRange;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2HSV;
 import org.opencv.core.Core;
@@ -46,8 +48,11 @@ public class ColorMask extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        Mat output = input;
 
+//        Rect crop = new Rect(0, 0, 640, 240);
+//        Mat output = input.submat(crop);
+
+        Mat output = input;
         Mat mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
@@ -56,18 +61,23 @@ public class ColorMask extends OpenCvPipeline {
         }
 
         Mat thresh = new Mat();
-        Scalar lowHSV;
-        Scalar highHSV;
-        Scalar lowerHSV;
-        Scalar higherHSV;
+        Scalar lowLHSV;
+        Scalar highLHSV;
+        Scalar lowerLHSV;
+        Scalar higherLHSV;
+
+        Scalar lowHHSV;
+        Scalar highHHSV;
+        Scalar lowerHHSV;
+        Scalar higherHHSV;
 
         if (alliance.equals("Blue")) {
-            lowHSV = new Scalar(85, 30, 20);
-            highHSV = new Scalar(140, 255, 255);
-            Core.inRange(mat, lowHSV, highHSV, thresh);
-            lowerHSV = new Scalar(90, 50, 50);
-            higherHSV = new Scalar(135, 255, 255);
-            Core.inRange(mat, lowerHSV, higherHSV, thresh);
+            lowLHSV = new Scalar(85, 20, 10);
+            highLHSV = new Scalar(140, 255, 255);
+            Core.inRange(mat, lowLHSV, highLHSV, thresh);
+            lowerLHSV = new Scalar(90, 25, 15);
+            higherLHSV = new Scalar(135, 255, 255);
+            Core.inRange(mat, lowerLHSV, higherLHSV, thresh);
 
             /*lowHSV = new Scalar(85, 0, 20);
             highHSV = new Scalar(120, 200, 255);
@@ -78,16 +88,28 @@ public class ColorMask extends OpenCvPipeline {
         }
 
         else if (alliance.equals("Red")) {
-//            Mat threshLow = new Mat();
-//            Mat threshHigh = new Mat();
+            Mat threshLow = new Mat();
+            Mat threshHigh = new Mat();
             //how to get both aspects, low and high? if make 2 mats, how combine? see later.
-            lowHSV = new Scalar(0, 30, 20);
-            highHSV = new Scalar(25, 255, 255);
-            Core.inRange(mat, lowHSV, highHSV, thresh);
-            lowerHSV = new Scalar(0, 50, 50);
-            higherHSV = new Scalar(20, 255, 255);
-            Core.inRange(mat, lowerHSV, higherHSV, thresh);
-            //bitwise_and(threshLow, threshHigh, thresh);
+            lowLHSV = new Scalar(0, 10, 5);
+            highLHSV = new Scalar(20, 255, 255);
+            Core.inRange(mat, lowLHSV, highLHSV, threshLow);
+            lowerLHSV = new Scalar(0, 15, 10);
+            higherLHSV = new Scalar(25, 255, 255);
+            Core.inRange(mat, lowerLHSV, higherLHSV, threshLow);
+
+//            bitwise_and(threshLow, threshHigh, thresh);
+
+            lowHHSV = new Scalar(140, 10, 5);
+            highHHSV = new Scalar(180, 255, 255);
+            Core.inRange(mat, lowHHSV, highHHSV, threshHigh);
+            lowerHHSV = new Scalar(145, 15, 10);
+            higherHHSV = new Scalar(180, 255, 255);
+            Core.inRange(mat, lowerHHSV, higherHHSV, threshHigh);
+
+            bitwise_or(threshLow, threshHigh, thresh);
+
+
         }
 
         Mat masked = new Mat();
@@ -98,7 +120,7 @@ public class ColorMask extends OpenCvPipeline {
         masked.convertTo(scaledMask, -1, 150/average.val[1], 0);
 
         Mat scaledThresh = new Mat();
-        Scalar strictLowHSV = new Scalar(0, 140, 0);
+        Scalar strictLowHSV = new Scalar(0, 10, 0); // 140
         Scalar strictHighHSV = new Scalar(255, 255, 255);
         Core.inRange(scaledMask, strictLowHSV, strictHighHSV, scaledThresh);
 
