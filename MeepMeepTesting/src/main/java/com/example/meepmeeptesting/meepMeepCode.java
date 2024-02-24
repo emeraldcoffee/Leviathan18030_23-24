@@ -22,7 +22,7 @@ public class meepMeepCode {
                 .setConstraints(40, 45, Math.toRadians(200), Math.toRadians(200), 10.64)
                 .setColorScheme(new ColorSchemeBlueLight())
 
-                    .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-35, 62, Math.toRadians(270)))).setVelConstraint(SampleMecanumDrive.getVelocityConstraint(45, Math.toRadians(310), 10.62))
+                    .followTrajectorySequence(drive -> (drive.trajectorySequenceBuilder(new Pose2d(-38, 62, Math.toRadians(270)))).setVelConstraint(SampleMecanumDrive.getVelocityConstraint(45, Math.toRadians(310), 10.62))
                             .splineToSplineHeading(new Pose2d(-39, 32.5, Math.toRadians(0)), Math.toRadians(270))
                             .addTemporalMarker(.1, () -> {
                                 robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
@@ -37,7 +37,7 @@ public class meepMeepCode {
                                 robot.transferMotor.setPower(1);
                                 robot.stackArm(RobotConfig.StackArm.OUT);
                             })
-                            .splineToConstantHeading(new Vector2d(-57.3, 35.7), Math.toRadians(180))
+                            .splineToConstantHeading(new Vector2d(-57.4, 35.7), Math.toRadians(180))
                             .addTemporalMarker(4.0, () -> {
                                 robot.grabFromStack(1);
                             })
@@ -51,7 +51,7 @@ public class meepMeepCode {
                                 robot.transferMotor.setPower(0);
                             })
                             .splineToConstantHeading(new Vector2d(50, 35.5), Math.toRadians(0))
-                            .lineTo(new Vector2d(53, 35.5), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                            .lineTo(new Vector2d(52.5, 34.5), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                             .addTemporalMarker(9.2, () -> {
                                 robot.dropper(RobotConfig.Dropper.OPEN);
                                 robot.safeRelocalizeBackdrop();
@@ -69,7 +69,7 @@ public class meepMeepCode {
                             })
                             .lineTo(new Vector2d(-33, 57))
                             .splineToConstantHeading(new Vector2d(-52, 37.5), Math.toRadians(250))
-                            .splineToConstantHeading(new Vector2d(-56.4, 34), Math.toRadians(180))
+                            .splineToConstantHeading(new Vector2d(-56.7, 34), Math.toRadians(180))
                             .addTemporalMarker(13.7, () -> {
                                 robot.intakeMotor.setPower(1);
                                 robot.transferMotor.setPower(1);
@@ -93,7 +93,7 @@ public class meepMeepCode {
                                 robot.transferMotor.setPower(0);
                             })
                             .splineToConstantHeading(new Vector2d(50, 37), Math.toRadians(0))
-                            .lineTo(new Vector2d(53, 37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                            .lineTo(new Vector2d(52.5, 37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                             .addTemporalMarker(21.7, () -> {
                                 robot.dropper(RobotConfig.Dropper.PARTIAL);
                                 robot.safeRelocalizeBackdrop();

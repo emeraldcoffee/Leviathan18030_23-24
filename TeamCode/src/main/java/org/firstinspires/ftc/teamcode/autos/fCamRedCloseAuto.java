@@ -92,7 +92,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
                 .lineTo(new Vector2d(53, -31))
                 .addTemporalMarker(4.1, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.3)
-                .lineTo(new Vector2d(40, -31))
+                .lineTo(new Vector2d(39.5, -30))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
@@ -103,13 +103,13 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -60))
-                .splineToSplineHeading(new Pose2d(17, -31), Math.toRadians(90))
-                .lineTo(new Vector2d(17,-36))
+                .splineToSplineHeading(new Pose2d(17, -31.5), Math.toRadians(90))
+                .lineTo(new Vector2d(16.8,-35.9))
                 .addTemporalMarker(1.9, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
                 .lineTo(new Vector2d(18, -36))
                 .splineToConstantHeading(new Vector2d(45, -37.5), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -37.5))
-                .addTemporalMarker(3.9, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .lineTo(new Vector2d(52.5, -37.3))
+                .addTemporalMarker(4.8, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(40, -37.5))
                 .addDisplacementMarker(() -> {
@@ -122,15 +122,15 @@ public class fCamRedCloseAuto extends LinearOpMode {
 
         TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -61))
-                .splineToLinearHeading(new Pose2d(23, -40), Math.toRadians(90))
-                .lineTo(new Vector2d(23, -48))
+                .splineToLinearHeading(new Pose2d(23, -40.2), Math.toRadians(90))
+                .lineTo(new Vector2d(23, -48.2))
                 .addTemporalMarker(2.15, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
                 .lineTo(new Vector2d(26, -48))
                 .splineToConstantHeading(new Vector2d(47, -44), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -44))
-                .addTemporalMarker(3.8, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .lineTo(new Vector2d(53, -43.9))
+                .addTemporalMarker(4.2, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.4)
-                .lineTo(new Vector2d(40, -44))
+                .lineTo(new Vector2d(40, -43.9))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
