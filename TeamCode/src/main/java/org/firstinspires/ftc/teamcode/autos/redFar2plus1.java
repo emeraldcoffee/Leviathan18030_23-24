@@ -286,7 +286,7 @@ public class redFar2plus1 extends LinearOpMode {
                 })
                 .lineTo(new Vector2d(-33, -57))
                 .splineToConstantHeading(new Vector2d(-52, -36), Math.toRadians(110))
-                .splineToConstantHeading(new Vector2d(-56.5, -33.2), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-56.5, -33.45), Math.toRadians(180))
                 .addTemporalMarker(14.2, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
