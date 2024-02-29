@@ -11,19 +11,19 @@ public class ParkSelect extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.setAutoClear(false);
-        Telemetry.Item parkPos = telemetry.addData("Park Position", PassData.parkPosition.toString());
+        Telemetry.Item parkPos = telemetry.addData("Park Position", PassData.roadrunnerParkPosition.toString());
         telemetry.update();
 
 
         waitForStart();
         while (!isStopRequested()) {
             if (gamepad1.x) {
-                PassData.parkPosition = RobotConstants.ParkPosition.WALL;
+                PassData.roadrunnerParkPosition = RobotConstants.ParkPosition.WALL;
             } else if (gamepad1.b) {
-                PassData.parkPosition = RobotConstants.ParkPosition.CENTER;
+                PassData.roadrunnerParkPosition = RobotConstants.ParkPosition.CENTER;
             }
 
-            parkPos.setValue(PassData.parkPosition.toString());
+            parkPos.setValue(PassData.roadrunnerParkPosition.toString());
             telemetry.update();
         }
     }

@@ -186,7 +186,7 @@ public class newJudingTele extends LinearOpMode {
             //Climb code
             switch (climb) {
                 case HOLD:
-                    if (currentGamepad1.dpad_down) {// && currentGamepad1.right_bumper
+                    if (currentGamepad1.dpad_down && currentGamepad1.start) {// && currentGamepad1.right_bumper
                         targetClimbPos = robot.climbMotor.getCurrentPosition() + 200;
                         robot.climbMotor.setTargetPosition((int) targetClimbPos);
                         climbTimer.reset();
