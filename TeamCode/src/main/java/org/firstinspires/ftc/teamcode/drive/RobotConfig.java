@@ -168,8 +168,8 @@ public class RobotConfig extends MecanumDrive {
     AutoStackCycle autoStackCycle = AutoStackCycle.WAIT;
 
     public enum SlideHeight {
-        BOTTOM(0),
-        PRELOAD_DROP(11.1),
+        BOTTOM(-.2),
+        PRELOAD_DROP(12),
         LOW(15),
         MEDIUM(21),
         HIGH(30);
@@ -351,6 +351,7 @@ public class RobotConfig extends MecanumDrive {
         }
 
         if (followPurePursuitPath) {
+            //localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY()
             double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
             setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
 
@@ -452,7 +453,7 @@ public class RobotConfig extends MecanumDrive {
 
     //Slide code
     public void setTargetSlidePos(double targetPos) {
-        targetSlidePos = Range.clip(targetPos, 0, 35);
+        targetSlidePos = Range.clip(targetPos, -3, 26);//35
     }
 
     public void ResetSlides() {
@@ -463,7 +464,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void setTargetSlidePos(SlideHeight height) {
-        targetSlidePos = height.height;
+        targetSlidePos = Range.clip(height.height, -3, 26);
     }
 
     public void rawSetTargetSlidePos(double targetPos) {

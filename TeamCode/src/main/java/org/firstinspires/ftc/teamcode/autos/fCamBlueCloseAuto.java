@@ -52,7 +52,7 @@ public class fCamBlueCloseAuto extends LinearOpMode {
         telemetry.setAutoClear(false);
         Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
         Telemetry.Item IMU = telemetry.addData("Current IMU", robot.getCurrentIMU().toString());
-        Telemetry.Item Park = telemetry.addData("Park Position", PassData.parkPosition.toString());
+        Telemetry.Item Park = telemetry.addData("Park Position", PassData.roadrunnerParkPosition.toString());
         telemetry.update();
 
         robot.transferMotor.setPower(-.2);
@@ -80,40 +80,41 @@ public class fCamBlueCloseAuto extends LinearOpMode {
 
         TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 61))
-                .splineToLinearHeading(new Pose2d(23, 40), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(23, 37), Math.toRadians(270))
                 .lineTo(new Vector2d(23, 48))
-                .addTemporalMarker(2.15, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
+                .addTemporalMarker(2.3, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
                 .lineTo(new Vector2d(26, 48))
-                .splineToConstantHeading(new Vector2d(47, 44), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 43.8))
+                .splineToConstantHeading(new Vector2d(47, 40.4), Math.toRadians(0))
+                .lineTo(new Vector2d(53, 40.4))
                 .addTemporalMarker(5.1, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.6)
-                .lineTo(new Vector2d(40, 44))
+                .lineTo(new Vector2d(40, 40.4))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, PassData.parkPosition.blue))
-                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
+                .lineTo(new Vector2d(40, PassData.roadrunnerParkPosition.blue))
+                .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.blue))
                 .build();
 
         TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
                 .lineTo(new Vector2d(12, 60))
-                .splineToSplineHeading(new Pose2d(17, 31), Math.toRadians(270))
+                .splineToSplineHeading(new Pose2d(17, 32.5), Math.toRadians(270))
+                .waitSeconds(.3)
                 .lineTo(new Vector2d(17,36))
                 .addTemporalMarker(1.9, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
                 .lineTo(new Vector2d(18, 36))
-                .splineToConstantHeading(new Vector2d(45, 37.5), Math.toRadians(0))
-                .lineTo(new Vector2d(53, 37.2))
-                .addTemporalMarker(5.1, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .splineToConstantHeading(new Vector2d(45, 36.9), Math.toRadians(0))
+                .lineTo(new Vector2d(51, 36.9))
+                .addTemporalMarker(5.2, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.6)
-                .lineTo(new Vector2d(40, 36.5))
+                .lineTo(new Vector2d(40, 36.9))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, PassData.parkPosition.blue))
-                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
+                .lineTo(new Vector2d(40, PassData.roadrunnerParkPosition.blue))
+                .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.blue))
                 .build();
 
         TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, 63, Math.toRadians(270)))
@@ -131,8 +132,8 @@ public class fCamBlueCloseAuto extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, PassData.parkPosition.blue))
-                .lineTo(new Vector2d(45, PassData.parkPosition.blue))
+                .lineTo(new Vector2d(40, PassData.roadrunnerParkPosition.blue))
+                .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.blue))
                 .build();
 
 

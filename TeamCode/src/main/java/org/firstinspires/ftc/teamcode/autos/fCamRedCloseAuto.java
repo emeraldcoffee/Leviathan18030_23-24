@@ -11,12 +11,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 //import org.firstinspires.ftc.teamcode.autos.old.fCamBlueFarAuto;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
-import org.firstinspires.ftc.teamcode.robot.HwMap;
 import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
-import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -56,7 +53,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
         telemetry.setAutoClear(false);
         Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
         Telemetry.Item IMU = telemetry.addData("Current IMU", robot.getCurrentIMU().toString());
-        Telemetry.Item Park = telemetry.addData("Park Position", PassData.parkPosition.toString());
+        Telemetry.Item Park = telemetry.addData("Park Position", PassData.roadrunnerParkPosition.toString());
         telemetry.update();
 
         robot.transferMotor.setPower(-.2);
@@ -97,46 +94,46 @@ public class fCamRedCloseAuto extends LinearOpMode {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, PassData.parkPosition.red))
-                .lineTo(new Vector2d(45, PassData.parkPosition.red))
+                .lineTo(new Vector2d(40, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.red))
                 .build();
 
         TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -60))
-                .splineToSplineHeading(new Pose2d(17, -31.5), Math.toRadians(90))
-                .lineTo(new Vector2d(16.8,-35.9))
-                .addTemporalMarker(1.9, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(18, -36))
-                .splineToConstantHeading(new Vector2d(45, -37.5), Math.toRadians(0))
-                .lineTo(new Vector2d(52.5, -37.3))
-                .addTemporalMarker(4.8, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .splineToSplineHeading(new Pose2d(15, -32), Math.toRadians(90))
+                .waitSeconds(.3)
+                .strafeRight(1)
+                .addTemporalMarker(1.75, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .splineToConstantHeading(new Vector2d(45, -37.1), Math.toRadians(0))
+                .lineTo(new Vector2d(52, -37.1))
+                .addTemporalMarker(4.5, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(40, -37.5))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, PassData.parkPosition.red))
-                .lineTo(new Vector2d(45, PassData.parkPosition.red))
+                .lineTo(new Vector2d(40, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.red))
                 .build();
 
         TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
                 .lineTo(new Vector2d(12, -61))
-                .splineToLinearHeading(new Pose2d(23, -40.2), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(22.7, -40.2), Math.toRadians(90))
                 .lineTo(new Vector2d(23, -48.2))
-                .addTemporalMarker(2.15, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .addTemporalMarker(2.1, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
                 .lineTo(new Vector2d(26, -48))
-                .splineToConstantHeading(new Vector2d(47, -44), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -43.9))
-                .addTemporalMarker(4.2, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .splineToConstantHeading(new Vector2d(47, -41.5), Math.toRadians(0))
+                .lineTo(new Vector2d(52, -41.5))
+                .addTemporalMarker(4.6, () -> robot.dropper(RobotConfig.Dropper.OPEN))
                 .waitSeconds(.4)
                 .lineTo(new Vector2d(40, -43.9))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
-                .lineTo(new Vector2d(40, PassData.parkPosition.red))
-                .lineTo(new Vector2d(45, PassData.parkPosition.red))
+                .lineTo(new Vector2d(40, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.red))
                 .build();
 
 

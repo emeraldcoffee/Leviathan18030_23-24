@@ -295,8 +295,10 @@ public class newTele extends LinearOpMode {
             //Intake code
             if (currentGamepad2.left_trigger>.5 && prevGamepad2.left_trigger<=.5) {
                 robot.grabFromStack(2);
+                armToggle = ArmToggle.OUT;
             } else if (currentGamepad2.right_trigger>.5 && prevGamepad2.right_trigger<=.5) {
                 robot.grabFromStack(1);
+                armToggle = ArmToggle.OUT;
             }
 
             switch (armToggle) {
