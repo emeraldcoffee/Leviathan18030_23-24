@@ -11,6 +11,8 @@ import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.drivebase.RobotDrive;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUNew;
@@ -342,7 +344,7 @@ public class RobotConfig extends MecanumDrive {
         updateLift();
         updateIntake();
 
-        if (followRoadrunnerPath) {//followRoadrunnerPath
+        if (true) {//followRoadrunnerPath
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
             if (signal != null) setDriveSignal(signal);
             if (!isBusy()) {
@@ -353,10 +355,15 @@ public class RobotConfig extends MecanumDrive {
         if (followPurePursuitPath) {
             //localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY()
             double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
-            setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
 
-            //stops the path from used once it is done
-            followPurePursuitPath = !currentPath.isFinished();
+            driveRobotCentric(driveTrainPowers[0], driveTrainPowers[1], driveTrainPowers[2]);
+//            setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
+
+            //stops the path from being used once it is done
+            if (currentPath.isFinished()) {
+                followPurePursuitPath = false;
+                setMotorPowers(0, 0 ,0, 0);
+            }
         }
 
         //Must be called to get new results
@@ -779,11 +786,11 @@ public class RobotConfig extends MecanumDrive {
     }
 
     @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        frontLeft.setPower(v);
-        backLeft.setPower(v1);
-        backRight.setPower(v2);
-        frontRight.setPower(v3);
+    public void setMotorPowers(double fL, double bL, double bR, double fR) {
+        frontLeft.setPower(fL);
+        backLeft.setPower(bL);
+        backRight.setPower(bR);
+        frontRight.setPower(fR);
     }
 
     //
@@ -866,5 +873,77 @@ public class RobotConfig extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
+    //Pure Pursuit methods
+    public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
+        driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, 0.0);
+    }
 
+    protected void normalize(double[] wheelSpeeds) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        if (maxMagnitude > 1) {
+            for (int i = 0; i < wheelSpeeds.length; i++) {
+                wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude);
+            }
+        }
+
+    }
+
+    protected void normalize(double[] wheelSpeeds, double magnitude) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        for (int i = 0; i < wheelSpeeds.length; i++) {
+            wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude) * magnitude;
+        }
+
+    }
+
+    public void driveFieldCentric(double strafeSpeed, double forwardSpeed,
+                                  double turnSpeed, double gyroAngle) {
+        strafeSpeed = Range.clip(strafeSpeed, -1, 1);
+        forwardSpeed = Range.clip(forwardSpeed, -1, 1);
+        turnSpeed = Range.clip(turnSpeed, -1, 1);
+
+        Vector2d input = new Vector2d(strafeSpeed, forwardSpeed);
+        input = input.rotateBy(-gyroAngle);
+
+        double theta = input.angle();
+
+        double[] wheelSpeeds = new double[4];
+        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] = Math.sin(theta + Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = Math.sin(theta + Math.PI / 4);
+
+        normalize(wheelSpeeds, input.magnitude());
+
+        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] += turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] -= turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] += turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] -= turnSpeed;
+
+        normalize(wheelSpeeds);
+
+        driveWithMotorPowers(
+                wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value],
+                wheelSpeeds[RobotDrive.MotorType.kFrontRight.value],
+                wheelSpeeds[RobotDrive.MotorType.kBackLeft.value],
+                wheelSpeeds[RobotDrive.MotorType.kBackRight.value]
+        );
+    }
+
+    public void driveWithMotorPowers(double frontLeftSpeed, double frontRightSpeed,
+                                     double backLeftSpeed, double backRightSpeed) {
+        setMotorPowers(frontLeftSpeed, backLeftSpeed, backRightSpeed, frontRightSpeed);
+    }
 }
