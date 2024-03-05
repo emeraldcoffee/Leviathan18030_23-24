@@ -174,7 +174,7 @@ public class RobotConfig extends MecanumDrive {
 
     public enum SlideHeight {
         BOTTOM(-.2),
-        PRELOAD_DROP(12),
+        PRELOAD_DROP(10.5),
         LOW(15),
         MEDIUM(21),
         HIGH(30);
