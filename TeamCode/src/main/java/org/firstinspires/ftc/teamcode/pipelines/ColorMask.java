@@ -72,10 +72,10 @@ public class ColorMask extends OpenCvPipeline {
         Scalar higherHHSV;
 
         if (alliance.equals("Blue")) {
-            lowLHSV = new Scalar(90, 30, 10);
+            lowLHSV = new Scalar(90, 30, 15);
             highLHSV = new Scalar(140, 255, 255);
             Core.inRange(mat, lowLHSV, highLHSV, thresh);
-            lowerLHSV = new Scalar(85, 50, 20);
+            lowerLHSV = new Scalar(95, 50, 30);
             higherLHSV = new Scalar(135, 255, 255);
             Core.inRange(mat, lowerLHSV, higherLHSV, thresh);
 
@@ -91,10 +91,10 @@ public class ColorMask extends OpenCvPipeline {
             Mat threshLow = new Mat();
             Mat threshHigh = new Mat();
             //how to get both aspects, low and high? if make 2 mats, how combine? see later.
-            lowLHSV = new Scalar(0, 30, 10);
+            lowLHSV = new Scalar(0, 30, 15);
             highLHSV = new Scalar(25, 255, 255);
             Core.inRange(mat, lowLHSV, highLHSV, thresh);
-            lowerLHSV = new Scalar(0, 50, 20);
+            lowerLHSV = new Scalar(0, 50, 30);
             higherLHSV = new Scalar(20, 255, 255);
             Core.inRange(mat, lowerLHSV, higherLHSV, thresh);
 
