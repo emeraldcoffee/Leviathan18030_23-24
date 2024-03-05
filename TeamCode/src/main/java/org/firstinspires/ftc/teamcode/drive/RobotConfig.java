@@ -106,6 +106,7 @@ public class RobotConfig extends MecanumDrive {
     List<LynxModule> allHubs;
 
     ElapsedTime stackTimer = new ElapsedTime();
+    ElapsedTime slideTimer = new ElapsedTime();
 
     //Hardware Components
     public DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -115,6 +116,8 @@ public class RobotConfig extends MecanumDrive {
     public List<DcMotorEx> allMotors;
 
     public double targetSlidePos = 0;//, prevError = 0, prevTime = 0;
+
+    public double prevError = 0;
 
     public Encoder slideEncoder;
     public final double slideToInches = 1.6 * Math.PI / 8192;
@@ -460,7 +463,7 @@ public class RobotConfig extends MecanumDrive {
 
     //Slide code
     public void setTargetSlidePos(double targetPos) {
-        targetSlidePos = Range.clip(targetPos, -3, 26);//35
+        targetSlidePos = Range.clip(targetPos, 0, 35);//35
     }
 
     public void ResetSlides() {
@@ -471,7 +474,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void setTargetSlidePos(SlideHeight height) {
-        targetSlidePos = Range.clip(height.height, -3, 26);
+        targetSlidePos = height.height;//Range.clip(height.height, -3, 26)
     }
 
     public void rawSetTargetSlidePos(double targetPos) {
@@ -490,32 +493,40 @@ public class RobotConfig extends MecanumDrive {
         //Error is positive when slide have to up
         double error = targetSlidePos - slidePosInches();
 
-        double p;//d
+        double p, d = 0;
 
         //Checks if error is in acceptable amounts
-        if (Math.abs(error) < .1) {
+        if (error<.1 && error>-.1) {
 //            d = 0;
             //If slides are at bottom give 0 power, otherwise slight power bc gravity
             if (slidePosInches() < .1) {
                 p = 0;
             } else {
-                p = .05;
+                p = .04;//*Math.signum(error)
             }
-        } else if (error>4 || error<-6) {
+        } else if (error>4 || error<-7) {
             //Slides set to max power
             p = Math.signum(error);
 //            d = 0;
         } else if (error>0){
             //with in 4 in but has to move up
             p = error*.3;
-//            d = (error-prevError)/(currentTime-prevTime)*.0;
-        } else {
-            //with in 6 in but has to move down
+            d = ((error - prevError) / slideTimer.seconds()) * .002;
+        } else if (error<-4){
+            //with in 6 and greater than 4 but has to move down
             p = error*.2;
-//            d = (error-prevError)/(currentTime-prevTime)*.0;
+            d = ((error-prevError)/slideTimer.seconds())*.005;
+        } else {//if (error<-2)
+            //with in 4 in but has to move down
+            p = error*.1-.15;
+            if (slidePosInches()>.2) {
+                d = ((error - prevError) / slideTimer.seconds()) * .007;//.007
+            }
         }
 
-        slideMotor.setPower(p);
+        slideMotor.setPower(p + d);
+        slideTimer.reset();
+        prevError = error;
 //        prevError = error;
 //        prevTime = currentTime;
 
