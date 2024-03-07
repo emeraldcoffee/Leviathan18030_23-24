@@ -75,6 +75,8 @@ import static java.lang.Double.isNaN;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
+import android.annotation.SuppressLint;
+
 @Config
 public class RobotConfig extends MecanumDrive {
 
@@ -174,7 +176,7 @@ public class RobotConfig extends MecanumDrive {
 
     public enum SlideHeight {
         BOTTOM(-.2),
-        PRELOAD_DROP(10.5),
+        PRELOAD_DROP(11),
         LOW(15),
         MEDIUM(21),
         HIGH(30);
@@ -357,7 +359,7 @@ public class RobotConfig extends MecanumDrive {
 
         if (followPurePursuitPath) {
             //localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY()
-            double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
+            double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading()+Math.PI/2);
 
             driveRobotCentric(driveTrainPowers[0], driveTrainPowers[1], driveTrainPowers[2]);
 //            setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
@@ -371,6 +373,11 @@ public class RobotConfig extends MecanumDrive {
 
         //Must be called to get new results
         clearBulkCache();
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String motorPowers() {
+        return String.format("%.2f, %.2f, %.2f, %.2f", frontLeft.getPower(), backLeft.getPower(), backRight.getPower(), frontRight.getPower());
     }
 
     public void exit() {

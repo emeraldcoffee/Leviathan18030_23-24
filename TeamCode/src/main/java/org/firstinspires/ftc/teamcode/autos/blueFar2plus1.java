@@ -153,12 +153,12 @@ public class blueFar2plus1 extends LinearOpMode {
 
         //3.88 stack 1, 14.68 stack 2
         TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(-38, 62, Math.toRadians(270)))
-                .splineToSplineHeading(new Pose2d(-39, 32.5, Math.toRadians(0)), Math.toRadians(270))
+                .splineToSplineHeading(new Pose2d(-41, 32.5, Math.toRadians(0)), Math.toRadians(270))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(-39, 37))
-                .addTemporalMarker(1.6, () -> {
+                .lineTo(new Vector2d(-41, 37))
+                .addTemporalMarker(1.7, () -> {
                     robot.rightPixelServo.setPosition(RobotConstants.rightIn);
                 })
                 .back(.1)
@@ -181,7 +181,7 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(50, 35.5), Math.toRadians(0))
-                .lineTo(new Vector2d(52.5, 34.5), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .lineTo(new Vector2d(50.5, 34.5), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                 .addTemporalMarker(9.3, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     robot.safeRelocalizeBackdrop();
@@ -199,7 +199,7 @@ public class blueFar2plus1 extends LinearOpMode {
                 })
                 .lineTo(new Vector2d(-33, 57))
                 .splineToConstantHeading(new Vector2d(-52, 37.5), Math.toRadians(250))
-                .splineToConstantHeading(new Vector2d(-57, 33.6), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(-57.2, 33.6), Math.toRadians(180))
                 .addTemporalMarker(13.7, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
@@ -223,7 +223,7 @@ public class blueFar2plus1 extends LinearOpMode {
                     robot.transferMotor.setPower(0);
                 })
                 .splineToConstantHeading(new Vector2d(50, 37), Math.toRadians(0))
-                .lineTo(new Vector2d(52.0, 37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
+                .lineTo(new Vector2d(51.0, 37), RobotConfig.getVelocityConstraint(25, Math.toRadians(200), 10.62), RobotConfig.getAccelerationConstraint(25))
                 .addTemporalMarker(21.7, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
                     robot.safeRelocalizeBackdrop();
