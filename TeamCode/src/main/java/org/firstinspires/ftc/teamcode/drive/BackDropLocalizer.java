@@ -5,12 +5,17 @@ import static java.lang.Math.abs;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.i2cDrivers.UltraSonic;
 import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 
 
 public class BackDropLocalizer extends TwoDistanceLocalizer{
+
+    ElapsedTime readingTimer = new ElapsedTime();
+
     Pose2d poseEstimate = new Pose2d();
 
     public enum RelBackdropPose{
@@ -22,6 +27,9 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
 
 
     private DistanceSensor leftDistanceSensor, rightDistanceSensor;
+    UltraSonic leftUltrasonic, rightUltrasonic;
+//    double leftReading, rightReading;
+
 
     private volatile double leftDistance, rightDistance;
 
@@ -32,8 +40,9 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     public BackDropLocalizer(HardwareMap hardwareMap) {
         leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "frontLeftDistanceSensor");
         rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "frontRightDistanceSensor");
-        leftDistanceSensor.getDistance(DistanceUnit.INCH);
 
+        leftUltrasonic = hardwareMap.get(UltraSonic.class, "leftUltra");
+        rightUltrasonic = hardwareMap.get(UltraSonic.class, "rightUltra");
     }
 
 //    Runnable updateLeft = () -> {
@@ -55,11 +64,41 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public Pose2d getPoseEstimate() {
-        return poseEstimate;
+        return new Pose2d(poseEstimate.getX(), 0, poseEstimate.getHeading());
     }
 
     public Pose2d getPoseEstimate(Pose2d pose) {
         return new Pose2d(poseEstimate.getX(), pose.getY(), poseEstimate.getHeading());
+    }
+
+    public double getLeftUltrasonic() {
+        return leftUltrasonic.reportRangeReadingIN()*Math.cos(poseEstimate.getHeading());
+    }
+
+    public double getRightUltrasonic() {
+        return rightUltrasonic.reportRangeReadingIN()*Math.cos(poseEstimate.getHeading());
+    }
+
+    public void takeLeftReading() {
+        readingTimer.reset();
+        leftUltrasonic.rangeReading();
+    }
+
+    public void takeRightReading() {
+        readingTimer.reset();
+        rightUltrasonic.rangeReading();
+    }
+
+    public boolean isReading() {
+        return readingTimer.milliseconds()<100;
+    }
+
+    public Pose2d getPoseEstimateLeft() {
+        return new Pose2d(poseEstimate.getX(), 61.8-getLeftUltrasonic(), poseEstimate.getHeading());
+    }
+
+    public Pose2d getPoseEstimateRight() {
+        return new Pose2d(poseEstimate.getX(), getRightUltrasonic()+61.8, poseEstimate.getHeading());
     }
 
     public boolean isInRange(Pose2d inputPose) {
