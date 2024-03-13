@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.util.Encoder;
 import java.util.ArrayList;
 import java.util.List;
 
-@Disabled
+
 @TeleOp
 public class testing extends LinearOpMode {
 
@@ -32,40 +32,41 @@ public class testing extends LinearOpMode {
         //Init code
         RobotConfig robot = new RobotConfig(hardwareMap);
 
-
         ElapsedTime runTime = new ElapsedTime();
 
         Telemetry.Item loopSpeed = telemetry.addData("Loop Speed", "");
+
+        Telemetry.Item distance = telemetry.addData("Backdrop estimate", "");
+        Telemetry.Item poseEstimate = telemetry.addData("Robot estimate", "");
+
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad prevGamepad1 = new Gamepad();
 
 
+
         waitForStart();
         if (isStopRequested()) return;
+        robot.setPoseEstimate(new Pose2d(-37, -62, Math.toRadians(90)));
 
         robot.stackHold(false);
         robot.stackArm(RobotConfig.StackArm.OUT);
 
+
         while (opModeIsActive() && !isStopRequested()) {
             currentGamepad1.copy(gamepad1);
 
-            if (currentGamepad1.left_bumper && !prevGamepad1.left_bumper) {
-                robot.grabFromStack(2);
-            } else if (currentGamepad1.right_bumper && !prevGamepad1.right_bumper) {
-                robot.grabFromStack(1);
-            }
+            if (!robot.isRightReading()) {
+                robot.updateBackdropLocalizer();
+                Pose2d leftPose = robot.getPoseEstimateRight();
+                robot.takeRightReading();
 
-            if (currentGamepad1.dpad_down && !prevGamepad1.dpad_down) {
-                robot.intakeMotor.setPower(1);
-                robot.transferMotor.setPower(1);
-            } else if (!currentGamepad1.dpad_down && prevGamepad1.dpad_down) {
-                robot.intakeMotor.setPower(0);
-                robot.transferMotor.setPower(0);
+                distance.setValue(String.format("x: %,3.2f, y: %,3.2f, heading: %,3.2f", leftPose.getX(), leftPose.getY(), leftPose.getHeading()));
             }
 
 
             robot.update();
+            poseEstimate.setValue(String.format("x: %,3.2f, y: %,3.2f, heading: %,3.2f", robot.getPoseEstimate().getX(), robot.getPoseEstimate().getY(), robot.getPoseEstimate().getHeading()));
 
             prevGamepad1.copy(currentGamepad1);
 

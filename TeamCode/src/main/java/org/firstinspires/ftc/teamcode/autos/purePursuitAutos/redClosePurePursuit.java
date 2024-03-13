@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autos.purePursuitAutos;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.arcrobotics.ftclib.purepursuit.Waypoint;
@@ -9,21 +10,38 @@ import com.arcrobotics.ftclib.purepursuit.waypoints.GeneralWaypoint;
 import com.arcrobotics.ftclib.purepursuit.waypoints.StartWaypoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.autos.redFar2plus1;
 import org.firstinspires.ftc.teamcode.drive.AutoWayPoints;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.RobotConfig;
+import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.robot.PassData;
+import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
 public class redClosePurePursuit extends LinearOpMode {
+    //How long it take the robot to complete 1 cycle
+    double cycleTime = 10;
+
+    //How long it takes the robot to park
+    double parkTime = 1;
+    String pos = "";
+
     enum PathControl {
         CAMERA,
         WAIT,
         INIT_PATH,
         CYCLE_STACK,
-        CYCLE_BACKDROP
+        CYCLE_BACKDROP,
+        FINISHED
     }
 
     PathControl pathControl = PathControl.CAMERA;
@@ -35,23 +53,99 @@ public class redClosePurePursuit extends LinearOpMode {
         RobotConfig robot  = new RobotConfig(hardwareMap);
         robot.ResetSlides();
 
+
         Telemetry.Item detectedPos = telemetry.addData("Position", "No detection");
         Telemetry.Item IMU = telemetry.addData("Current IMU", robot.getCurrentIMU().toString());
-        Telemetry.Item Park = telemetry.addData("Park Position", PassData.roadrunnerParkPosition.toString());
+        Telemetry.Item Pathing = telemetry.addData("Park Position", PassData.roadrunnerParkPosition.toString() + " Cross Position: " + PassData.crossStackSide.toString());
 
-//        while (opModeInInit() && init) {
-//            if (gamepad1.back) {
-//                init = false;
-//            }
-//
-//            telemetry.update();
-//        }
+        ElapsedTime runTimer = new ElapsedTime();
+
+
+        ColorMask pipeline = new ColorMask();
+
+        robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
+        robot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            public void onOpened() {
+                pipeline.setAlliance("Red");
+                robot.webcam.setPipeline(pipeline);
+
+                robot.webcam.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error: ", errorCode);
+            }
+        });
+
+        while (opModeInInit() && init) {
+            if (gamepad1.dpad_left) {
+                PassData.stackPosition = AutoWayPoints.StackPosition.WALL;
+                PassData.dropPosition = AutoWayPoints.DropPosition.WALL;
+                PassData.crossStackSide = AutoWayPoints.CrossStackSide.WALL;
+                PassData.crossBackdropSide = AutoWayPoints.CrossBackdropSide.WALL;
+            } else if (gamepad1.dpad_right) {
+                PassData.stackPosition = AutoWayPoints.StackPosition.WALL;
+                PassData.dropPosition = AutoWayPoints.DropPosition.WALL;
+                PassData.crossStackSide = AutoWayPoints.CrossStackSide.WALL;
+                PassData.crossBackdropSide = AutoWayPoints.CrossBackdropSide.WALL;
+            }
+
+            if (gamepad1.x) {
+                PassData.parkPosition = AutoWayPoints.ParkPosition.WALL;
+            } else if (gamepad1.b) {
+                PassData.parkPosition = AutoWayPoints.ParkPosition.CENTER;
+            }
+
+            if (gamepad1.back) {
+                init = false;
+            }
+
+            Pathing.setValue(PassData.roadrunnerParkPosition.toString() + " Cross Position: " + PassData.crossStackSide.toString());
+            telemetry.update();
+        }
+
+        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
+                .lineTo(new Vector2d(12, -45))
+                .splineToConstantHeading(new Vector2d(8.5, -36), Math.toRadians(180))
+                .lineTo(new Vector2d(8, -36))
+                .addTemporalMarker(1.5, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .lineTo(new Vector2d(20, -36))
+                .splineToSplineHeading(new Pose2d(45, -31, Math.toRadians(0)), Math.toRadians(0))
+                .lineTo(new Vector2d(53, -31))
+                .addTemporalMarker(4.1, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .waitSeconds(.3)
+                .build();
+
+        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
+                .lineTo(new Vector2d(12, -60))
+                .splineToSplineHeading(new Pose2d(15, -32), Math.toRadians(90))
+                .waitSeconds(.3)
+                .strafeRight(1)
+                .addTemporalMarker(1.75, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .splineToConstantHeading(new Vector2d(45, -37.1), Math.toRadians(0))
+                .lineTo(new Vector2d(52, -37.1))
+                .addTemporalMarker(4.5, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .waitSeconds(.3)
+                .build();
+
+        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
+                .lineTo(new Vector2d(12, -61))
+                .splineToLinearHeading(new Pose2d(22.7, -40.2), Math.toRadians(90))
+                .lineTo(new Vector2d(23, -48.2))
+                .addTemporalMarker(2.1, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .lineTo(new Vector2d(26, -48))
+                .splineToConstantHeading(new Vector2d(47, -41.5), Math.toRadians(0))
+                .lineTo(new Vector2d(52, -41.5))
+                .addTemporalMarker(4.6, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .waitSeconds(.4)
+                .build();
 
         Path firstCycle = new Path(
-                new StartWaypoint(52, -41.5),
+                new StartWaypoint(52, -37.1),
                 new GeneralWaypoint(PassData.crossBackdropSide.red, 10, .5, Math.toRadians(1)),
                 new GeneralWaypoint(PassData.crossStackSide.red, 10, .5, Math.toRadians(1)),
-                new EndWaypoint(PassData.stackPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .5, Math.toRadians(1))
+                new EndWaypoint(PassData.stackPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .2, Math.toRadians(1))
         );
 
 
@@ -59,25 +153,27 @@ public class redClosePurePursuit extends LinearOpMode {
                 new StartWaypoint(PassData.stackPosition.red),
                 new GeneralWaypoint(PassData.crossStackSide.red, 10, .5, Math.toRadians(1)),
                 new GeneralWaypoint(PassData.crossBackdropSide.red, 10, .5, Math.toRadians(1)),
-                new EndWaypoint(PassData.crossBackdropSide.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .5, Math.toRadians(1))
+                new EndWaypoint(PassData.dropPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .2, Math.toRadians(1))
         );
 
         Path returnCycle = new Path(
-                new StartWaypoint(52, -41.5),
+                new StartWaypoint(PassData.dropPosition.red),
                 new GeneralWaypoint(PassData.crossBackdropSide.red, 10, .5, Math.toRadians(1)),
                 new GeneralWaypoint(PassData.crossStackSide.red, 10, .5, Math.toRadians(1)),
-                new EndWaypoint(PassData.stackPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .5, Math.toRadians(1))
+                new EndWaypoint(PassData.stackPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .2, Math.toRadians(1))
         );
 
         Path park = new Path(
                 new StartWaypoint(PassData.dropPosition.red),
                 new GeneralWaypoint(AutoWayPoints.ParkPosition.BACK.red, 10, .5, Math.toRadians(1)),
-                new EndWaypoint(PassData.parkPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, .5, Math.toRadians(1))
+                new EndWaypoint(PassData.parkPosition.red, DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, 10, 1, Math.toRadians(3))
         );
 
 
 
         waitForStart();
+        runTimer.reset();
+
         robot.update();
         robot.setPoseEstimate(new Pose2d(52, -41.5, 0));
 
@@ -98,9 +194,74 @@ public class redClosePurePursuit extends LinearOpMode {
 //            robot.update();
 //        }
 
+        if (true) return;
 
-//        while (!isStopRequested()) {
-//        }
+        while (!isStopRequested()) {
+            switch (pathControl) {
+                case CAMERA:
+                    //Saves camera reading
+                    if (runTimer.seconds()>.5) {
+                        pos = pipeline.getPos();
+                        pathControl = PathControl.WAIT;
+                    }
+                    break;
+                case WAIT:
+                    //Use to make auto wait for alliance partner
+                    if (runTimer.seconds()>.5) {
+                        switch (pos) {
+                            case "left":
+                                robot.followTrajectorySequenceAsync(left);
+                                detectedPos.setValue("Left");
+                                break;
+                            case "center":
+                                robot.followTrajectorySequenceAsync(center);
+                                detectedPos.setValue("Center");
+                                break;
+                            case "right":
+                                robot.followTrajectorySequenceAsync(right);
+                                detectedPos.setValue("Right");
+                                break;
+                            default:
+                                robot.followTrajectorySequenceAsync(center);
+                                detectedPos.setValue("Default center (No detection)");
+                                break;
+                        }
+                        pathControl = PathControl.INIT_PATH;
+                    }
+                    break;
+                case INIT_PATH:
+                    if (!robot.isBusy()) {
+                        returnCycle.set(0, new StartWaypoint(robot.getPoseEstimate().getX(), robot.getPoseEstimate().getY()));
+                        robot.followPurePursuitPath(returnCycle);
+                        pathControl = PathControl.CYCLE_BACKDROP;
+                    }
+                    break;
+                case CYCLE_BACKDROP:
+                    if (robot.isPurePursuitPathFinished()) {
+                        robot.followPurePursuitPath(placeCycle);
+                        pathControl = PathControl.CYCLE_STACK;
+                    }
+                    break;
+                case CYCLE_STACK:
+                    if (robot.isPurePursuitPathFinished()) {
+                        if (runTimer.seconds() < 30 - cycleTime){
+                            robot.followPurePursuitPath(returnCycle);
+                            pathControl = PathControl.CYCLE_BACKDROP;
+                        } else if (runTimer.seconds() < 30 - parkTime) {
+                            robot.followPurePursuitPath(park);
+                            pathControl = PathControl.FINISHED;
+                        } else {
+                            pathControl = PathControl.FINISHED;
+                        }
+                    }
+                        break;
+            }
+
+            IMU.setValue(robot.getCurrentIMU().toString());
+
+            robot.update();
+            telemetry.update();
+        }
 
     }
 

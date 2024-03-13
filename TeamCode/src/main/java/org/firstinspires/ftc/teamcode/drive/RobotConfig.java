@@ -11,6 +11,8 @@ import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.drivebase.RobotDrive;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.purepursuit.Path;
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMUNew;
@@ -73,6 +75,8 @@ import static java.lang.Double.isNaN;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
+import android.annotation.SuppressLint;
+
 @Config
 public class RobotConfig extends MecanumDrive {
 
@@ -104,6 +108,7 @@ public class RobotConfig extends MecanumDrive {
     List<LynxModule> allHubs;
 
     ElapsedTime stackTimer = new ElapsedTime();
+    ElapsedTime slideTimer = new ElapsedTime();
 
     //Hardware Components
     public DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -113,6 +118,8 @@ public class RobotConfig extends MecanumDrive {
     public List<DcMotorEx> allMotors;
 
     public double targetSlidePos = 0;//, prevError = 0, prevTime = 0;
+
+    public double prevError = 0;
 
     public Encoder slideEncoder;
     public final double slideToInches = 1.6 * Math.PI / 8192;
@@ -169,7 +176,7 @@ public class RobotConfig extends MecanumDrive {
 
     public enum SlideHeight {
         BOTTOM(-.2),
-        PRELOAD_DROP(12),
+        PRELOAD_DROP(11),
         LOW(15),
         MEDIUM(21),
         HIGH(30);
@@ -342,7 +349,7 @@ public class RobotConfig extends MecanumDrive {
         updateLift();
         updateIntake();
 
-        if (followRoadrunnerPath) {//followRoadrunnerPath
+        if (true) {//followRoadrunnerPath
             DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
             if (signal != null) setDriveSignal(signal);
             if (!isBusy()) {
@@ -352,15 +359,25 @@ public class RobotConfig extends MecanumDrive {
 
         if (followPurePursuitPath) {
             //localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY()
-            double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading());
-            setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
+            double[] driveTrainPowers = currentPath.loop(localizer.getPoseEstimate().getX(), localizer.getPoseEstimate().getY(), localizer.getPoseEstimate().getHeading()+Math.PI/2);
 
-            //stops the path from used once it is done
-            followPurePursuitPath = !currentPath.isFinished();
+            driveRobotCentric(driveTrainPowers[0], driveTrainPowers[1], driveTrainPowers[2]);
+//            setMecanumDrive(-driveTrainPowers[1], -driveTrainPowers[0], -driveTrainPowers[2]);
+
+            //stops the path from being used once it is done
+            if (currentPath.isFinished()) {
+                followPurePursuitPath = false;
+                setMotorPowers(0, 0 ,0, 0);
+            }
         }
 
         //Must be called to get new results
         clearBulkCache();
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String motorPowers() {
+        return String.format("%.2f, %.2f, %.2f, %.2f", frontLeft.getPower(), backLeft.getPower(), backRight.getPower(), frontRight.getPower());
     }
 
     public void exit() {
@@ -453,7 +470,7 @@ public class RobotConfig extends MecanumDrive {
 
     //Slide code
     public void setTargetSlidePos(double targetPos) {
-        targetSlidePos = Range.clip(targetPos, -3, 26);//35
+        targetSlidePos = Range.clip(targetPos, 0, 35);//35
     }
 
     public void ResetSlides() {
@@ -464,7 +481,7 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void setTargetSlidePos(SlideHeight height) {
-        targetSlidePos = Range.clip(height.height, -3, 26);
+        targetSlidePos = height.height;//Range.clip(height.height, -3, 26)
     }
 
     public void rawSetTargetSlidePos(double targetPos) {
@@ -483,32 +500,40 @@ public class RobotConfig extends MecanumDrive {
         //Error is positive when slide have to up
         double error = targetSlidePos - slidePosInches();
 
-        double p;//d
+        double p, d = 0;
 
         //Checks if error is in acceptable amounts
-        if (Math.abs(error) < .1) {
+        if (error<.1 && error>-.1) {
 //            d = 0;
             //If slides are at bottom give 0 power, otherwise slight power bc gravity
             if (slidePosInches() < .1) {
                 p = 0;
             } else {
-                p = .05;
+                p = .04;//*Math.signum(error)
             }
-        } else if (error>4 || error<-6) {
+        } else if (error>4 || error<-7) {
             //Slides set to max power
             p = Math.signum(error);
 //            d = 0;
         } else if (error>0){
             //with in 4 in but has to move up
             p = error*.3;
-//            d = (error-prevError)/(currentTime-prevTime)*.0;
-        } else {
-            //with in 6 in but has to move down
+            d = ((error - prevError) / slideTimer.seconds()) * .002;
+        } else if (error<-4){
+            //with in 6 and greater than 4 but has to move down
             p = error*.2;
-//            d = (error-prevError)/(currentTime-prevTime)*.0;
+            d = ((error-prevError)/slideTimer.seconds())*.005;
+        } else {//if (error<-2)
+            //with in 4 in but has to move down
+            p = error*.1-.15;
+            if (slidePosInches()>.2) {
+                d = ((error - prevError) / slideTimer.seconds()) * .007;//.007
+            }
         }
 
-        slideMotor.setPower(p);
+        slideMotor.setPower(p + d);
+        slideTimer.reset();
+        prevError = error;
 //        prevError = error;
 //        prevTime = currentTime;
 
@@ -596,6 +621,38 @@ public class RobotConfig extends MecanumDrive {
 
     public Pose2d getBackdropPoseEstimate() {
         return backDropLocalizer.getPoseEstimate(localizer.getPoseEstimate());
+    }
+
+    public double getLeftUltrasonic() {
+        return backDropLocalizer.getLeftUltrasonic();
+    }
+
+    public double getRightUltrasonic() {
+        return backDropLocalizer.getRightUltrasonic();
+    }
+
+    public void takeLeftReading() {
+        backDropLocalizer.takeLeftReading();
+    }
+
+    public void takeRightReading() {
+        backDropLocalizer.takeRightReading();
+    }
+
+    public boolean isLeftReading() {
+        return backDropLocalizer.isLeftReading();
+    }
+
+    public boolean isRightReading() {
+        return backDropLocalizer.isRightReading();
+    }
+
+    public Pose2d getPoseEstimateLeft() {
+        return backDropLocalizer.getPoseEstimateLeft();
+    }
+
+    public Pose2d getPoseEstimateRight() {
+        return backDropLocalizer.getPoseEstimateRight();
     }
 
     public void relocalizeBackdrop() {
@@ -779,11 +836,11 @@ public class RobotConfig extends MecanumDrive {
     }
 
     @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        frontLeft.setPower(v);
-        backLeft.setPower(v1);
-        backRight.setPower(v2);
-        frontRight.setPower(v3);
+    public void setMotorPowers(double fL, double bL, double bR, double fR) {
+        frontLeft.setPower(fL);
+        backLeft.setPower(bL);
+        backRight.setPower(bR);
+        frontRight.setPower(fR);
     }
 
     //
@@ -866,5 +923,77 @@ public class RobotConfig extends MecanumDrive {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 
+    //Pure Pursuit methods
+    public void driveRobotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
+        driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, 0.0);
+    }
 
+    protected void normalize(double[] wheelSpeeds) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        if (maxMagnitude > 1) {
+            for (int i = 0; i < wheelSpeeds.length; i++) {
+                wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude);
+            }
+        }
+
+    }
+
+    protected void normalize(double[] wheelSpeeds, double magnitude) {
+        double maxMagnitude = Math.abs(wheelSpeeds[0]);
+        for (int i = 1; i < wheelSpeeds.length; i++) {
+            double temp = Math.abs(wheelSpeeds[i]);
+            if (maxMagnitude < temp) {
+                maxMagnitude = temp;
+            }
+        }
+        for (int i = 0; i < wheelSpeeds.length; i++) {
+            wheelSpeeds[i] = (wheelSpeeds[i] / maxMagnitude) * magnitude;
+        }
+
+    }
+
+    public void driveFieldCentric(double strafeSpeed, double forwardSpeed,
+                                  double turnSpeed, double gyroAngle) {
+        strafeSpeed = Range.clip(strafeSpeed, -1, 1);
+        forwardSpeed = Range.clip(forwardSpeed, -1, 1);
+        turnSpeed = Range.clip(turnSpeed, -1, 1);
+
+        Vector2d input = new Vector2d(strafeSpeed, forwardSpeed);
+        input = input.rotateBy(-gyroAngle);
+
+        double theta = input.angle();
+
+        double[] wheelSpeeds = new double[4];
+        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] = Math.sin(theta + Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] = Math.sin(theta - Math.PI / 4);
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = Math.sin(theta + Math.PI / 4);
+
+        normalize(wheelSpeeds, input.magnitude());
+
+        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] += turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] -= turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] += turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] -= turnSpeed;
+
+        normalize(wheelSpeeds);
+
+        driveWithMotorPowers(
+                wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value],
+                wheelSpeeds[RobotDrive.MotorType.kFrontRight.value],
+                wheelSpeeds[RobotDrive.MotorType.kBackLeft.value],
+                wheelSpeeds[RobotDrive.MotorType.kBackRight.value]
+        );
+    }
+
+    public void driveWithMotorPowers(double frontLeftSpeed, double frontRightSpeed,
+                                     double backLeftSpeed, double backRightSpeed) {
+        setMotorPowers(frontLeftSpeed, backLeftSpeed, backRightSpeed, frontRightSpeed);
+    }
 }
