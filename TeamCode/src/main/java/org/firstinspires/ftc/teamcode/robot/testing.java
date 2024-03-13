@@ -56,7 +56,7 @@ public class testing extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             currentGamepad1.copy(gamepad1);
 
-            if (!robot.isReading()) {
+            if (!robot.isRightReading()) {
                 robot.updateBackdropLocalizer();
                 Pose2d leftPose = robot.getPoseEstimateRight();
                 robot.takeRightReading();

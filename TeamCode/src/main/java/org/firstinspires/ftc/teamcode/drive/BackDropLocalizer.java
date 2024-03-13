@@ -5,6 +5,7 @@ import static java.lang.Math.abs;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -13,8 +14,6 @@ import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 
 
 public class BackDropLocalizer extends TwoDistanceLocalizer{
-
-    ElapsedTime readingTimer = new ElapsedTime();
 
     Pose2d poseEstimate = new Pose2d();
 
@@ -27,9 +26,9 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
 
 
     private DistanceSensor leftDistanceSensor, rightDistanceSensor;
-    UltraSonic leftUltrasonic, rightUltrasonic;
-//    double leftReading, rightReading;
+    private UltraSonic leftUltrasonic, rightUltrasonic;
 
+    private TouchSensor leftReader, rightReader;
 
     private volatile double leftDistance, rightDistance;
 
@@ -80,17 +79,19 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public void takeLeftReading() {
-        readingTimer.reset();
         leftUltrasonic.rangeReading();
     }
 
     public void takeRightReading() {
-        readingTimer.reset();
         rightUltrasonic.rangeReading();
     }
 
-    public boolean isReading() {
-        return readingTimer.milliseconds()<100;
+    public boolean isLeftReading() {
+        return leftReader.isPressed();
+    }
+
+    public boolean isRightReading() {
+        return rightReader.isPressed();
     }
 
     public Pose2d getPoseEstimateLeft() {

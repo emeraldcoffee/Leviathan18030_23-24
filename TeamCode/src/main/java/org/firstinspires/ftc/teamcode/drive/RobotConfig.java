@@ -639,8 +639,12 @@ public class RobotConfig extends MecanumDrive {
         backDropLocalizer.takeRightReading();
     }
 
-    public boolean isReading() {
-        return backDropLocalizer.isReading();
+    public boolean isLeftReading() {
+        return backDropLocalizer.isLeftReading();
+    }
+
+    public boolean isRightReading() {
+        return backDropLocalizer.isRightReading();
     }
 
     public Pose2d getPoseEstimateLeft() {
