@@ -24,6 +24,7 @@ public class redClose2Plus4 extends LinearOpMode {
     enum Camera {
         WAIT,
         SAVE,
+        FIRST_DROP,
         FINISHED
     }
 
@@ -60,57 +61,7 @@ public class redClose2Plus4 extends LinearOpMode {
             }
         });
 
-        TrajectorySequence cycles = robot.trajectorySequenceBuilder(new Pose2d(-58.1, -11.5, 0))
-                .waitSeconds(1)
-                .addTemporalMarker(.3, () -> {
-                    robot.grabFromStack(2);
-                })
-                .lineTo(new Vector2d(24, -11.5))
-                .addTemporalMarker(3.4, () -> {
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-                    robot.intakeMotor.setPower(0);
-                    robot.transferMotor.setPower(0);
-                })
-                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-                .lineTo(new Vector2d(51.2, -30))
-                .waitSeconds(.5)
-                .addTemporalMarker(5.7, () -> {
-                    robot.dropper(RobotConfig.Dropper.PARTIAL);
-//                    robot.safeRelocalizeBackdrop();
-                })
-                .back(.1)
-                .addTemporalMarker(6.7, () -> {//8.5
-                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
-                    robot.dropper(RobotConfig.Dropper.CLOSED);
-                })
-                //cycle 2
-                .splineToConstantHeading(new Vector2d(24, -11.8), Math.toRadians(180))
-                .addTemporalMarker(8.9, () -> {
-                    robot.intakeMotor.setPower(1);
-                    robot.transferMotor.setPower(1);
-                    robot.stackArm(RobotConfig.StackArm.OUT);
-                })
-                .lineTo(new Vector2d(-57.7, -11.8))
-                .waitSeconds(1)
-                .addTemporalMarker(9.8, () -> {
-                    robot.grabFromStack(2);
-                })
-//                .lineTo(new Vector2d(24, -11.8))
-//                .addTemporalMarker(13.9, () -> {
-//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-//                    robot.intakeMotor.setPower(0);
-//                    robot.transferMotor.setPower(0);
-//                })
-//                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-////                .lineTo(new Vector2d(51, -30))
-//                .waitSeconds(.5)
-//                .back(8)
-//                .addTemporalMarker(14.8, () -> {
-//                    robot.dropper(RobotConfig.Dropper.PARTIAL);
-////                    robot.safeRelocalizeBackdrop();
-//                })
 
-                .build();
 
         //4.57 stack 1, 15.09 stack 2
         TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, -62, Math.toRadians(90)))
@@ -209,9 +160,12 @@ public class redClose2Plus4 extends LinearOpMode {
                 .lineTo(new Vector2d(17,-36))
                 .addTemporalMarker(1.8, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
                 .lineTo(new Vector2d(18, -36))
-                .splineToConstantHeading(new Vector2d(45, -36.6), Math.toRadians(0))
-                .lineTo(new Vector2d(51.5, -36.6))
-                .addTemporalMarker(4.25, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+                .splineToConstantHeading(new Vector2d(45, -36.75), Math.toRadians(0))
+                .lineTo(new Vector2d(51.5, -36.75))
+                .addTemporalMarker(4.25, () -> {
+                    robot.dropper(RobotConfig.Dropper.OPEN);
+                    robot.relocalizeRight();
+                })
                 .waitSeconds(.3)
                 .back(.1)
                 .addTemporalMarker(5.2, () -> {
@@ -220,62 +174,17 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.transferMotor.setPower(.3);
                 })
                 //cycle 1
-                .splineToConstantHeading(new Vector2d(24, -11.5), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, -11.9), Math.toRadians(180))
                 .addTemporalMarker(8.0, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.3, -11.5))
-//                .addTemporalMarker(8.6, () -> robot.followTrajectorySequence(cycles))
-//                .waitSeconds(1)
-//                .addTemporalMarker(8.9, () -> {
-//                    robot.grabFromStack(2);
-//                })
-//                .lineTo(new Vector2d(24, -11.5))
-//                .addTemporalMarker(12.0, () -> {
-//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-//                    robot.intakeMotor.setPower(0);
-//                    robot.transferMotor.setPower(0);
-//                })
-//                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-//                .lineTo(new Vector2d(51.2, -30))
-//                .waitSeconds(.5)
-//                .addTemporalMarker(14.3, () -> {
-//                    robot.dropper(RobotConfig.Dropper.PARTIAL);
-////                    robot.safeRelocalizeBackdrop();
-//                })
-//                .back(.1)
-//                .addTemporalMarker(15.3, () -> {//8.5
-//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
-//                    robot.dropper(RobotConfig.Dropper.CLOSED);
-//                })
-//                //cycle 2
-//                .splineToConstantHeading(new Vector2d(24, -11.8), Math.toRadians(180))
-//                .addTemporalMarker(17.5, () -> {
-//                    robot.intakeMotor.setPower(1);
-//                    robot.transferMotor.setPower(1);
-//                    robot.stackArm(RobotConfig.StackArm.OUT);
-//                })
-//                .lineTo(new Vector2d(-57.7, -11.8))
-//                .waitSeconds(1)
-//                .addTemporalMarker(18.4, () -> {
-//                    robot.grabFromStack(2);
-//                })
-//                .lineTo(new Vector2d(24, -11.8))
-//                .addTemporalMarker(21.7, () -> {
-//                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
-//                    robot.intakeMotor.setPower(0);
-//                    robot.transferMotor.setPower(0);
-//                })
-//                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-//                .lineTo(new Vector2d(51, -30))
-//                .waitSeconds(.5)
-//                .back(8)
-//                .addTemporalMarker(23.4, () -> {
-//                    robot.dropper(RobotConfig.Dropper.PARTIAL);
-////                    robot.safeRelocalizeBackdrop();
-//                })
+                .lineTo(new Vector2d(-59.2, -11.9))
+                .waitSeconds(1)
+                .addTemporalMarker(8.7, () -> {
+                    robot.grabFromStack(2);
+                })
                 .build();
 
         //3.38 stack 1, 14.46 stack 2
@@ -368,6 +277,54 @@ public class redClose2Plus4 extends LinearOpMode {
                 .waitSeconds(1.5)
                 .build();
 
+        TrajectorySequence cycles = robot.trajectorySequenceBuilder(center.end())
+                .lineTo(new Vector2d(24, -11.9))
+                .addTemporalMarker(2.2, () -> {
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+                    robot.intakeMotor.setPower(0);
+                    robot.transferMotor.setPower(0);
+                })
+                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
+                .lineTo(new Vector2d(51.2, -30))
+                .waitSeconds(.5)
+                .addTemporalMarker(4.3, () -> {
+                    robot.dropper(RobotConfig.Dropper.PARTIAL);
+                    robot.relocalizeRight();
+                })
+                .back(.1)
+                .addTemporalMarker(5.5, () -> {//8.5
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
+                    robot.dropper(RobotConfig.Dropper.CLOSED);
+                })
+                //cycle 2
+                .splineToConstantHeading(new Vector2d(24, -12.1), Math.toRadians(180))
+                .addTemporalMarker(7.7, () -> {
+                    robot.intakeMotor.setPower(1);
+                    robot.transferMotor.setPower(1);
+                    robot.stackArm(RobotConfig.StackArm.OUT);
+                })
+                .lineTo(new Vector2d(-58.5, -12.1))
+                .waitSeconds(1)
+                .addTemporalMarker(8.7, () -> {
+                    robot.grabFromStack(2);
+                })
+                .lineTo(new Vector2d(24, -12.1))
+                .addTemporalMarker(12.5, () -> {
+                    robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
+                    robot.intakeMotor.setPower(0);
+                    robot.transferMotor.setPower(0);
+                })
+                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
+                .lineTo(new Vector2d(51, -30))
+                .waitSeconds(.5)
+                .back(8)
+                .addTemporalMarker(13.6, () -> {
+                    robot.dropper(RobotConfig.Dropper.PARTIAL);
+//                    robot.safeRelocalizeBackdrop();
+                })
+
+                .build();
+
 
 
         ElapsedTime cameraDelayTimer = new ElapsedTime();
@@ -422,7 +379,13 @@ public class redClose2Plus4 extends LinearOpMode {
                             detectedPos.setValue("Default center (No detection)");
                             break;
                     }
-                    camera = Camera.FINISHED;
+                    camera = Camera.FIRST_DROP;
+                    break;
+                case FIRST_DROP:
+                    if (!robot.isBusy()) {
+                        robot.followTrajectorySequenceAsync(cycles);
+                        camera = Camera.FINISHED;
+                    }
                     break;
                 case FINISHED:
                     break;

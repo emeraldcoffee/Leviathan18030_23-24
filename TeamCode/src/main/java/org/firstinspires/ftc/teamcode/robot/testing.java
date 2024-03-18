@@ -34,10 +34,13 @@ public class testing extends LinearOpMode {
 
         ElapsedTime runTime = new ElapsedTime();
 
+        ElapsedTime readingTimer = new ElapsedTime();
+
         Telemetry.Item loopSpeed = telemetry.addData("Loop Speed", "");
 
         Telemetry.Item distance = telemetry.addData("Backdrop estimate", "");
         Telemetry.Item poseEstimate = telemetry.addData("Robot estimate", "");
+        Telemetry.Item isReading = telemetry.addData("isReading", "");
 
 
         Gamepad currentGamepad1 = new Gamepad();
@@ -47,7 +50,7 @@ public class testing extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
-        robot.setPoseEstimate(new Pose2d(-37, -62, Math.toRadians(90)));
+        robot.setPoseEstimate(new Pose2d(12, -62, Math.toRadians(90)));
 
         robot.stackHold(false);
         robot.stackArm(RobotConfig.StackArm.OUT);
@@ -56,14 +59,15 @@ public class testing extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             currentGamepad1.copy(gamepad1);
 
-            if (!robot.isRightReading()) {
+            if (readingTimer.seconds()>1) {
                 robot.updateBackdropLocalizer();
                 Pose2d leftPose = robot.getPoseEstimateRight();
                 robot.takeRightReading();
-
+                readingTimer.reset();
                 distance.setValue(String.format("x: %,3.2f, y: %,3.2f, heading: %,3.2f", leftPose.getX(), leftPose.getY(), leftPose.getHeading()));
             }
 
+            isReading.setValue(robot.isRightReading());
 
             robot.update();
             poseEstimate.setValue(String.format("x: %,3.2f, y: %,3.2f, heading: %,3.2f", robot.getPoseEstimate().getX(), robot.getPoseEstimate().getY(), robot.getPoseEstimate().getHeading()));

@@ -42,6 +42,9 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
 
         leftUltrasonic = hardwareMap.get(UltraSonic.class, "leftUltra");
         rightUltrasonic = hardwareMap.get(UltraSonic.class, "rightUltra");
+
+        leftReader = hardwareMap.get(TouchSensor.class, "leftReader");
+        rightReader = hardwareMap.get(TouchSensor.class, "rightReader");
     }
 
 //    Runnable updateLeft = () -> {
@@ -59,7 +62,7 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
         double heading = -Math.atan((leftDistance-rightDistance)/7.673);
         double lateralDistance = ((leftDistance+rightDistance)/2-6.524)*Math.cos(heading);
 //should read 51.7
-        poseEstimate = new Pose2d(lateralDistance+61.75, poseEstimate.getY(), heading);
+        poseEstimate = new Pose2d(lateralDistance+61.3, poseEstimate.getY(), heading);
     }
 
     public Pose2d getPoseEstimate() {
@@ -87,11 +90,11 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public boolean isLeftReading() {
-        return leftReader.isPressed();
+        return !leftReader.isPressed();
     }
 
     public boolean isRightReading() {
-        return rightReader.isPressed();
+        return !rightReader.isPressed();
     }
 
     public Pose2d getPoseEstimateLeft() {
@@ -99,7 +102,7 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public Pose2d getPoseEstimateRight() {
-        return new Pose2d(poseEstimate.getX(), getRightUltrasonic()+61.8, poseEstimate.getHeading());
+        return new Pose2d(poseEstimate.getX(), getRightUltrasonic()-63, poseEstimate.getHeading());
     }
 
     public boolean isInRange(Pose2d inputPose) {

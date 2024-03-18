@@ -655,6 +655,33 @@ public class RobotConfig extends MecanumDrive {
         return backDropLocalizer.getPoseEstimateRight();
     }
 
+    public Pose2d getFreshPoseEstimateLeft() {
+        updateBackdropLocalizer();
+        takeLeftReading();
+        while (isLeftReading()) {}
+        return backDropLocalizer.getPoseEstimateLeft();
+    }
+
+    public Pose2d getFreshPoseEstimateRight() {
+        ElapsedTime waitTimer = new ElapsedTime();
+        waitTimer.reset();
+        updateBackdropLocalizer();
+        takeRightReading();
+
+        while (waitTimer.milliseconds()<150) {}
+
+//        while (isRightReading()) {}
+        return backDropLocalizer.getPoseEstimateRight();
+    }
+
+    public void relocalizeLeft() {
+        setPoseEstimate(getFreshPoseEstimateLeft());
+    }
+
+    public void relocalizeRight() {
+//        setPoseEstimate(getFreshPoseEstimateRight());
+    }
+
     public void relocalizeBackdrop() {
         updateBackdropLocalizer();
         localizer.setPoseEstimate(getBackdropPoseEstimate());
