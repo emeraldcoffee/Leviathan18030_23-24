@@ -66,8 +66,8 @@ public class redFar2plus1 extends LinearOpMode {
         });
 
         //4.57 stack 1, 15.09 stack 2
-        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
-                .splineToSplineHeading(new Pose2d(-36, -35, Math.toRadians(0)), Math.toRadians(90))
+        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(-41.7, -62, Math.toRadians(90)))
+                .splineToSplineHeading(new Pose2d(-41.7, -35, Math.toRadians(0)), Math.toRadians(90))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
@@ -152,7 +152,7 @@ public class redFar2plus1 extends LinearOpMode {
                 .build();
 
         //3.88 stack 1, 14.68 stack 2
-        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
+        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(-41.7, -62, Math.toRadians(90)))
                 .splineToSplineHeading(new Pose2d(-39, -32.4, Math.toRadians(0)), Math.toRadians(90))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
@@ -238,7 +238,7 @@ public class redFar2plus1 extends LinearOpMode {
                 .build();
 
         //3.38 stack 1, 14.46 stack 2
-        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(-35, -62, Math.toRadians(90)))
+        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(-41.7, -62, Math.toRadians(90)))
                 .splineToConstantHeading(new Vector2d(-51, -35), Math.toRadians(90))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
@@ -337,7 +337,7 @@ public class redFar2plus1 extends LinearOpMode {
         robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
 
         robot.update();
-        robot.setPoseEstimate(new Pose2d(-35, -62, Math.toRadians(90)));
+        robot.setPoseEstimate(new Pose2d(-41.7, -62, Math.toRadians(90)));
 
         cameraDelayTimer.reset();
 

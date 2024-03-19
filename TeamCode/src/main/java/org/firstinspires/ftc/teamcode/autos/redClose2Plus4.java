@@ -95,7 +95,7 @@ public class redClose2Plus4 extends LinearOpMode {
                 .addTemporalMarker(2.0, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
                 .lineTo(new Vector2d(26, -47))
                 .splineToConstantHeading(new Vector2d(47, -42.7), Math.toRadians(0))
-                .lineTo(new Vector2d(51.5, -42.7))
+                .lineTo(new Vector2d(51.7, -42.7))
                 .addTemporalMarker(4.5, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     backdropReading1.setValue(robot.relocalizeRight());
@@ -167,7 +167,7 @@ public class redClose2Plus4 extends LinearOpMode {
                 .addTemporalMarker(4.5, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     backdropReading1.setValue(robot.isRightReading());
-                    robot.setPoseEstimate(robot.getPoseEstimate().plus(new Pose2d(-.8, 0, 0)));
+//                    robot.setPoseEstimate(robot.getPoseEstimate().plus(new Pose2d(-.8, 0, 0)));
                 })
                 .waitSeconds(.3)
                 .back(.1)

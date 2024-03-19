@@ -66,6 +66,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
         {
             public void onOpened()
             {
+                pipeline.setStart("close");
                 pipeline.setAlliance("Red");
                 robot.webcam.setPipeline(pipeline);
 
@@ -79,15 +80,17 @@ public class fCamRedCloseAuto extends LinearOpMode {
         });
 
 
-        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(12, -45))
-                .splineToConstantHeading(new Vector2d(9, -34.5), Math.toRadians(180))
-                .lineTo(new Vector2d(8.6, -34.5))
-                .addTemporalMarker(1.5, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(20, -34.5))
-                .splineToSplineHeading(new Pose2d(45, -30.4, Math.toRadians(0)), Math.toRadians(0))
-                .lineTo(new Vector2d(53, -30.4))
-                .addTemporalMarker(4.1, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(16.7, -63, Math.toRadians(90)))
+                .lineTo(new Vector2d(16.7, -61))
+                .splineToLinearHeading(new Pose2d(22, -40), Math.toRadians(90))
+                .lineTo(new Vector2d(22, -47))
+                .addTemporalMarker(2.0, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .lineTo(new Vector2d(26, -47))
+                .splineToConstantHeading(new Vector2d(47, -42.7), Math.toRadians(0))
+                .lineTo(new Vector2d(51.5, -42.7))
+                .addTemporalMarker(4.5, () -> {
+                    robot.dropper(RobotConfig.Dropper.OPEN);
+                })
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(39.5, -30))
                 .addDisplacementMarker(() -> {
@@ -98,15 +101,17 @@ public class fCamRedCloseAuto extends LinearOpMode {
                 .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.red))
                 .build();
 
-        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(12, -60))
-                .splineToSplineHeading(new Pose2d(15, -32), Math.toRadians(90))
-                .waitSeconds(.3)
-                .strafeRight(1)
-                .addTemporalMarker(1.75, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .splineToConstantHeading(new Vector2d(45, -37.1), Math.toRadians(0))
-                .lineTo(new Vector2d(52, -37.1))
-                .addTemporalMarker(4.5, () -> robot.dropper(RobotConfig.Dropper.OPEN))
+        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(16.7, -63, Math.toRadians(90)))
+                .lineTo(new Vector2d(16.7, -60))
+                .splineToSplineHeading(new Pose2d(16, -32), Math.toRadians(90))
+                .lineTo(new Vector2d(16,-36))
+                .addTemporalMarker(1.8, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .lineTo(new Vector2d(18, -36))
+                .splineToConstantHeading(new Vector2d(45, -36.65), Math.toRadians(0))
+                .lineTo(new Vector2d(51.5, -36.65))
+                .addTemporalMarker(4.35, () -> {
+                    robot.dropper(RobotConfig.Dropper.OPEN);
+                })
                 .waitSeconds(.3)
                 .lineTo(new Vector2d(40, -37.5))
                 .addDisplacementMarker(() -> {
@@ -117,16 +122,18 @@ public class fCamRedCloseAuto extends LinearOpMode {
                 .lineTo(new Vector2d(45, PassData.roadrunnerParkPosition.red))
                 .build();
 
-        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(12, -63, Math.toRadians(90)))
-                .lineTo(new Vector2d(12, -61))
-                .splineToLinearHeading(new Pose2d(22.7, -40.2), Math.toRadians(90))
-                .lineTo(new Vector2d(23, -48.2))
-                .addTemporalMarker(2.1, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(26, -48))
-                .splineToConstantHeading(new Vector2d(47, -41.5), Math.toRadians(0))
-                .lineTo(new Vector2d(52, -41.5))
-                .addTemporalMarker(4.6, () -> robot.dropper(RobotConfig.Dropper.OPEN))
-                .waitSeconds(.4)
+        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(16.7, -63, Math.toRadians(90)))
+                .lineTo(new Vector2d(16.7, -45))
+                .splineToConstantHeading(new Vector2d(9, -34), Math.toRadians(180))
+                .lineTo(new Vector2d(8.5, -34))
+                .addTemporalMarker(1.5, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
+                .lineTo(new Vector2d(20, -34))
+                .splineToSplineHeading(new Pose2d(45, -27.6, Math.toRadians(0)), Math.toRadians(0))
+                .lineTo(new Vector2d(53.2, -27.6))
+                .addTemporalMarker(4.5, () -> {
+                    robot.dropper(RobotConfig.Dropper.OPEN);
+                })
+                .waitSeconds(.3)
                 .lineTo(new Vector2d(40, -43.9))
                 .addDisplacementMarker(() -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
@@ -151,7 +158,7 @@ public class fCamRedCloseAuto extends LinearOpMode {
         robot.ResetSlides();
 
         robot.update();
-        robot.setPoseEstimate(new Pose2d(12, -63, Math.toRadians(90)));
+        robot.setPoseEstimate(new Pose2d(16.7, -63, Math.toRadians(90)));
 
         cameraDelayTimer.reset();
         robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
