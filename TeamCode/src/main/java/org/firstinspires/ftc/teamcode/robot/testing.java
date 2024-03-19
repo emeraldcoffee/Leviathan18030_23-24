@@ -50,7 +50,7 @@ public class testing extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
-        robot.setPoseEstimate(new Pose2d(12, -62, Math.toRadians(90)));
+        robot.setPoseEstimate(new Pose2d(16.7, -62, Math.toRadians(90)));
 
         robot.stackHold(false);
         robot.stackArm(RobotConfig.StackArm.OUT);

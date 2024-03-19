@@ -102,7 +102,7 @@ public class BackDropLocalizer extends TwoDistanceLocalizer{
     }
 
     public Pose2d getPoseEstimateRight() {
-        return new Pose2d(poseEstimate.getX(), getRightUltrasonic()-63, poseEstimate.getHeading());
+        return new Pose2d(poseEstimate.getX(), getRightUltrasonic()-62.5, poseEstimate.getHeading());
     }
 
     public boolean isInRange(Pose2d inputPose) {

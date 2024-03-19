@@ -171,13 +171,24 @@ public class RobotMethods {
         return String.format(" x: %,3.2f y: %,3.2f z: %,3.2f heading: %,3.2f, confidence: %,3.2f", aprilTag.ftcPose.x, aprilTag.ftcPose.y, aprilTag.ftcPose.z, aprilTag.ftcPose.yaw, aprilTag.decisionMargin);
     }
 
+    public static double normalizeAngle(double a) {
+        while (a>Math.PI) a-=2*Math.PI;
+        while (a<-Math.PI) a+=2*Math.PI;
+
+        return a;
+    }
+
+    public static double toRoadrunnerAngle(double a) {
+        while (a>2*Math.PI) a-=2*Math.PI;
+        while (a<0) a+=2*Math.PI;
+
+        return a;
+    }
+
     public static double angleDifferenceRad(double a, double b) {
         double d = a-b;
 
-        while (d>Math.PI) d-=2*Math.PI;
-        while (d<-Math.PI) d+=2*Math.PI;
-
-        return d;
+        return normalizeAngle(d);
     }
 
     //Assumes that both angles are in range (-2pi, 2pi)

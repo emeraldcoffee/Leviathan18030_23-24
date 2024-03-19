@@ -52,6 +52,7 @@ public class redFar2plus1 extends LinearOpMode {
 
         robot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             public void onOpened() {
+                pipeline.setStart("far");
                 pipeline.setAlliance("Red");
                 robot.webcam.setPipeline(pipeline);
 

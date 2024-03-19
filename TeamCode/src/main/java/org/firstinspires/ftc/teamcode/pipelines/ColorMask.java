@@ -27,6 +27,10 @@ public class ColorMask extends OpenCvPipeline {
     }*/
 
     String alliance;
+    String start;
+
+    int leftBound;
+    int rightBound;
     static int xCoord;
     static int yCoord;
 
@@ -37,9 +41,9 @@ public class ColorMask extends OpenCvPipeline {
             green = new Scalar(0, 255, 0),
             red = new Scalar(255, 0, 0);
 
-    Rect leftRectangle = new Rect(100, 300, 80, 180);
-    Rect centerRectangle = new Rect(200, 320, 180, 80);
-    Rect rightRectangle = new Rect(530, 300, 80, 180);
+//    Rect leftRectangle = new Rect(100, 300, 80, 180);
+//    Rect centerRectangle = new Rect(200, 320, 180, 80);
+//    Rect rightRectangle = new Rect(530, 300, 80, 180);
     ArrayList<double[]> frameList;
     static Point contourCoords;
 
@@ -53,12 +57,12 @@ public class ColorMask extends OpenCvPipeline {
 
 
         Rect crop = new Rect(0, 60, 640, 420);
-        Mat output = input.submat(crop);
+        input = input.submat(crop);
 
 //        Mat output = input;
 //        Mat output = input.adjustROI(120, 480, 0, 640);
         Mat mat = new Mat();
-        Imgproc.cvtColor(output, mat, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
         if (mat.empty()) {
             return input;
@@ -139,7 +143,7 @@ public class ColorMask extends OpenCvPipeline {
         Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
 
-        if (frameList.size() > 5) {
+        if (frameList.size() > 2) {
             frameList.remove(0);
         }
 
@@ -181,7 +185,7 @@ public class ColorMask extends OpenCvPipeline {
 
 //            Core.bitwise_and(input, output, image);
 
-            Imgproc.rectangle(output, rect, red);
+            Imgproc.rectangle(input, rect, red);
 
 
             xCoord = (int) (rect.x + (rect.width / 2));
@@ -192,31 +196,42 @@ public class ColorMask extends OpenCvPipeline {
             if (coords.size() > 0)
                 contourCoords = coords.get(0);
         }
-        Rect centerBox = new Rect(213, 0, 450 - 213, 480);
+        Rect centerBox = new Rect(leftBound, 0, rightBound - leftBound, 480);
         Scalar green = new Scalar(44, 235, 28);
-        Imgproc.rectangle(output, centerBox, green, 2);
+        Imgproc.rectangle(input, centerBox, green, 2);
 
-        Imgproc.rectangle(output, crop, green, 2);
+        Imgproc.rectangle(input, crop, green, 2);
 
 
-        return output;
+        return input;
     }
 
     public void setAlliance(String a) {
         alliance = a;
     }
+    public void setStart(String s) {
+        start = s;
+        if (start.equals("close")) {
+            leftBound = 180;
+            rightBound = 380;
+        }
+        else {
+            leftBound = 280;
+            rightBound = 520;
+        }
+    }
 
     public String getPos() {
-        if ((xCoord > 0) && (xCoord <= 213)) {
-            //pos = teamElementPosition.LEFT;
-            return "left";
-        } else if (xCoord <= 450) {
-            //pos = teamElementPosition.CENTER;
-            return "center";
-        } else {
-            //pos = teamElementPosition.RIGHT;
-            return "right";
-        }
-
+//        if (start.equals("close")) {close
+            if ((xCoord > 0) && (xCoord <= leftBound)) {
+                //pos = teamElementPosition.LEFT;
+                return "left";
+            } else if (xCoord <= rightBound) {
+                //pos = teamElementPosition.CENTER;
+                return "center";
+            } else {
+                //pos = teamElementPosition.RIGHT;
+                return "right";
+            }
     }
 }

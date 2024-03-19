@@ -35,6 +35,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
+import org.firstinspires.ftc.teamcode.robot.RobotMethods;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
@@ -675,11 +676,24 @@ public class RobotConfig extends MecanumDrive {
     }
 
     public void relocalizeLeft() {
-        setPoseEstimate(getFreshPoseEstimateLeft());
+        Pose2d relocalizeEstimate = getFreshPoseEstimateLeft();
+
+        setPoseEstimate(new Pose2d(
+                relocalizeEstimate.getX()*.3+getPoseEstimate().getX()*.7,
+                relocalizeEstimate.getY()*.3+getPoseEstimate().getY()*.7,
+                RobotMethods.toRoadrunnerAngle(RobotMethods.normalizeAngle(relocalizeEstimate.getHeading())*.3+RobotMethods.normalizeAngle(getPoseEstimate().getHeading())*.7)
+                ));
     }
 
-    public void relocalizeRight() {
-//        setPoseEstimate(getFreshPoseEstimateRight());
+    public Pose2d relocalizeRight() {
+//        Pose2d relocalizeEstimate = getFreshPoseEstimateRight();
+//
+//        setPoseEstimate(new Pose2d(
+//                relocalizeEstimate.getX()*.3+getPoseEstimate().getX()*.7,
+//                getPoseEstimate().getY(),//relocalizeEstimate.getY()*.3
+//                RobotMethods.toRoadrunnerAngle(RobotMethods.normalizeAngle(relocalizeEstimate.getHeading())*.3+RobotMethods.normalizeAngle(getPoseEstimate().getHeading())*.7)
+//        ));
+        return new Pose2d(0, 0, 0);//relocalizeEstimate;
     }
 
     public void relocalizeBackdrop() {
