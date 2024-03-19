@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,14 +14,13 @@ import org.firstinspires.ftc.teamcode.pipelines.ColorMask;
 import org.firstinspires.ftc.teamcode.robot.PassData;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @Autonomous
-public class redClose2Plus4 extends LinearOpMode {
+public class blueClose2Plus4 extends LinearOpMode {
     enum Camera {
         WAIT,
         SAVE,
@@ -54,8 +52,8 @@ public class redClose2Plus4 extends LinearOpMode {
         robot.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"));
         robot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             public void onOpened() {
-                pipeline.setStart("close");
-                pipeline.setAlliance("Red");
+                pipeline.setStart("far");
+                pipeline.setAlliance("Blue");
                 robot.webcam.setPipeline(pipeline);
 
 //                robot.webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
@@ -88,14 +86,14 @@ public class redClose2Plus4 extends LinearOpMode {
         }
 
         //+9.57
-        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(16.7, -62, Math.toRadians(90)))
-                .lineTo(new Vector2d(16.7, -61))
-                .splineToLinearHeading(new Pose2d(22, -40), Math.toRadians(90))
-                .lineTo(new Vector2d(22, -47))
-                .addTemporalMarker(2.0, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(26, -47))
-                .splineToConstantHeading(new Vector2d(47, -42.7), Math.toRadians(0))
-                .lineTo(new Vector2d(52, -42.7))
+        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(16.7, 62, Math.toRadians(270)))
+                .lineTo(new Vector2d(16.7, 61))
+                .splineToLinearHeading(new Pose2d(22, 40), Math.toRadians(270))
+                .lineTo(new Vector2d(22, 47))
+                .addTemporalMarker(2.0, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(26, 47))
+                .splineToConstantHeading(new Vector2d(47, 42.7), Math.toRadians(0))
+                .lineTo(new Vector2d(52, 42.7))
                 .addTemporalMarker(4.5, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     backdropReading1.setValue(robot.relocalizeRight());
@@ -108,27 +106,27 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.transferMotor.setPower(.3);
                 })
                 //cycle 1
-                .splineToConstantHeading(new Vector2d(24, -12.1), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, 12.1), Math.toRadians(180))
                 .addTemporalMarker(8.0, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-59.15, -12.1))
+                .lineTo(new Vector2d(-59.15, 12.1))
                 .waitSeconds(1)
                 .addTemporalMarker(8.6, () -> {
                     robot.grabFromStack(2);
                 })
 
 
-                .lineTo(new Vector2d(24, -12.1))
+                .lineTo(new Vector2d(24, 12.1))
                 .addTemporalMarker(2.2+9.57, () -> {
                     robot.setTargetSlidePos(15.2);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-                .lineTo(new Vector2d(52.2, -30))
+                .splineToConstantHeading(new Vector2d(50, 30), Math.toRadians(0))
+                .lineTo(new Vector2d(52.2, 30))
                 .waitSeconds(.5)
                 .addTemporalMarker(4.3+9.57, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
@@ -140,25 +138,25 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
                 //cycle 2
-                .splineToConstantHeading(new Vector2d(24, -12.55), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, 12.55), Math.toRadians(180))
                 .addTemporalMarker(7.7+9.57, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.62, -12.55))
+                .lineTo(new Vector2d(-58.62, 12.55))
                 .waitSeconds(1)
                 .addTemporalMarker(8.75+9.57, () -> {
                     robot.grabFromStack(2);
                 })
-                .lineTo(new Vector2d(24, -12.55))
+                .lineTo(new Vector2d(24, 12.55))
                 .addTemporalMarker(12.5+9.57, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(51, -32), Math.toRadians(0))
-                .lineTo(new Vector2d(52.2, -32))
+                .splineToConstantHeading(new Vector2d(51, 32), Math.toRadians(0))
+                .lineTo(new Vector2d(52.2, 32))
                 .waitSeconds(.5)
                 .back(8)
                 .addTemporalMarker(13.8+9.57, () -> {
@@ -167,18 +165,18 @@ public class redClose2Plus4 extends LinearOpMode {
                 .addTemporalMarker(15+9.57, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.blue))
                 .build();
 
         //+9.49
-        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(16.7, -62, Math.toRadians(90)))
-                .lineTo(new Vector2d(16.7, -60))
-                .splineToSplineHeading(new Pose2d(16, -32), Math.toRadians(90))
-                .lineTo(new Vector2d(16,-36))
-                .addTemporalMarker(1.8, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(18, -36))
-                .splineToConstantHeading(new Vector2d(45, -36.69), Math.toRadians(0))
-                .lineTo(new Vector2d(52, -36.69))
+        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(16.7, 62, Math.toRadians(270)))
+                .lineTo(new Vector2d(16.7, 60))
+                .splineToSplineHeading(new Pose2d(16, 32), Math.toRadians(270))
+                .lineTo(new Vector2d(16,36))
+                .addTemporalMarker(1.8, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(18, 36))
+                .splineToConstantHeading(new Vector2d(45, 36.69), Math.toRadians(0))
+                .lineTo(new Vector2d(52, 36.69))
                 .addTemporalMarker(4.35, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     backdropReading1.setValue(robot.relocalizeRight());
@@ -191,27 +189,27 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.transferMotor.setPower(.3);
                 })
                 //cycle 1
-                .splineToConstantHeading(new Vector2d(24, -11.9), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, 11.9), Math.toRadians(180))
                 .addTemporalMarker(8.0, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-59.15, -11.9))
+                .lineTo(new Vector2d(-59.15, 11.9))
                 .waitSeconds(1)
                 .addTemporalMarker(8.7, () -> {
                     robot.grabFromStack(2);
                 })
 
 
-                .lineTo(new Vector2d(24, -11.9))
+                .lineTo(new Vector2d(24, 11.9))
                 .addTemporalMarker(2.2+9.49, () -> {
                     robot.setTargetSlidePos(15.2);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-                .lineTo(new Vector2d(52, -30))
+                .splineToConstantHeading(new Vector2d(50, 30), Math.toRadians(0))
+                .lineTo(new Vector2d(52, 30))
                 .waitSeconds(.5)
                 .addTemporalMarker(4.3+9.49, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
@@ -223,25 +221,25 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
                 //cycle 2
-                .splineToConstantHeading(new Vector2d(24, -12.25), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, 12.25), Math.toRadians(180))
                 .addTemporalMarker(7.7+9.49, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.65, -12.25))
+                .lineTo(new Vector2d(-58.65, 12.25))
                 .waitSeconds(1)
                 .addTemporalMarker(8.7+9.49, () -> {
                     robot.grabFromStack(2);
                 })
-                .lineTo(new Vector2d(24, -12.25))
+                .lineTo(new Vector2d(24, 12.25))
                 .addTemporalMarker(12.5+9.49, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -32), Math.toRadians(0))
-                .lineTo(new Vector2d(52, -32))
+                .splineToConstantHeading(new Vector2d(50, 32), Math.toRadians(0))
+                .lineTo(new Vector2d(52, 32))
                 .waitSeconds(.5)
                 .back(8)
                 .addTemporalMarker(13.8+9.49, () -> {
@@ -250,18 +248,18 @@ public class redClose2Plus4 extends LinearOpMode {
                 .addTemporalMarker(15+9.49, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.blue))
                 .build();
 
         //+9.26
-        TrajectorySequence left = robot.trajectorySequenceBuilder(new Pose2d(16.7, -62, Math.toRadians(90)))
-                .lineTo(new Vector2d(16.7, -45))
-                .splineToConstantHeading(new Vector2d(9, -34), Math.toRadians(180))
-                .lineTo(new Vector2d(8.5, -34))
-                .addTemporalMarker(1.5, () -> robot.leftPixelServo.setPosition(RobotConstants.leftIn))
-                .lineTo(new Vector2d(20, -34))
-                .splineToSplineHeading(new Pose2d(45, -27.6, Math.toRadians(0)), Math.toRadians(0))
-                .lineTo(new Vector2d(53.2, -27.6))
+        TrajectorySequence right = robot.trajectorySequenceBuilder(new Pose2d(16.7, 62, Math.toRadians(270)))
+                .lineTo(new Vector2d(16.7, 45))
+                .splineToConstantHeading(new Vector2d(9, 34), Math.toRadians(180))
+                .lineTo(new Vector2d(8.5, 34))
+                .addTemporalMarker(1.5, () -> robot.rightPixelServo.setPosition(RobotConstants.rightIn))
+                .lineTo(new Vector2d(20, 34))
+                .splineToSplineHeading(new Pose2d(45, 27.6, Math.toRadians(0)), Math.toRadians(0))
+                .lineTo(new Vector2d(53.2, 27.6))
                 .addTemporalMarker(4.5, () -> {
                     robot.dropper(RobotConfig.Dropper.OPEN);
                     backdropReading1.setValue(robot.isRightReading());
@@ -274,27 +272,27 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.transferMotor.setPower(.3);
                 })
                 //cycle 1
-                .splineToConstantHeading(new Vector2d(24, -11.25), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, 11.45), Math.toRadians(180))
                 .addTemporalMarker(7.5, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.4, -11.25))
+                .lineTo(new Vector2d(-58.4, 11.45))
                 .waitSeconds(1)
                 .addTemporalMarker(8.25, () -> {
                     robot.grabFromStack(2);
                 })
 
 
-                .lineTo(new Vector2d(24, -11.25))
+                .lineTo(new Vector2d(24, 11.45))
                 .addTemporalMarker(2.2+9.26, () -> {
                     robot.setTargetSlidePos(15.2);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -30), Math.toRadians(0))
-                .lineTo(new Vector2d(53.3, -30))
+                .splineToConstantHeading(new Vector2d(50, 30), Math.toRadians(0))
+                .lineTo(new Vector2d(53.3, 30))
                 .waitSeconds(.5)
                 .addTemporalMarker(4.4+9.26, () -> {
                     robot.dropper(RobotConfig.Dropper.PARTIAL);
@@ -306,25 +304,25 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
                 //cycle 2
-                .splineToConstantHeading(new Vector2d(24, -11.7), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, 11.9), Math.toRadians(180))
                 .addTemporalMarker(7.7+9.26, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.25, -11.7))
+                .lineTo(new Vector2d(-58.1, 11.9))
                 .waitSeconds(1)
                 .addTemporalMarker(8.7+9.26, () -> {
                     robot.grabFromStack(2);
                 })
-                .lineTo(new Vector2d(24, -11.7))
+                .lineTo(new Vector2d(24, 11.9))
                 .addTemporalMarker(12.5+9.26, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -32), Math.toRadians(0))
-                .lineTo(new Vector2d(52.6, -32))
+                .splineToConstantHeading(new Vector2d(50, 32), Math.toRadians(0))
+                .lineTo(new Vector2d(52.6, 32))
                 .waitSeconds(.5)
                 .back(8)
                 .addTemporalMarker(13.9+9.4, () -> {
@@ -333,7 +331,7 @@ public class redClose2Plus4 extends LinearOpMode {
                 .addTemporalMarker(14.8+9.26, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.blue))
                 .build();
 
 //        TrajectorySequence cycles = robot.trajectorySequenceBuilder(center.end())
@@ -399,7 +397,7 @@ public class redClose2Plus4 extends LinearOpMode {
 //        Telemetry.Item slideData = telemetry.addData("Slide Data:", "Encoder Val:" + robot.liftEncoder.getCurrentPosition() + " Target Val:" + targetSlidePos);
 
 
-        robot.leftPixelServo.setPosition(RobotConstants.leftOut);
+        robot.rightPixelServo.setPosition(RobotConstants.rightOut);
         robot.dropper(RobotConfig.Dropper.CLOSED);
 
         robot.ResetSlides();
@@ -410,7 +408,7 @@ public class redClose2Plus4 extends LinearOpMode {
         robot.setTargetSlidePos(11);//RobotConfig.SlideHeight.PRELOAD_DROP
 
         robot.update();
-        robot.setPoseEstimate(new Pose2d(16.7, -62, Math.toRadians(90)));
+        robot.setPoseEstimate(new Pose2d(16.7, 62, Math.toRadians(270)));
 
 //        robot.webcam.resumeViewport();
 

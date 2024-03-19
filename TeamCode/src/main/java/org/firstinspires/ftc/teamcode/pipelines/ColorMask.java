@@ -212,12 +212,12 @@ public class ColorMask extends OpenCvPipeline {
     public void setStart(String s) {
         start = s;
         if (start.equals("close")) {
-            leftBound = 180;
-            rightBound = 380;
+            leftBound = 200;
+            rightBound = 390;
         }
         else {
-            leftBound = 280;
-            rightBound = 520;
+            leftBound = 300;
+            rightBound = 490;
         }
     }
 
