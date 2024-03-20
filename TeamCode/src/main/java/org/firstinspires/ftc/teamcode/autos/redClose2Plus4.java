@@ -191,20 +191,20 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.transferMotor.setPower(.3);
                 })
                 //cycle 1
-                .splineToConstantHeading(new Vector2d(24, -11.9), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, -11.7), Math.toRadians(180))
                 .addTemporalMarker(8.0, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-59.15, -11.9))
+                .lineTo(new Vector2d(-59.15, -11.7))
                 .waitSeconds(1)
                 .addTemporalMarker(8.7, () -> {
                     robot.grabFromStack(2);
                 })
 
 
-                .lineTo(new Vector2d(24, -11.9))
+                .lineTo(new Vector2d(24, -11.7))
                 .addTemporalMarker(2.2+9.49, () -> {
                     robot.setTargetSlidePos(15.2);
                     robot.intakeMotor.setPower(0);
@@ -274,20 +274,20 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.transferMotor.setPower(.3);
                 })
                 //cycle 1
-                .splineToConstantHeading(new Vector2d(24, -11.25), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, -9.1), Math.toRadians(180))
                 .addTemporalMarker(7.5, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.4, -11.25))
+                .lineTo(new Vector2d(-58.4, -9.1))
                 .waitSeconds(1)
                 .addTemporalMarker(8.25, () -> {
                     robot.grabFromStack(2);
                 })
 
 
-                .lineTo(new Vector2d(24, -11.25))
+                .lineTo(new Vector2d(24, -9.1))
                 .addTemporalMarker(2.2+9.26, () -> {
                     robot.setTargetSlidePos(15.2);
                     robot.intakeMotor.setPower(0);
@@ -306,25 +306,25 @@ public class redClose2Plus4 extends LinearOpMode {
                     robot.dropper(RobotConfig.Dropper.CLOSED);
                 })
                 //cycle 2
-                .splineToConstantHeading(new Vector2d(24, -11.7), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(24, -9.4), Math.toRadians(180))
                 .addTemporalMarker(7.7+9.26, () -> {
                     robot.intakeMotor.setPower(1);
                     robot.transferMotor.setPower(1);
                     robot.stackArm(RobotConfig.StackArm.OUT);
                 })
-                .lineTo(new Vector2d(-58.25, -11.7))
+                .lineTo(new Vector2d(-58.25, -9.4))
                 .waitSeconds(1)
                 .addTemporalMarker(8.7+9.26, () -> {
                     robot.grabFromStack(2);
                 })
-                .lineTo(new Vector2d(24, -11.7))
+                .lineTo(new Vector2d(24, -9.4))
                 .addTemporalMarker(12.5+9.26, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.LOW);
                     robot.intakeMotor.setPower(0);
                     robot.transferMotor.setPower(0);
                 })
-                .splineToConstantHeading(new Vector2d(50, -32), Math.toRadians(0))
-                .lineTo(new Vector2d(52.6, -32))
+                .splineToConstantHeading(new Vector2d(50, -29.2), Math.toRadians(0))
+                .lineTo(new Vector2d(52.6, -29.2))
                 .waitSeconds(.5)
                 .back(8)
                 .addTemporalMarker(13.9+9.4, () -> {
@@ -333,7 +333,7 @@ public class redClose2Plus4 extends LinearOpMode {
                 .addTemporalMarker(14.8+9.26, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(42, PassData.roadrunnerParkPosition.red))
+                .lineTo(new Vector2d(41, PassData.roadrunnerParkPosition.red))
                 .build();
 
 //        TrajectorySequence cycles = robot.trajectorySequenceBuilder(center.end())
