@@ -41,21 +41,24 @@ public class BackAndForthSpline extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         RobotConfig robot = new RobotConfig(hardwareMap);
 
-        TrajectorySequence trajectoryForward = robot.trajectorySequenceBuilder(new Pose2d(-37, 62, Math.toRadians(270)))
-                .splineToConstantHeading(new Vector2d(-51, 35), Math.toRadians(270))
-                .splineToSplineHeading(new Pose2d(-46.5, 34), Math.toRadians(30))
-                .waitSeconds(.4)
+        TrajectorySequence trajectoryForward = robot.trajectorySequenceBuilder(new Pose2d(54, 36.69, Math.toRadians(0)))
+//                .lineTo(new Vector2d(54, 36.69))
+
+                .back(.1)
+                //cycle 1
+                .splineToSplineHeading(new Pose2d(25, 11.9, Math.toRadians(0)), Math.toRadians(180))
+                .back(15)
                 .build();
 
         TrajectorySequence trajectoryBackward = robot.trajectorySequenceBuilder(trajectoryForward.end())
-                .splineToSplineHeading(trajectoryForward.start(), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(trajectoryForward.start().getX(), trajectoryForward.start().getY()), Math.toRadians(0))
                 .waitSeconds(.3)
                 .build();
 
         waitForStart();
 
         robot.update();
-        robot.setPoseEstimate(new Pose2d(-37, 62, Math.toRadians(270)));
+        robot.setPoseEstimate(new Pose2d(54, 36.69, Math.toRadians(0)));
 
         while (!isStopRequested()) {
             robot.followTrajectorySequence(trajectoryForward);

@@ -52,6 +52,7 @@ public class blueFar2plus1 extends LinearOpMode {
 
         robot.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             public void onOpened() {
+                pipeline.setStart("close");
                 pipeline.setAlliance("Blue");
                 robot.webcam.setPipeline(pipeline);
 
@@ -152,7 +153,7 @@ public class blueFar2plus1 extends LinearOpMode {
                 .build();
 
         //3.88 stack 1, 14.68 stack 2
-        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(-38, 62, Math.toRadians(270)))
+        TrajectorySequence center = robot.trajectorySequenceBuilder(new Pose2d(-38, 63.2, Math.toRadians(270)))
                 .splineToSplineHeading(new Pose2d(-41, 32.5, Math.toRadians(0)), Math.toRadians(270))
                 .addTemporalMarker(.1, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
@@ -173,8 +174,8 @@ public class blueFar2plus1 extends LinearOpMode {
                 })
                 .waitSeconds(.9)
                 .forward(.5)
-                .splineToConstantHeading(new Vector2d(-33, 57), Math.toRadians(0))
-                .lineTo(new Vector2d(31, 57))
+                .splineToConstantHeading(new Vector2d(-33, 58), Math.toRadians(0))
+                .lineTo(new Vector2d(31, 58))
                 .addTemporalMarker(7.2, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
                     robot.intakeMotor.setPower(0);
@@ -196,11 +197,11 @@ public class blueFar2plus1 extends LinearOpMode {
                 .waitSeconds(1.3)
                 //Cycle 1
                 .back(.1)
-                .splineToConstantHeading(new Vector2d(33, 57), Math.toRadians(180))
+                .splineToConstantHeading(new Vector2d(33, 58), Math.toRadians(180))
                 .addTemporalMarker(11.7, () -> {
                     robot.setTargetSlidePos(RobotConfig.SlideHeight.BOTTOM);
                 })
-                .lineTo(new Vector2d(-33, 57))
+                .lineTo(new Vector2d(-33, 58))
                 .splineToConstantHeading(new Vector2d(-52, 37.5), Math.toRadians(250))
                 .splineToConstantHeading(new Vector2d(-57.2, 33.6), Math.toRadians(180))
                 .addTemporalMarker(13.7, () -> {
@@ -218,8 +219,8 @@ public class blueFar2plus1 extends LinearOpMode {
                 })
                 //To backdrop
                 .forward(.5)
-                .splineToConstantHeading(new Vector2d(-33, 57), Math.toRadians(0))
-                .lineTo(new Vector2d(31, 57))
+                .splineToConstantHeading(new Vector2d(-33, 58), Math.toRadians(0))
+                .lineTo(new Vector2d(31, 58))
                 .addTemporalMarker(19.4, () -> {
                     robot.setTargetSlidePos(17);
                     robot.intakeMotor.setPower(0);
@@ -338,7 +339,7 @@ public class blueFar2plus1 extends LinearOpMode {
         robot.setTargetSlidePos(RobotConfig.SlideHeight.PRELOAD_DROP);
 
         robot.update();
-        robot.setPoseEstimate(new Pose2d(-37, 62, Math.toRadians(270)));
+        robot.setPoseEstimate(new Pose2d(-37, 63.2, Math.toRadians(270)));
 
         cameraDelayTimer.reset();
 
@@ -349,7 +350,7 @@ public class blueFar2plus1 extends LinearOpMode {
 
             switch (camera) {
                 case WAIT:
-                    if (cameraDelayTimer.seconds() > .8 + 2) {
+                    if (cameraDelayTimer.seconds() > 2) {
                         camera = Camera.SAVE;
                     }
                     break;

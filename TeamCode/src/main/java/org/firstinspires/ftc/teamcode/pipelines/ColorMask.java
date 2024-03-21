@@ -216,8 +216,8 @@ public class ColorMask extends OpenCvPipeline {
             rightBound = 390;
         }
         else {
-            leftBound = 300;
-            rightBound = 490;
+            leftBound = 345;
+            rightBound = 535;
         }
     }
 
