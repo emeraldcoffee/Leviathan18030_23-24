@@ -21,7 +21,7 @@ public class inspection extends LinearOpMode {
         waitForStart();
 
         robot.spikeMarkHoldServo.setPosition(RobotConstants.holdServoUp);
-        robot.transferMotor.setPower(-.2);
+        robot.transferMotor.setPower(-1);
 
         while (opModeIsActive() && !isStopRequested()) {
             sleep(5);

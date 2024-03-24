@@ -80,11 +80,11 @@ public class ColorMask extends OpenCvPipeline {
         Scalar higherHHSV;
 
         if (alliance.equals("Blue")) {
-            lowLHSV = new Scalar(90, 40, 18);
-            highLHSV = new Scalar(140, 255, 180);
+            lowLHSV = new Scalar(92, 15, 16);
+            highLHSV = new Scalar(138, 255, 180);
             Core.inRange(mat, lowLHSV, highLHSV, thresh);
-            lowerLHSV = new Scalar(95, 60, 32);
-            higherLHSV = new Scalar(135, 255, 200);
+            lowerLHSV = new Scalar(105, 20, 33);
+            higherLHSV = new Scalar(130, 255, 200);
             Core.inRange(mat, lowerLHSV, higherLHSV, thresh);
 
             /*lowHSV = new Scalar(85, 0, 20);
@@ -97,11 +97,11 @@ public class ColorMask extends OpenCvPipeline {
             Mat threshLow = new Mat();
             Mat threshHigh = new Mat();
             //how to get both aspects, low and high? if make 2 mats, how combine? see later.
-            lowLHSV = new Scalar(0, 40, 18);
-            highLHSV = new Scalar(15, 255, 180);
+            lowLHSV = new Scalar(0, 35, 20);
+            highLHSV = new Scalar(15, 255, 255);
             Core.inRange(mat, lowLHSV, highLHSV, thresh);
-            lowerLHSV = new Scalar(0, 60, 32);
-            higherLHSV = new Scalar(13, 255, 200);
+            lowerLHSV = new Scalar(0, 45, 38);
+            higherLHSV = new Scalar(10, 255, 255);
             Core.inRange(mat, lowerLHSV, higherLHSV, thresh);
 
 //            bitwise_and(threshLow, threshHigh, thresh);
@@ -175,7 +175,8 @@ public class ColorMask extends OpenCvPipeline {
             for (MatOfPoint contour : contours) {
                 if (Imgproc.contourArea(contour) > maxContour) {
                     maxContour = Imgproc.contourArea(contour);
-                    largestContour = contour;
+//                    if (contour.size().area() < 20000)
+                        largestContour = contour;
                 }
             }
 
@@ -216,8 +217,8 @@ public class ColorMask extends OpenCvPipeline {
             rightBound = 390;
         }
         else {
-            leftBound = 345;
-            rightBound = 535;
+            leftBound = 213;
+            rightBound = 450;
         }
     }
 
